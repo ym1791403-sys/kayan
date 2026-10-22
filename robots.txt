@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://kayan-weld.vercel.app/sitemap.xml
