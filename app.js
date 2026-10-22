@@ -6,7 +6,7 @@ window.KAYAN_CONFIG = {
     apiKey: "AIzaSyDJ5Bl1G-mYkzO9ovilFrsa7Z5OhcI0vO4",
     authDomain: "kyan-b9581.firebaseapp.com",
     projectId: "kyan-b9581",
-    databaseURL: "https://kyan-b9581-default-rtdb.firebaseio.com",
+    databaseURL: "https://kyan-b9581-default-rtdb.firebaseio.com/",
     storageBucket: "kyan-b9581.firebasestorage.app",
     messagingSenderId: "275317091922",
     appId: "1:275317091922:web:60e95ecb19caad26dd798b"
