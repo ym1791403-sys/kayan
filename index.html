@@ -1,55 +1,25 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="كيان سيتي للتطوير العقاري وإدارة الأصول في أسيوط: شقق مفروشة وأجنحة طلاب VIP وشقق عائلية وبنتهاوس مع إدارة متكاملة للأصول.">
+<meta name="description" content="كيان سيتي للتطوير العقاري وإدارة الأصول في أسيوط: شقق مفروشة، فلل، أجنحة طلاب VIP، وشقق عائلية وبنتهاوس مع إدارة متكاملة للأصول.">
 <meta name="theme-color" content="#070d18">
 <link rel="canonical" href="https://kayan-weld.vercel.app/">
 <title>كيان سيتي للتطوير العقاري وإدارة الأصول | Kayan City</title>
 
-<!-- ========================================== -->
-<!-- 1. الأيقونات (التاب و الموبايل) -->
-<!-- ========================================== -->
-<!-- الصورة التالتة (اللوجو الأسود) -->
+<!-- الأيقونات والوسوم -->
 <link rel="icon" type="image/png" href="favicon.png">
-<!-- الصورة التانية (اللوجو في دايرة) -->
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest.json">
 
-<!-- ========================================== -->
-<!-- 2. صورة البروفايل (لما حد يبعت اللينك) -->
-<!-- ========================================== -->
-<!-- الصورة الأولى (العريضة) -->
 <meta property="og:title" content="كيان سيتي للتطوير العقاري وإدارة الأصول">
 <meta property="og:description" content="أيقونة معمارية في قلب أسيوط. نصنع للمستقبل بُعداً عقارياً فخماً.">
 <meta property="og:image" content="https://kayan-weld.vercel.app/profile.jpg">
 <meta property="og:url" content="https://kayan-weld.vercel.app/">
 <meta property="og:type" content="website">
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="كيان سيتي للتطوير العقاري">
-<meta name="twitter:description" content="أيقونة معمارية في قلب أسيوط.">
-<meta name="twitter:image" content="https://kayan-weld.vercel.app/profile.jpg">
-
-<!-- ========================================== -->
-<!-- 3. كود البحث في جوجل (Schema) -->
-<!-- ========================================== -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "كيان سيتي للتطوير العقاري",
-  "url": "https://kayan-weld.vercel.app/",
-  "logo": "https://kayan-weld.vercel.app/apple-touch-icon.png"
-}
-</script>
-
-<!-- ========================================== -->
-<!-- 4. الخطوط -->
-<!-- ========================================== -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<!-- الخطوط -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Reem+Kufi:wght@600;700&display=swap" rel="stylesheet">
@@ -97,7 +67,6 @@ body {
   direction: rtl;
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 7px; height: 7px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #1e3150; border-radius: 4px; }
@@ -110,7 +79,7 @@ body {
   padding: 0 24px;
 }
 
-/* Top Ad Announcement Bar */
+/* شريط الإعلانات */
 .ad-announcement-bar {
   background: linear-gradient(90deg, #997926 0%, #d4af37 50%, #f5df97 100%);
   color: #08111e;
@@ -146,9 +115,7 @@ body {
   transition: transform 0.2s ease;
 }
 
-.ad-action-btn:hover {
-  transform: scale(1.05);
-}
+.ad-action-btn:hover { transform: scale(1.05); }
 
 /* Navbar */
 .nav-holder {
@@ -167,7 +134,6 @@ body {
   max-width: 1200px;
   background: rgba(8, 15, 28, 0.85);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 10px 24px;
@@ -225,19 +191,10 @@ body {
   font-size: 0.95rem;
   font-weight: 600;
   transition: color 0.2s ease;
-  position: relative;
   padding: 4px 0;
 }
 
-.nav-links a:hover {
-  color: #fff;
-}
-
-.nav-cta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.nav-links a:hover { color: #fff; }
 
 .btn-primary {
   background: var(--gold-gradient);
@@ -285,28 +242,14 @@ body {
   color: #fff;
 }
 
-
-/* 3D Hero Section */
+/* Hero Section */
 .hero-stage {
-  height: 320vh;
+  min-height: 85vh;
   position: relative;
-}
-
-.hero-viewport {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
   background: radial-gradient(circle at 75% 30%, #15223e 0%, #080f1d 70%, #040810 100%);
-}
-
-#canvas-3d {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+  display: flex;
+  align-items: center;
+  padding: 120px 0 60px;
 }
 
 .hero-overlay {
@@ -314,26 +257,18 @@ body {
   inset: 0;
   pointer-events: none;
   background: 
-    linear-gradient(to top, rgba(7, 13, 24, 0.98) 0%, rgba(7, 13, 24, 0) 25%),
-    linear-gradient(to left, rgba(7, 13, 24, 0.92) 0%, rgba(7, 13, 24, 0.4) 45%, rgba(7, 13, 24, 0) 70%),
+    linear-gradient(to top, rgba(7, 13, 24, 0.98) 0%, rgba(7, 13, 24, 0.3) 50%),
     radial-gradient(circle at center, transparent 40%, rgba(3, 7, 14, 0.65) 100%);
-  z-index: 2;
+  z-index: 1;
 }
 
 .hero-content {
   position: relative;
   z-index: 10;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  pointer-events: none;
+  width: 100%;
 }
 
-.hero-cards-box {
-  max-width: 580px;
-  pointer-events: auto;
-}
+.hero-cards-box { max-width: 620px; }
 
 .badge-tag {
   display: inline-flex;
@@ -349,41 +284,11 @@ body {
   margin-bottom: 20px;
 }
 
-.badge-tag::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 10px var(--gold);
-}
-
-.hero-slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  pointer-events: none;
-}
-
-.hero-slide.active {
-  pointer-events: auto;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hero-slide.inactive {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
 .hero-title {
   font-family: 'Reem Kufi', sans-serif;
-  font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+  font-size: clamp(2.4rem, 5vw, 4rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.2;
   margin-bottom: 16px;
   color: #ffffff;
 }
@@ -401,82 +306,10 @@ body {
   color: var(--text-muted);
   line-height: 1.8;
   margin-bottom: 30px;
-  max-width: 520px;
+  max-width: 530px;
 }
 
-.hero-actions {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.search-banner {
-  margin-top: 36px;
-  background: rgba(13, 23, 42, 0.85);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-  border-radius: var(--radius-md);
-  padding: 16px 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) auto;
-  gap: 16px;
-  align-items: center;
-  box-shadow: var(--shadow-card);
-}
-
-.search-field label {
-  display: block;
-  font-size: 0.76rem;
-  color: var(--gold-light);
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.search-field select {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  font-family: inherit;
-  font-size: 0.9rem;
-  outline: none;
-}
-
-.search-field select option {
-  background: #0d172a;
-  color: #fff;
-}
-
-.scene-badge-3d {
-  position: absolute;
-  bottom: 30px;
-  left: 30px;
-  z-index: 10;
-  background: rgba(10, 18, 33, 0.75);
-  border: 1px solid var(--border);
-  padding: 8px 18px;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  color: var(--gold-light);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  backdrop-filter: blur(12px);
-  pointer-events: auto;
-}
-
-.scroll-cue {
-  position: absolute;
-  bottom: 24px;
-  inset-inline: 0;
-  text-align: center;
-  z-index: 10;
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  pointer-events: none;
-}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
 
 /* Stats Strip */
 .stats-strip {
@@ -485,20 +318,16 @@ body {
   background: linear-gradient(180deg, rgba(7, 13, 24, 0.9) 0%, rgba(13, 23, 42, 0.95) 100%);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 44px 0;
+  padding: 40px 0;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
+  gap: 30px;
 }
 
-.stat-item {
-  text-align: center;
-  position: relative;
-}
-
+.stat-item { text-align: center; position: relative; }
 .stat-item:not(:last-child)::after {
   content: "";
   position: absolute;
@@ -509,29 +338,8 @@ body {
   background: var(--border-subtle);
 }
 
-.stat-num {
-  font-family: 'Reem Kufi', sans-serif;
-  font-size: 2.8rem;
-  font-weight: 700;
-  background: var(--gold-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  line-height: 1.1;
-}
-
-.stat-label {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-top: 6px;
-  font-weight: 600;
-}
-
-/* Section Common Styling */
-section {
-  padding: 90px 0;
-  position: relative;
-}
+/* قسم العقارات */
+section { padding: 90px 0; position: relative; }
 
 .section-head {
   text-align: center;
@@ -562,7 +370,6 @@ section {
   line-height: 1.8;
 }
 
-/* Properties Grid & Cards */
 .filter-tabs {
   display: flex;
   justify-content: center;
@@ -594,7 +401,7 @@ section {
 
 .properties-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 30px;
 }
 
@@ -603,7 +410,7 @@ section {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s ease;
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
@@ -613,26 +420,27 @@ section {
 .property-card:hover {
   transform: translateY(-8px);
   border-color: var(--border);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
 }
 
 .card-img-wrap {
   position: relative;
-  height: 230px;
+  height: 250px;
   overflow: hidden;
-  background: #101c33;
+  background: #0d172a;
+  cursor: pointer;
 }
 
 .card-img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.6s ease;
+  display: block;
 }
 
-.property-card:hover .card-img-wrap img {
-  transform: scale(1.08);
-}
+.property-card:hover .card-img-wrap img { transform: scale(1.08); }
 
 .card-badge {
   position: absolute;
@@ -653,7 +461,6 @@ section {
   background: #dc2626 !important;
   color: #fff !important;
   border-color: #ef4444 !important;
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
 }
 
 .card-badge.reserved {
@@ -676,11 +483,6 @@ section {
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   z-index: 3;
   padding: 4px 0;
-  letter-spacing: 1px;
-}
-
-.property-card.sold-card .card-img-wrap img {
-  filter: grayscale(40%) contrast(90%);
 }
 
 .card-price {
@@ -695,6 +497,23 @@ section {
   border-radius: var(--radius-sm);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
+
+.card-zoom-hint {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.card-img-wrap:hover .card-zoom-hint { opacity: 1; }
 
 .card-body {
   padding: 24px;
@@ -736,29 +555,12 @@ section {
   gap: 6px;
 }
 
-.card-feature-item svg {
-  width: 17px;
-  height: 17px;
-  stroke: var(--gold);
-}
+.card-feature-item svg { width: 17px; height: 17px; stroke: var(--gold); }
 
 .card-foot {
   margin-top: auto;
   display: flex;
   gap: 10px;
-}
-
-.btn-sold {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-  font-weight: 700;
-  font-size: 0.92rem;
-  padding: 10px 24px;
-  border-radius: 999px;
-  text-align: center;
-  flex: 1;
-  cursor: not-allowed;
 }
 
 .empty-state-box {
@@ -768,9 +570,10 @@ section {
   border-radius: var(--radius-lg);
   padding: 60px 20px;
   text-align: center;
+  color: var(--text-muted);
 }
 
-/* Services Grid */
+/* Services */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -783,8 +586,6 @@ section {
   border-radius: var(--radius-md);
   padding: 30px 24px;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 
 .service-card:hover {
@@ -812,8 +613,6 @@ section {
   stroke: currentColor;
   fill: none;
   stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .service-card h3 {
@@ -829,7 +628,7 @@ section {
   line-height: 1.7;
 }
 
-/* Contact & Team */
+/* Contact */
 .contact-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -838,7 +637,6 @@ section {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 48px;
-  box-shadow: var(--shadow-card);
 }
 
 .team-list {
@@ -858,21 +656,9 @@ section {
   border-radius: var(--radius-md);
 }
 
-.member-info b {
-  color: #fff;
-  font-size: 1.05rem;
-  display: block;
-}
-
-.member-info span {
-  color: var(--text-muted);
-  font-size: 0.84rem;
-}
-
-.member-actions {
-  display: flex;
-  gap: 8px;
-}
+.member-info b { color: #fff; font-size: 1.05rem; display: block; }
+.member-info span { color: var(--text-muted); font-size: 0.84rem; }
+.member-actions { display: flex; gap: 8px; }
 
 .btn-sm {
   padding: 6px 14px;
@@ -881,21 +667,10 @@ section {
   text-decoration: none;
   font-weight: 700;
 }
+.btn-sm.call { border: 1px solid var(--border); color: var(--gold-light); }
+.btn-sm.wa { background: #25d366; color: #0b1523; }
 
-.btn-sm.call {
-  border: 1px solid var(--border);
-  color: var(--gold-light);
-}
-
-.btn-sm.wa {
-  background: #25d366;
-  color: #0b1523;
-}
-
-.form-group {
-  margin-bottom: 18px;
-}
-
+.form-group { margin-bottom: 18px; }
 .form-group label {
   display: block;
   color: #c9d7e8;
@@ -903,8 +678,7 @@ section {
   font-weight: 600;
   margin-bottom: 8px;
 }
-
-.form-group input, .form-group select, .form-group textarea {
+.form-group input, .form-group select {
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
@@ -915,10 +689,7 @@ section {
   font-size: 0.95rem;
   outline: none;
 }
-
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: var(--gold);
-}
+.form-group input:focus, .form-group select:focus { border-color: var(--gold); }
 
 /* Footer */
 footer {
@@ -955,7 +726,14 @@ footer {
   font-size: 0.85rem;
 }
 
-/* Subtle Discreet Admin Lock (غير ملفت نهائياً للزوار) */
+.dev-credit {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.dev-credit a { color: var(--gold); font-weight: 700; text-decoration: none; }
+
+/* Discreet lock */
 .discreet-lock-btn {
   position: fixed;
   bottom: 14px;
@@ -971,19 +749,9 @@ footer {
   justify-content: center;
   cursor: pointer;
   z-index: 999;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(4px);
-  padding: 0;
 }
 
-.discreet-lock-btn:hover {
-  background: rgba(14, 23, 42, 0.95);
-  border-color: var(--gold);
-  color: var(--gold);
-  opacity: 1;
-}
-
-/* Passcode Modal */
+/* Passcode modal */
 .admin-passcode-modal {
   position: fixed;
   inset: 0;
@@ -995,11 +763,7 @@ footer {
   justify-content: center;
   padding: 20px;
 }
-
-.admin-passcode-modal.show {
-  display: flex;
-  animation: zoomIn 0.25s ease;
-}
+.admin-passcode-modal.show { display: flex; }
 
 .passcode-card {
   width: 100%;
@@ -1009,14 +773,6 @@ footer {
   border-radius: var(--radius-lg);
   padding: 40px 32px;
   text-align: center;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-}
-
-.passcode-card h3 {
-  font-family: 'Reem Kufi', sans-serif;
-  color: #fff;
-  font-size: 1.7rem;
-  margin-bottom: 8px;
 }
 
 .passcode-input {
@@ -1031,16 +787,10 @@ footer {
   letter-spacing: 6px;
   outline: none;
   margin-bottom: 18px;
-  transition: border-color 0.2s ease;
 }
+.passcode-input:focus { border-color: var(--gold); }
 
-.passcode-input:focus {
-  border-color: var(--gold);
-}
-
-/* ========================================================
-   FULL SCREEN INTEGRATED ADMIN DASHBOARD
-   ======================================================== */
+/* لوحة التحكم */
 .admin-overlay-view {
   position: fixed;
   inset: 0;
@@ -1052,10 +802,7 @@ footer {
   height: 100vh;
   overflow: hidden;
 }
-
-.admin-overlay-view.open {
-  display: flex !important;
-}
+.admin-overlay-view.open { display: flex !important; }
 
 .admin-sidebar {
   width: 280px;
@@ -1101,19 +848,13 @@ footer {
   cursor: pointer;
   text-align: right;
   font-family: inherit;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
 .admin-tab-btn:hover, .admin-tab-btn.active {
   background: rgba(212, 175, 55, 0.12);
   color: #fff;
   border-right: 3px solid var(--gold);
-}
-
-.admin-tab-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke: currentColor;
 }
 
 .btn-back-site {
@@ -1132,12 +873,6 @@ footer {
   cursor: pointer;
   justify-content: center;
   margin-bottom: 10px;
-  transition: all 0.2s ease;
-}
-
-.btn-back-site:hover {
-  background: rgba(212, 175, 55, 0.18);
-  border-color: var(--gold);
 }
 
 .btn-logout-panel {
@@ -1155,12 +890,6 @@ footer {
   font-weight: 700;
   cursor: pointer;
   justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.btn-logout-panel:hover {
-  background: #ef4444;
-  color: #fff;
 }
 
 .kpi-row {
@@ -1188,32 +917,18 @@ footer {
   height: 100%;
   background: var(--gold-gradient);
 }
-
 .admin-kpi.success::after { background: var(--cyan); }
 .admin-kpi.warning::after { background: var(--warning); }
 .admin-kpi.danger::after { background: #ef4444; }
 
-.kpi-label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.kpi-number {
-  font-family: 'Reem Kufi', sans-serif;
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1;
-}
+.kpi-label { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 6px; font-weight: 600; }
+.kpi-number { font-family: 'Reem Kufi', sans-serif; font-size: 2.2rem; font-weight: 700; color: #fff; }
 
 .content-box {
   background: #0d172a;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
   margin-bottom: 30px;
 }
 
@@ -1228,22 +943,8 @@ footer {
   gap: 12px;
 }
 
-.box-header h2 {
-  font-size: 1.35rem;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .table-responsive { overflow-x: auto; }
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.92rem;
-}
-
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 .admin-table th {
   text-align: right;
   padding: 14px 16px;
@@ -1253,7 +954,6 @@ footer {
   border-bottom: 1px solid var(--border-subtle);
   white-space: nowrap;
 }
-
 .admin-table td {
   padding: 16px;
   border-bottom: 1px solid var(--border-subtle);
@@ -1269,53 +969,12 @@ footer {
   background: #111e33;
 }
 
-.status-select {
-  background: #08111e;
-  border: 1px solid var(--border-subtle);
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-  outline: none;
-}
-
-.action-group { display: flex; gap: 8px; }
-
-.btn-icon {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: #cbd7e6;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-icon:hover {
-  background: rgba(212, 175, 55, 0.15);
-  color: var(--gold);
-  border-color: var(--gold);
-}
-
-.btn-icon.delete:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border-color: #ef4444;
-}
-
-/* Student Housing System Styles */
+/* جدول الطلاب ومتابعة الشهور */
 .student-search-bar {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 20px;
-  align-items: center;
 }
 
 .student-search-input {
@@ -1329,24 +988,8 @@ footer {
   font-family: inherit;
   font-size: 0.92rem;
   outline: none;
-  transition: border-color 0.2s ease;
 }
-
-.student-search-input:focus {
-  border-color: var(--gold);
-}
-
-.student-filter-select {
-  background: #08111e;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.88rem;
-  outline: none;
-  cursor: pointer;
-}
+.student-search-input:focus { border-color: var(--gold); }
 
 .month-badges-grid {
   display: flex;
@@ -1365,51 +1008,17 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  transition: all 0.15s ease;
   border: 1px solid transparent;
 }
-
 .month-badge-item.paid {
   background: rgba(56, 239, 125, 0.15);
   color: #38ef7d;
   border-color: rgba(56, 239, 125, 0.35);
 }
-
-.month-badge-item.paid:hover {
-  background: rgba(56, 239, 125, 0.3);
-  transform: scale(1.05);
-}
-
 .month-badge-item.unpaid {
   background: rgba(239, 68, 68, 0.12);
   color: #fca5a5;
   border-color: rgba(239, 68, 68, 0.25);
-}
-
-.month-badge-item.unpaid:hover {
-  background: rgba(239, 68, 68, 0.25);
-  transform: scale(1.05);
-}
-
-.supervisor-pill {
-  font-size: 0.78rem;
-  background: rgba(212, 175, 55, 0.12);
-  color: var(--gold-light);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  padding: 3px 10px;
-  border-radius: 999px;
-  display: inline-block;
-  font-weight: 600;
-}
-
-.notes-pill {
-  font-size: 0.8rem;
-  color: #fcd34d;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  padding: 2px 8px;
-  border-radius: 4px;
-  display: inline-block;
 }
 
 .btn-wa-sm {
@@ -1423,11 +1032,6 @@ footer {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  transition: transform 0.2s ease;
-}
-
-.btn-wa-sm:hover {
-  transform: scale(1.1);
 }
 
 .btn-tel-sm {
@@ -1441,15 +1045,9 @@ footer {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  transition: all 0.2s ease;
 }
 
-.btn-tel-sm:hover {
-  background: var(--gold);
-  color: #08111e;
-}
-
-/* Modals inside Admin */
+/* Modals */
 .admin-sub-modal {
   position: fixed;
   inset: 0;
@@ -1461,7 +1059,6 @@ footer {
   justify-content: center;
   padding: 20px;
 }
-
 .admin-sub-modal.open { display: flex !important; }
 
 .admin-sub-card {
@@ -1473,7 +1070,6 @@ footer {
   padding: 32px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
 }
 
 .form-grid-2 {
@@ -1484,7 +1080,6 @@ footer {
 
 .form-field-admin { margin-bottom: 16px; }
 .form-field-admin.full { grid-column: 1 / -1; }
-
 .form-field-admin label {
   display: block;
   font-size: 0.88rem;
@@ -1492,7 +1087,6 @@ footer {
   font-weight: 600;
   margin-bottom: 6px;
 }
-
 .form-field-admin input, .form-field-admin select {
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
@@ -1504,90 +1098,44 @@ footer {
   font-size: 0.92rem;
   outline: none;
 }
+.form-field-admin input:focus, .form-field-admin select:focus { border-color: var(--gold); }
 
-.form-field-admin input:focus, .form-field-admin select:focus {
-  border-color: var(--gold);
-}
-
-.image-presets {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-}
-
-.preset-thumb {
-  width: 60px;
-  height: 45px;
-  border-radius: 6px;
-  object-fit: cover;
-  cursor: pointer;
-  border: 2px solid transparent;
-  opacity: 0.7;
-  transition: all 0.2s ease;
-}
-
-.preset-thumb:hover, .preset-thumb.active {
-  opacity: 1;
-  border-color: var(--gold);
-  transform: scale(1.05);
-}
-
-.ad-editor-box {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+/* Lightbox */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 14, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 2000000;
+  display: none;
+  align-items: center;
+  justify-content: center;
   padding: 24px;
-  margin-bottom: 24px;
+  cursor: zoom-out;
 }
-
-.ad-switch-label {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  margin-bottom: 18px;
-  font-size: 1.1rem;
-  color: #fff;
-  font-weight: 700;
+.image-lightbox.active { display: flex; }
+.image-lightbox img {
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 12px;
+  border: 1px solid var(--gold);
+  object-fit: contain;
 }
-
-.switch-toggle {
-  position: relative;
-  width: 50px;
-  height: 26px;
-  background: #243550;
-  border-radius: 999px;
-  transition: background 0.3s ease;
-}
-
-.switch-toggle::after {
-  content: "";
+.lightbox-close-btn {
   position: absolute;
-  top: 3px;
-  right: 4px;
-  width: 20px;
-  height: 20px;
+  top: 20px;
+  right: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid var(--border);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: #fff;
-  transition: transform 0.3s ease;
-}
-
-input[type="checkbox"]:checked + .switch-toggle { background: var(--cyan); }
-input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-22px); }
-
-.ad-preview-box {
-  margin-top: 20px;
-  padding: 14px 20px;
-  background: linear-gradient(90deg, #d4af37, #f7e7b4);
-  color: #0b1523;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
+  font-size: 1.5rem;
+  cursor: pointer;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25);
+  justify-content: center;
 }
 
 .toast-notice {
@@ -1605,468 +1153,37 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
   z-index: 10000000;
 }
 
-/* Pagination Styling */
-.table-pagination-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 16px 8px 4px 8px;
-  margin-top: 14px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.pagination-info {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-}
-
-.pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.pagination-size-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.pagination-select {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  color: #fff;
-  padding: 5px 10px;
-  font-family: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-  outline: none;
-}
-
-.pagination-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-pagination {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-pagination:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.18);
-  border-color: var(--gold);
-}
-
-.btn-pagination:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.pagination-current-page {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--gold-light);
-  min-width: 48px;
-  text-align: center;
-}
-
-/* Cloud DB Tab Styles */
-.db-status-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-radius: var(--radius-md);
-  margin-bottom: 24px;
-  background: rgba(13, 23, 42, 0.95);
-  border: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.db-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.db-status-badge.connected {
-  background: rgba(56, 239, 125, 0.15);
-  color: #38ef7d;
-  border: 1px solid rgba(56, 239, 125, 0.3);
-}
-
-.db-status-badge.local {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.db-status-badge.error {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.db-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-@media (max-width: 860px) {
-  .db-grid { grid-template-columns: 1fr; }
-}
-
-.db-card-section {
-  background: #0d172a;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 24px;
-}
-
-.db-card-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #fff;
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.sql-snippet-box {
-  background: #060b13;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-sm);
-  padding: 12px;
-  font-family: monospace;
-  font-size: 0.8rem;
-  color: #7dd3fc;
-  direction: ltr;
-  text-align: left;
-  max-height: 140px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  margin-top: 10px;
-}
-
 @media (max-width: 992px) {
   .nav-links { display: none; }
   .contact-container { grid-template-columns: 1fr; padding: 28px; }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .admin-sidebar { width: 70px; padding: 18px 10px; }
   .admin-brand-title, .admin-tab-btn span, .btn-back-site span, .btn-logout-panel span { display: none; }
-  .admin-main { padding: 20px 14px; }
   .form-grid-2 { grid-template-columns: 1fr; }
 }
-
 @media (max-width: 600px) {
   .footer-top { grid-template-columns: 1fr; }
   .properties-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .stat-item::after { display: none; }
 }
-
-/* ===== Polish & performance ===== */
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-#services,#contact,footer{content-visibility:auto;contain-intrinsic-size:1px 700px}
-.property-card{content-visibility:auto;contain-intrinsic-size:auto 430px}
-.property-card img{background:var(--surface)}
-.pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:18px 8px;flex-wrap:wrap}
-.pager-info{color:var(--text-muted);font-weight:600;font-size:.9rem}
-.pager button[disabled],.btn-outline[disabled]{opacity:.4;cursor:not-allowed}
-.admin-table tbody tr{transition:background .15s ease}
-.admin-table tbody tr:hover{background:rgba(212,175,55,.05)}
-.dev-credit{margin-top:6px;font-size:.82rem;color:var(--text-muted);unicode-bidi:isolate}
-.dev-credit a{color:var(--gold);font-weight:700;text-decoration:none}
-.dev-credit a[href]:hover{text-decoration:underline}
-@media (max-width:768px),(hover:none){*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.navbar{background:rgba(8,15,28,.96)}}
-.hero-viewport{contain:layout paint}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-/* Mobile Navigation & Drawer */
-.mobile-nav-toggle {
-  display: none;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  width: 42px;
-  height: 42px;
-  padding: 8px;
-  cursor: pointer;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.25s ease;
-}
-.mobile-nav-toggle span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: #fff;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-.mobile-nav-toggle.open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-  background: var(--gold);
-}
-.mobile-nav-toggle.open span:nth-child(2) {
-  opacity: 0;
-}
-.mobile-nav-toggle.open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-  background: var(--gold);
-}
-
-.mobile-drawer {
-  position: fixed;
-  top: 76px;
-  inset-inline: 18px;
-  background: rgba(8, 15, 28, 0.96);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 22px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-  display: none;
-  flex-direction: column;
-  z-index: 999;
-  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.mobile-drawer.open {
-  display: flex;
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.mobile-drawer-links {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.mobile-drawer-links a {
-  text-decoration: none;
-  color: #e5edf7;
-  font-size: 1.05rem;
-  font-weight: 600;
-  display: block;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background 0.2s;
-}
-.mobile-drawer-links a:hover {
-  background: rgba(212, 175, 55, 0.12);
-  color: #fff;
-}
-.mobile-drawer-links a.drawer-admin-btn {
-  color: var(--gold);
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  font-weight: 700;
-}
-
-/* Database Status Pill in Admin Header */
-.db-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
-.db-status-pill.connected {
-  background: rgba(56, 239, 125, 0.15);
-  color: #38ef7d;
-  border: 1px solid rgba(56, 239, 125, 0.35);
-}
-.db-status-pill.local {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.35);
-}
-
-/* View Mode Switcher (Table vs Cards) */
-.view-mode-tabs {
-  display: inline-flex;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 3px;
-  gap: 4px;
-}
-.view-mode-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-}
-.view-mode-btn.active {
-  background: var(--gold);
-  color: #08111e;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-}
-
-/* Mobile Cards View for Students */
-.students-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-.student-card {
-  background: rgba(13, 23, 42, 0.85);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-.student-card:hover {
-  border-color: rgba(212, 175, 55, 0.35);
-  transform: translateY(-2px);
-}
-.student-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 12px;
-}
-.student-card-num {
-  font-size: 0.8rem;
-  color: var(--gold-light);
-  font-weight: 700;
-  margin-left: 6px;
-}
-.student-card-name {
-  font-size: 1.1rem;
-  color: #fff;
-}
-.student-card-details {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
-  font-size: 0.88rem;
-  color: #cbd7e6;
-}
-.student-card-details b {
-  color: #fff;
-}
-.student-card-months {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-@media (max-width: 992px) {
-  .mobile-nav-toggle { display: flex; }
-}
-
-@media (max-width: 768px) {
-  .admin-overlay-view {
-    flex-direction: column;
-  }
-  .admin-sidebar {
-    width: 100% !important;
-    height: auto !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 10px 14px !important;
-    border-left: none !important;
-    border-bottom: 1px solid var(--border) !important;
-    overflow-x: auto;
-  }
-  .admin-menu-list {
-    flex-direction: row !important;
-    gap: 8px !important;
-    margin: 0 !important;
-  }
-  .admin-tab-btn {
-    padding: 8px 12px !important;
-  }
-  .admin-sidebar > div:first-child {
-    display: none !important;
-  }
-  .admin-sidebar > div:last-child {
-    display: flex !important;
-    gap: 8px !important;
-    padding-top: 0 !important;
-    border-top: none !important;
-  }
-  .admin-main {
-    padding: 14px 10px !important;
-    height: calc(100vh - 65px) !important;
-    overflow-y: auto !important;
-  }
-  .students-cards-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-
 </style>
 </head>
 <body>
 
-<!-- Dynamic Announcement / Ad Bar (Hidden by default until created by admin) -->
-<div class="ad-announcement-bar" id="ad-announcement-bar" style="display:none;">
-  <span class="ad-tag-pill" id="ad-pill"></span>
-  <span id="ad-text-content"></span>
-  <a href="#contact" class="ad-action-btn" id="ad-action-btn"></a>
+<!-- شريط الإعلانات أعلى الموقع -->
+<div class="ad-announcement-bar" id="ad-announcement-bar">
+  <span class="ad-tag-pill" id="ad-pill">عرض خاص</span>
+  <span id="ad-text-content">خصم خاص لفترة محدودة على أجنحة الطلاب والفلل الفندقية</span>
+  <a href="#contact" class="ad-action-btn" id="ad-action-btn">احجز الآن</a>
 </div>
 
-<!-- Navbar -->
+<!-- شريط التنقل (Navbar) -->
 <div class="nav-holder">
   <nav class="navbar">
     <a href="#" class="brand">
       <div class="brand-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
       </div>
       <div class="brand-text">
         <b>كيان سيتي</b>
@@ -2079,127 +1196,38 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       <li><a href="#properties">الوحدات والمشاريع</a></li>
       <li><a href="#services">خدمات الإدارة</a></li>
       <li><a href="#contact">تواصل معنا</a></li>
-      <li><a href="javascript:void(0)" id="nav-admin-trigger" style="color:var(--gold); font-weight:700;">سجل الطلاب والإدارة 🔐</a></li>
     </ul>
 
     <div class="nav-cta">
       <a href="#contact" class="btn-primary">
         <span>احجز معاينة</span>
       </a>
-      <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="القائمة" aria-controls="mobile-drawer"><span></span><span></span><span></span></button>
     </div>
   </nav>
 </div>
 
-<!-- Mobile Navigation Drawer -->
-<div class="mobile-drawer" id="mobile-drawer">
-  <ul class="mobile-drawer-links">
-    <li><a href="#about">عن المشروع</a></li>
-    <li><a href="#properties">الوحدات والمشاريع</a></li>
-    <li><a href="#services">خدمات الإدارة</a></li>
-    <li><a href="#contact">تواصل معنا</a></li>
-    <li><a href="javascript:void(0)" id="drawer-admin-trigger" class="drawer-admin-btn">سجل الطلاب والإدارة 🔐</a></li>
-  </ul>
-  <a href="#contact" class="btn-primary" style="margin-top:16px; width:100%; justify-content:center;">احجز معاينة فوراً</a>
-</div>
-
-
-<!-- 3D Luxury Hero Showcase -->
+<!-- قسم الواجهة الرئيسية (Hero) -->
 <div class="hero-stage" id="hero-stage">
-  <div class="hero-viewport">
-    <canvas id="canvas-3d" aria-label="عرض ثلاثي الأبعاد لأبراج كيان سيتي المعمارية"></canvas>
-    <div class="hero-overlay"></div>
-
-    <div class="wrap hero-content">
-      <div class="hero-cards-box">
-        
-        <!-- Slide 1 -->
-        <div class="hero-slide active" id="slide-1">
-          <div class="badge-tag">أيقونة معمارية في قلب أسيوط</div>
-          <h1 class="hero-title">
-            نصنع للمستقبل <br>
-            <span class="gold-accent">بُعداً عقارياً فخماً</span>
-          </h1>
-          <p class="hero-desc">
-            مجموعة كيان سيتي للتطوير العقاري وإدارة المشروعات. ندمج بين الفخامة المعمارية وإدارة الأصول العقارية بأعلى عائد استثماري وراحة تامة.
-          </p>
-          <div class="hero-actions">
-            <a href="#properties" class="btn-primary">استكشف الوحدات المعروضة</a>
-            <a href="#contact" class="btn-outline">طلب استشارة عقارية</a>
-          </div>
-
-          <!-- Quick Search -->
-          <div class="search-banner">
-            <div class="search-field">
-              <label>نوع العقار</label>
-              <select id="hero-search-cat">
-                <option value="all">جميع الأنواع</option>
-                <option value="hotel">شقق فندقية راقية</option>
-                <option value="student">سكن طلابي VIP</option>
-                <option value="family">شقق عائلية وبنتهاوس</option>
-              </select>
-            </div>
-            <div class="search-field">
-              <label>الموقع</label>
-              <select>
-                <option>جامعة أسيوط الرئيسية</option>
-                <option>حي النميس الراقي</option>
-                <option>كورنيش النيل</option>
-              </select>
-            </div>
-            <a href="#properties" class="btn-primary" style="margin-top:14px; padding:10px 18px;">بحث الآن</a>
-          </div>
-        </div>
-
-        <!-- Slide 2 -->
-        <div class="hero-slide inactive" id="slide-2">
-          <div class="badge-tag">تصميم معماري معاصر</div>
-          <h2 class="hero-title">
-            شقق فندقية <br>
-            <span class="gold-accent">بأعلى معايير الرفاهية</span>
-          </h2>
-          <p class="hero-desc">
-            واجهات زجاجية بانورامية عازلة، تراسات فسيحة تطل على أرقى معالم المدينة، مع خدمات فندقية وأمن 24 ساعة.
-          </p>
-          <div class="hero-actions">
-            <a href="#properties" class="btn-primary">شاهد نماذج الشقق</a>
-            <a href="#contact" class="btn-outline">حجز فوري</a>
-          </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="hero-slide inactive" id="slide-3">
-          <div class="badge-tag">إدارة أصول احترافية</div>
-          <h2 class="hero-title">
-            عوائد استثمارية مضمونة <br>
-            <span class="gold-accent">وعقود رقمية موثقة</span>
-          </h2>
-          <p class="hero-desc">
-            ندير شقتك واستثمارك باحترافية كاملة من تحصيل الإيجارات ومتابعة الصيانة الدورية حتى التقارير المالية الشهرية.
-          </p>
-          <div class="hero-actions">
-            <a href="#contact" class="btn-primary">سجل وحدتك معنا</a>
-            <a href="#contact" class="btn-outline">تواصل مع الإدارة</a>
-          </div>
-        </div>
-
+  <div class="hero-overlay"></div>
+  <div class="wrap hero-content">
+    <div class="hero-cards-box">
+      <div class="badge-tag">أيقونة معمارية في قلب أسيوط</div>
+      <h1 class="hero-title">
+        نصنع للمستقبل <br>
+        <span class="gold-accent">بُعداً عقارياً فخماً</span>
+      </h1>
+      <p class="hero-desc">
+        مجموعة كيان سيتي للتطوير العقاري وإدارة المشروعات. ندمج بين الفخامة المعمارية وإدارة الفلل والأصول العقارية بأعلى عائد استثماري وراحة تامة.
+      </p>
+      <div class="hero-actions">
+        <a href="#properties" class="btn-primary">استكشف العقارات والوحدات</a>
+        <a href="#contact" class="btn-outline">طلب استشارة عقارية</a>
       </div>
-    </div>
-
-    <div class="scene-badge-3d">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-      </svg>
-      <span>اسحب بالماوس لتدوير البرج 360 درجة</span>
-    </div>
-
-    <div class="scroll-cue" id="scroll-cue">
-      <span>قم بالتمرير للأسفل لجولة داخل البرج</span>
     </div>
   </div>
 </div>
 
-<!-- Features & Trust Strip -->
+<!-- شريط الميزات والضمانات -->
 <div class="stats-strip" id="about">
   <div class="wrap">
     <div class="stats-grid">
@@ -2207,56 +1235,55 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         <div class="stat-num" style="display:flex; justify-content:center; align-items:center; margin-bottom:8px;">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-        <div class="stat-label" style="font-size:1.05rem; font-weight:700; color:#fff;">عقود موثقة رسمياً</div>
+        <div style="font-size:1.05rem; font-weight:700; color:#fff;">عقود موثقة رسمياً</div>
         <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">ضمان قانوني لحقوق الملاك والنزلاء</div>
       </div>
       <div class="stat-item">
         <div class="stat-num" style="display:flex; justify-content:center; align-items:center; margin-bottom:8px;">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="stat-label" style="font-size:1.05rem; font-weight:700; color:#fff;">صيانة وطوارئ 24/7</div>
+        <div style="font-size:1.05rem; font-weight:700; color:#fff;">صيانة وطوارئ 24/7</div>
         <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">متابعة دورية للسباكة والكهرباء والتكييف</div>
       </div>
       <div class="stat-item">
         <div class="stat-num" style="display:flex; justify-content:center; align-items:center; margin-bottom:8px;">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </div>
-        <div class="stat-label" style="font-size:1.05rem; font-weight:700; color:#fff;">إدارة أصول فندقية</div>
+        <div style="font-size:1.05rem; font-weight:700; color:#fff;">إدارة أصول وفلل فندقية</div>
         <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">أعلى معايير النظافة والفرش الفاخر</div>
       </div>
       <div class="stat-item">
         <div class="stat-num" style="display:flex; justify-content:center; align-items:center; margin-bottom:8px;">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <div class="stat-label" style="font-size:1.05rem; font-weight:700; color:#fff;">تحصيل مالي رقمي</div>
-        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">كشوف حساب وتقارير شهرية للملاك</div>
+        <div style="font-size:1.05rem; font-weight:700; color:#fff;">تحصيل مالي رقمي</div>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">مربوط بسيرفر Firebase أونلاين</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Properties Section -->
+<!-- قسم العقارات المعروضة أونلاين -->
 <section id="properties">
   <div class="wrap">
     <div class="section-head">
-      <span class="section-subtitle">الوحدات المعروضة</span>
-      <h2 class="section-title">اختر مسكنك أو استثمارك المفضل</h2>
-      <p class="section-desc">مجموعة متميزة من الشقق الفندقية والسكن الطلابي والعائلي المجهز بأحدث وسائل الراحة في أسيوط.</p>
+      <span class="section-subtitle">العقارات والوحدات المعروضة</span>
+      <h2 class="section-title">اختر فيلتك أو وحدتك المجهزة</h2>
+      <p class="section-desc">جميع العقارات التالية مسجلة حية ومباشرة من قاعدة البيانات. (اضغط على أي صورة لتكبيرها وفحصها بوضوح HD).</p>
     </div>
 
     <div class="filter-tabs">
       <button class="tab-btn active" data-filter="all">جميع الوحدات</button>
-      <button class="tab-btn" data-filter="hotel">أجنحة فندقية</button>
+      <button class="tab-btn" data-filter="hotel">أجنحة وفلل فندقية</button>
       <button class="tab-btn" data-filter="student">سكن طلابي VIP</button>
       <button class="tab-btn" data-filter="family">شقق عائلية فاخرة</button>
     </div>
 
-    <!-- Dynamic Container -->
     <div class="properties-grid" id="properties-grid"></div>
   </div>
 </section>
 
-<!-- Services Section -->
+<!-- الخدمات -->
 <section id="services" style="background: rgba(10, 18, 33, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
   <div class="wrap">
     <div class="section-head">
@@ -2269,11 +1296,11 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
         <h3>إدارة وتأجير الوحدات</h3>
-        <p>فحص واختيار دقيق للمستأجرين، تسويق الوحدات باحترافية، وإبرام عقود رقمية تضمن أعلى نسبة إشغال.</p>
+        <p>فحص واختيار دقيق للمستأجرين، تسويق الوحدات والفلل باحترافية، وإبرام عقود رقمية تضمن أعلى نسبة إشغال.</p>
       </div>
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/></svg></div>
-        <h3>التحصيل المالي الرقمي</h3>
+        <h3>التحصيل المالي السحابي</h3>
         <p>نظام محاسبي لتحصيل الإيجارات وتوريد مستحقات الملاك بحساباتهم البنكية مع كشوف حساب تفصيلية.</p>
       </div>
       <div class="service-card">
@@ -2284,13 +1311,13 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       <div class="service-card">
         <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <h3>الأمن والخدمات الذكية</h3>
-        <p>كاميرات مراقبة للمداخل، أنظمة دخول ذكية، وإنترنت فايبر عالي السرعة لكل شقة.</p>
+        <p>كاميرات مراقبة للمداخل، أنظمة دخول ذكية، وإنترنت فايبر عالي السرعة لكل شقة وفيلا.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Contact Section -->
+<!-- التواصل وفريق العمل -->
 <section id="contact">
   <div class="wrap">
     <div class="contact-container">
@@ -2307,7 +1334,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
             </div>
             <div class="member-actions">
               <a href="tel:01017006541" class="btn-sm call">اتصال</a>
-              <a href="https://wa.me/201017006541" target="_blank" rel="noopener" class="btn-sm wa">واتساب</a>
+              <a href="https://wa.me/201017006541" target="_blank" class="btn-sm wa">واتساب</a>
             </div>
           </div>
 
@@ -2318,7 +1345,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
             </div>
             <div class="member-actions">
               <a href="tel:01091048919" class="btn-sm call">اتصال</a>
-              <a href="https://wa.me/201091048919" target="_blank" rel="noopener" class="btn-sm wa">واتساب</a>
+              <a href="https://wa.me/201091048919" target="_blank" class="btn-sm wa">واتساب</a>
             </div>
           </div>
 
@@ -2329,7 +1356,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
             </div>
             <div class="member-actions">
               <a href="tel:01029105138" class="btn-sm call">اتصال</a>
-              <a href="https://wa.me/201029105138" target="_blank" rel="noopener" class="btn-sm wa">واتساب</a>
+              <a href="https://wa.me/201029105138" target="_blank" class="btn-sm wa">واتساب</a>
             </div>
           </div>
 
@@ -2340,7 +1367,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
             </div>
             <div class="member-actions">
               <a href="tel:01070451554" class="btn-sm call">اتصال</a>
-              <a href="https://wa.me/201070451554" target="_blank" rel="noopener" class="btn-sm wa">واتساب</a>
+              <a href="https://wa.me/201070451554" target="_blank" class="btn-sm wa">واتساب</a>
             </div>
           </div>
         </div>
@@ -2348,11 +1375,10 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         <div style="font-size:0.95rem; color:#b7c7db; line-height:2;">
           <div><strong style="color:#fff">الخط الأرضي:</strong> <a href="tel:0882081777" style="color:var(--gold); text-decoration:none;">0882081777</a></div>
           <div><strong style="color:#fff">البريد الإلكتروني:</strong> <a href="mailto:citykayan3@gmail.com" style="color:var(--gold); text-decoration:none;">citykayan3@gmail.com</a></div>
-          <div><strong style="color:#fff">المقر الرئيسي:</strong> اسيوط_شارع المكتبات خلف كافتيريا دريم بلازا</div>
+          <div><strong style="color:#fff">المقر الرئيسي:</strong> أسيوط - شارع المكتبات خلف كافتيريا دريم بلازا</div>
         </div>
       </div>
 
-      <!-- Quick Booking Form -->
       <div class="contact-form">
         <h4 style="font-size:1.4rem; color:#fff; margin-bottom:18px;">طلب حجز موعد معاينة أو استشارة</h4>
         <form id="booking-request-form">
@@ -2367,8 +1393,9 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
           <div class="form-group">
             <label>نوع الطلب</label>
             <select id="book-type">
-              <option>معاينة وحجز شقة مفروشة</option>
-              <option>تسجيل شقة تحت إدارة كيان سيتي (للملاك)</option>
+              <option>معاينة وحجز فيلا / شقة مفروشة</option>
+              <option>سكن طلابي VIP</option>
+              <option>تسجيل عقار تحت إدارة كيان سيتي (للملاك)</option>
               <option>شراء واستثمار وحدات</option>
             </select>
           </div>
@@ -2393,17 +1420,16 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
             <span>Kayan City</span>
           </div>
         </div>
-        <p style="font-size:0.9rem; line-height:1.8; max-width:340px;">الشركة الرائدة في إدارة وتطوير الشقق الفندقية والسكنية في أسيوط والصعيد.</p>
+        <p style="font-size:0.9rem; line-height:1.8; max-width:340px;">الشركة الرائدة في إدارة وتطوير الفلل والشقق الفندقية والسكنية في أسيوط والصعيد.</p>
       </div>
 
       <div class="footer-col">
         <h4>روابط سريعة</h4>
         <ul>
           <li><a href="#about">عن كيان سيتي</a></li>
-          <li><a href="#properties">الشقق المتاحة</a></li>
+          <li><a href="#properties">العقارات المتاحة</a></li>
           <li><a href="#services">خدمات الإدارة</a></li>
           <li><a href="#contact">تواصل معنا</a></li>
-      <li><a href="javascript:void(0)" id="footer-admin-trigger" style="color:var(--gold); font-weight:700;">سجل الطلاب والإدارة 🔐</a></li>
         </ul>
       </div>
 
@@ -2411,8 +1437,8 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         <h4>أنواع الوحدات</h4>
         <ul>
           <li><a href="#properties">أجنحة الطلاب VIP</a></li>
-          <li><a href="#properties">شقق النيل الفندقية</a></li>
-          <li><a href="#properties">شقق عائلية وبنتهاوس</a></li>
+          <li><a href="#properties">فلل وبنتهاوس النيل</a></li>
+          <li><a href="#properties">شقق عائلية وفندقية</a></li>
         </ul>
       </div>
 
@@ -2421,54 +1447,50 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         <ul>
           <li>خدمة العملاء: 9:00 ص - 10:00 م</li>
           <li>خدمة الصيانة والطوارئ: 24 ساعة</li>
-          <li>المقر:اسيوط شارع المكتبات خلف كافتيريا دريم بلازا</li>
+          <li>المقر: أسيوط - شارع المكتبات خلف دريم بلازا</li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p><a href="privacy.html">سياسة الخصوصية</a> | <a href="security.html">سياسة الحماية والأمان</a> | <a href="terms.html">الشروط والأحكام</a></p>
       <p>© 2026 شركة كيان سيتي للتطوير العقاري وإدارة الأصول. جميع الحقوق محفوظة.</p>
-      <p class="dev-credit" dir="ltr">Developed by <a href="https://wa.me/201095046646" target="_blank" rel="noopener">JOO</a> &amp; <a id="dev-malak" href="https://wa.me/201015366757" target="_blank" rel="noopener">Malak</a></p>
+      <!-- JOO فقط كما طلبت -->
+      <p class="dev-credit" dir="ltr">Developed by <a href="https://wa.me/201095046646" target="_blank" rel="noopener">JOO</a></p>
     </div>
   </div>
 </footer>
 
-<!-- Discreet Hidden Lock Icon (علامة قفل صغيرة ومخفية تماماً عن الزوار العاديين) -->
-<button class="discreet-lock-btn" id="floating-admin-trigger" aria-label="CP">
+<!-- Lightbox تكبير الصورة -->
+<div class="image-lightbox" id="image-lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="عرض صورة العقار بوضوح">
+</div>
+
+<!-- زر القفل غير الملفت -->
+<button class="discreet-lock-btn" id="floating-admin-trigger" aria-label="لوحة الإدارة">
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
   </svg>
 </button>
 
-<!-- Passcode Modal Prompt -->
+<!-- كلمة السر -->
 <div class="admin-passcode-modal" id="admin-passcode-modal">
   <div class="passcode-card">
-    <div style="width:58px; height:58px; margin:0 auto 18px; border-radius:50%; background:rgba(212,175,55,0.12); border:1px solid var(--gold); display:flex; align-items:center; justify-content:center; color:var(--gold);">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-    </div>
-    <h3>لوحة التحكم والإدارة</h3>
-    <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:20px;">أدخل كلمة سر الإدارة للتحكم في الوحدات وسجل الطلاب والإعلانات:</p>
+    <h3 style="font-family:'Reem Kufi',sans-serif; color:#fff; font-size:1.7rem; margin-bottom:8px;">لوحة الإدارة والتحكم</h3>
+    <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:20px;">أدخل كلمة سر الإدارة للتحكم في العقارات وسجل الطلاب:</p>
     
     <form id="passcode-form">
       <input type="password" class="passcode-input" id="passcode-input" placeholder="كلمة السر" autocomplete="current-password" required>
       <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:13px; margin-bottom:12px;">دخول لوحة التحكم</button>
       <button type="button" class="btn-outline" id="passcode-cancel" style="width:100%; justify-content:center;">إلغاء</button>
-      <div id="passcode-err" style="color:#ef4444; font-size:0.88rem; font-weight:700; margin-top:12px; display:none;">كلمة السر غير صحيحة</div>
+      <div id="passcode-err" style="color:#ef4444; font-size:0.88rem; font-weight:700; margin-top:12px; display:none;">كلمة السر غير صحيحة (الافتراضية: 123456)</div>
     </form>
   </div>
 </div>
 
-<!-- ========================================================
-     INTEGRATED FULL SCREEN ADMIN DASHBOARD
-     ======================================================== -->
+<!-- لوحة الإدارة الكاملة المربوطة بـ Firebase -->
 <div class="admin-overlay-view" id="integrated-admin-panel">
-  
-  <!-- Admin Sidebar -->
   <aside class="admin-sidebar">
     <div style="display:flex; align-items:center; gap:12px; padding-bottom:20px; border-bottom:1px solid var(--border-subtle);">
       <div class="brand-icon" style="width:38px; height:38px;">
@@ -2476,39 +1498,27 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       </div>
       <div class="admin-brand-title">
         <b style="font-size:1.15rem; color:#fff; display:block;">كيان سيتي</b>
-        <span style="font-size:0.75rem; color:var(--gold-light);">لوحة الإدارة المركزية</span>
+        <span style="font-size:0.75rem; color:var(--cyan);">🟢 متصل بـ Firebase أونلاين</span>
       </div>
     </div>
 
     <ul class="admin-menu-list">
       <li>
         <button class="admin-tab-btn active" data-admin-tab="admin-tab-units">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          <span>إدارة الشقق والوحدات</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span>إدارة الشقق والفلل الحقيقية</span>
         </button>
       </li>
       <li>
         <button class="admin-tab-btn" data-admin-tab="admin-tab-students">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>سجل الطلاب والسكن</span>
-        </button>
-      </li>
-      <li>
-        <button class="admin-tab-btn" data-admin-tab="admin-tab-ads">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span>نظام الإعلانات والعروض</span>
-        </button>
-      </li>
-      <li>
-        <button class="admin-tab-btn" data-admin-tab="admin-tab-stats">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>الإحصائيات والمبيعات</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+          <span>سجل الطلاب والسكن الجامعي</span>
         </button>
       </li>
     </ul>
 
     <div style="padding-top:16px; border-top:1px solid var(--border-subtle);">
-      <button class="btn-back-site" id="btn-return-site" title="إغلاق لوحة الإدارة والعودة للموقع العام">
+      <button class="btn-back-site" id="btn-return-site">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         <span>العودة للموقع العام</span>
       </button>
@@ -2519,87 +1529,65 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
     </div>
   </aside>
 
-  <!-- Admin Main Screen -->
   <main class="admin-main">
     <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
       <div>
-        <h1 id="admin-page-title" style="font-family:'Reem Kufi',sans-serif; font-size:1.9rem; color:#fff;">إدارة الشقق والوحدات المعروضة</h1>
-        <p style="color:var(--text-muted); font-size:0.92rem;">تحكم كامل في الأسعار، الصور، وحالة البيع (متاح / محجوز / تم البيع)</p>
+        <h1 style="font-family:'Reem Kufi',sans-serif; font-size:1.9rem; color:#fff;">إدارة العقارات والفلل الحقيقية</h1>
+        <p style="color:var(--text-muted); font-size:0.92rem;">البيانات محفوظة مباشرة في Firebase وتظهر لأي زائر فوراً</p>
       </div>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        <div class="db-status-pill connected" id="db-status-pill" title="انقر لعرض تفاصيل وحالة الاتصال بقاعدة البيانات">🟢 متصل بـ Firebase</div>
-        <button type="button" class="btn-outline" id="btn-open-firebase-settings" style="font-size:0.85rem; padding:8px 14px;">⚙️ إعدادات Firebase</button>
-        <button type="button" class="btn-outline" id="btn-open-change-passcode" style="font-size:0.85rem; padding:8px 14px;">🔑 الرقم السري</button>
-        
         <button class="btn-primary" id="btn-open-add-unit" style="padding:10px 22px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          <span>إضافة شقة جديدة</span>
-        </button>
-
-        <button class="btn-outline" id="btn-clear-all-units" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" title="حذف كل الوحدات للبدء من الصفر">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          <span>مسح الكل</span>
+          <span>+ إضافة عقار / فيلا حقيقية</span>
         </button>
       </div>
     </header>
 
-    <!-- Tab 1: Units -->
+    <!-- تبويب العقارات -->
     <div class="admin-tab-pane" id="admin-tab-units" style="display:block;">
       <div class="kpi-row">
         <div class="admin-kpi">
-          <div class="kpi-label">إجمالي الوحدات</div>
+          <div class="kpi-label">إجمالي العقارات الحقيقية</div>
           <div class="kpi-number" id="kpi-total-units">0</div>
         </div>
         <div class="admin-kpi success">
-          <div class="kpi-label">وحدات متاحة للحجز</div>
+          <div class="kpi-label">متاح للحجز</div>
           <div class="kpi-number" id="kpi-avail-units" style="color:var(--cyan)">0</div>
         </div>
-        <div class="admin-kpi warning">
-          <div class="kpi-label">وحدات محجوزة مؤقتاً</div>
-          <div class="kpi-number" id="kpi-res-units" style="color:var(--warning)">0</div>
-        </div>
         <div class="admin-kpi danger">
-          <div class="kpi-label">وحدات تم بيعها (Sold Out)</div>
+          <div class="kpi-label">تم البيع (Sold Out)</div>
           <div class="kpi-number" id="kpi-sold-units" style="color:#ef4444">0</div>
         </div>
       </div>
 
       <div class="content-box">
         <div class="box-header">
-          <h2>
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" width="22" height="22"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-            <span>جدول الشقق والوحدات المعروضة</span>
-          </h2>
-          <span style="font-size:0.85rem; color:var(--gold-light);">تغيير الحالة إلى "تم البيع" ينعكس فوراً في الموقع العام!</span>
+          <h2>قائمة العقارات والفلل المسجلة</h2>
         </div>
 
-        <div class="table-responsive" id="students-table-wrap">
+        <div class="table-responsive">
           <table class="admin-table">
             <thead>
               <tr>
                 <th>الصورة</th>
-                <th>اسم الشقة / الوحدة</th>
+                <th>اسم العقار</th>
                 <th>القسم</th>
                 <th>السعر</th>
                 <th>الموقع</th>
-                <th>المساحة / الغرف</th>
-                <th>حالة الوحدة</th>
+                <th>المواصفات</th>
+                <th>الحالة</th>
                 <th>إجراءات</th>
               </tr>
             </thead>
-            <tbody id="admin-props-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="admin-props-tbody"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- Tab: Student Housing Management (سجل الطلاب والسكن الجامعي) -->
+    <!-- تبويب سجل الطلاب والسكن الجامعي -->
     <div class="admin-tab-pane" id="admin-tab-students" style="display:none;">
-      
-      <!-- Student KPIs -->
       <div class="kpi-row">
         <div class="admin-kpi">
           <div class="kpi-label">إجمالي الطلاب المسجلين</div>
@@ -2613,203 +1601,58 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
           <div class="kpi-label">إجمالي مبالغ التأمين</div>
           <div class="kpi-number" id="kpi-students-insurance" style="color:#60a5fa">0 ج.م</div>
         </div>
-        <div class="admin-kpi warning">
-          <div class="kpi-label">إجمالي بنود الاستهلاك والملاحظات</div>
-          <div class="kpi-number" id="kpi-students-notes-total" style="color:var(--warning)">0 ج.م</div>
-        </div>
       </div>
 
       <div class="content-box">
         <div class="box-header">
           <div>
-            <h2>
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" width="22" height="22"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <span>سجل الطلاب والسكن الجامعي</span>
-            </h2>
+            <h2>سجل الطلاب والسكن الجامعي</h2>
             <p style="color:var(--text-muted); font-size:0.86rem; margin-top:4px;">
-              إدارة أسماء الطلاب، الكليات، العمارات، الشقق، الملاك، ومتابعة تحصيل الشهور بنقرة واحدة
+              إضافة وتعديل الطلاب، متابعة الإيجار والسداد، والتحكم التام
             </p>
           </div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
             <button class="btn-primary" id="btn-open-add-student" style="padding:9px 18px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               <span>+ إضافة طالب جديد</span>
             </button>
-            <button class="btn-outline" id="btn-export-students-excel" style="color:#38ef7d; border-color:rgba(56,239,125,0.4);" title="تصدير كملف Excel / CSV">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <button class="btn-outline" id="btn-export-students-excel" style="color:#38ef7d; border-color:rgba(56,239,125,0.4);">
               <span>تصدير Excel</span>
             </button>
-            <button class="btn-outline" id="btn-backup-students-json" style="color:var(--gold-light); border-color:rgba(212,175,55,0.4);" title="تنزيل نسخة احتياطية JSON">
-              <span>نسخة احتياطية JSON</span>
-            </button>
-            <button class="btn-outline" id="btn-import-students-json" title="استيراد ملف JSON">
-              <span>استيراد JSON</span>
-            </button>
-            <input type="file" id="input-import-students-file" accept=".json" style="display:none">
-            <button class="btn-outline" id="btn-print-students" title="طباعة كشف الطلاب">
-              <span>طباعة 🖨️</span>
-            </button>
-            <button class="btn-outline" id="btn-clear-all-students" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" title="مسح كل الطلاب للبدء من الصفر">
-              <span>مسح الكل</span>
-            </button>
           </div>
         </div>
 
-        <!-- Search & Filter Bar -->
         <div class="student-search-bar">
-          <input type="text" class="student-search-input" id="student-search-box" placeholder="🔍 بحث سريع باسم الطالب، رقم الموبايل، الكلية، المحافظة، أو اسم العمارة...">
-          
-          <select class="student-filter-select" id="student-supervisor-filter">
-            <option value="all">جميع المشرفين المسؤولين</option>
-          </select>
-
-          <select class="student-filter-select" id="student-building-filter">
-            <option value="all">جميع العمارات</option>
-          </select>
-          <select class="student-filter-select" id="student-college-filter">
-            <option value="all">جميع الكليات</option>
-          </select>
-
-          <select class="student-filter-select" id="student-payment-filter">
-            <option value="all">جميع حالات السداد</option>
-            <option value="current_paid">مسددو الشهر الحالي ✓</option>
-            <option value="current_unpaid">متأخرو الشهر الحالي ✗</option>
-            <option value="all_paid">سددوا جميع الشهور</option>
-            <option value="has_due">عليهم متبقيات</option>
-          </select>
-
-          <div class="view-mode-tabs">
-            <button type="button" class="view-mode-btn active" id="btn-view-table">
-              <span>جدول 📋</span>
-            </button>
-            <button type="button" class="view-mode-btn" id="btn-view-cards">
-              <span>كروت 📱</span>
-            </button>
-          </div>
+          <input type="text" class="student-search-input" id="student-search-box" placeholder="🔍 بحث باسم الطالب، الموبايل، الكلية، أو العمارة...">
         </div>
 
-        <!-- Responsive Students Table -->
         <div class="table-responsive">
           <table class="admin-table">
             <thead>
               <tr>
-                <th style="width:40px;">م</th>
+                <th>م</th>
                 <th>بيانات الطالب</th>
-                <th>البلد والكلية</th>
+                <th>الكلية والبلد</th>
                 <th>العمارة والشقة</th>
-                <th>العنوان والدور</th>
-                <th>المالك والمشرف المسؤول</th>
+                <th>المشرف والمالك</th>
                 <th>الماليات (إيجار / تأمين)</th>
-                <th>ملاحظات واستهلاك</th>
-                <th style="min-width:300px;">متابعة الشهور (اضغط لتغيير السداد)</th>
-                <th>إجراءات</th>
+                <th>متابعة الشهور (اضغط لتغيير السداد)</th>
+                <th>إجراءات وتعديل</th>
               </tr>
             </thead>
-            <tbody id="admin-students-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
+            <tbody id="admin-students-tbody"></tbody>
           </table>
         </div>
-        <!-- Mobile Cards Container -->
-        <div id="admin-students-cards-container" class="students-cards-grid" style="display:none;"></div>
-
-        <div id="students-pager" class="pager"></div>
-
-
       </div>
     </div>
-
-    <!-- Tab 2: Ads -->
-    <div class="admin-tab-pane" id="admin-tab-ads" style="display:none;">
-      <div class="content-box">
-        <div class="box-header">
-          <h2>
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" width="22" height="22"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            <span>شريط الإعلانات والعروض في أعلى الموقع</span>
-          </h2>
-        </div>
-
-        <div class="ad-editor-box">
-          <label class="ad-switch-label">
-            <input type="checkbox" id="admin-ad-enabled" style="display:none">
-            <div class="switch-toggle"></div>
-            <span>تفعيل شريط الإعلانات في أعلى الموقع العام</span>
-          </label>
-
-          <div class="form-grid-2">
-            <div class="form-field-admin full">
-              <label>نص الإعلان أو العرض</label>
-              <input type="text" id="admin-ad-text" placeholder="اكتب نص الإعلان الذي تريده...">
-            </div>
-            <div class="form-field-admin">
-              <label>شارة العرض (Badge)</label>
-              <input type="text" id="admin-ad-tag" placeholder="مثال: خصم 20%">
-            </div>
-            <div class="form-field-admin">
-              <label>نص زر الحجز / الإجراء</label>
-              <input type="text" id="admin-ad-btn-text" placeholder="مثال: احجز الآن">
-            </div>
-          </div>
-
-          <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
-            <button type="button" class="btn-primary" id="btn-save-ad" style="padding:10px 28px;">حفظ وتطبيق الإعلان فوراً</button>
-            <button type="button" class="btn-outline" id="btn-delete-ad" style="padding:10px 22px; border-color:rgba(239,68,68,0.5); color:#ef4444;" title="حذف وإلغاء شريط الإعلان نهائياً">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-left:6px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              <span>حذف وإلغاء الإعلان تماماً</span>
-            </button>
-          </div>
-
-          <div style="margin-top:24px;">
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;">معاينة حية لشكل الإعلان:</div>
-            <div class="ad-preview-box" id="admin-ad-preview-box">
-              <span id="admin-ad-preview-text">نص الإعلان التجريبي</span>
-              <button style="background:#091322; color:#fff; border:none; padding:6px 16px; border-radius:999px; font-weight:700; cursor:pointer;" id="admin-ad-preview-btn">احجز الآن</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab 3: Stats -->
-    <div class="admin-tab-pane" id="admin-tab-stats" style="display:none;">
-      <div class="content-box">
-        <div class="box-header">
-          <h2>
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" width="22" height="22"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span>الملخص المالي والتشغيلي</span>
-          </h2>
-        </div>
-
-        <div class="kpi-row">
-          <div class="admin-kpi">
-            <div class="kpi-label">إجمالي القيمة الإيجارية الشهرية</div>
-            <div class="kpi-number" id="stats-total-val" style="color:var(--gold)">0 ج.م</div>
-          </div>
-          <div class="admin-kpi success">
-            <div class="kpi-label">متحصلات الوحدات المباعة والمؤجرة</div>
-            <div class="kpi-number" id="stats-sold-val" style="color:var(--cyan)">0 ج.م</div>
-          </div>
-          <div class="admin-kpi">
-            <div class="kpi-label">نسبة الإشغال الإجمالية</div>
-            <div class="kpi-number" id="stats-occupancy">0%</div>
-          </div>
-        </div>
-
-        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.8;">
-          لوحة التحكم تتيح لك إدارة كل ما يُعرض على الزوار بكل دقة ومصداقية. يمكنك مسح النماذج التجريبية في أي وقت وإدخال عقاراتك وأسعارك وصورك الحقيقية بكل سهولة.
-        </p>
-      </div>
-    </div>
-
   </main>
 </div>
 
-<!-- Modal: Add / Edit Property inside Admin -->
+<!-- Modal: إضافة / تعديل عقار مع رافع الصور HD للفايربيس -->
 <div class="admin-sub-modal" id="admin-property-modal">
   <div class="admin-sub-card">
     <div class="box-header" style="margin-bottom:20px;">
-      <h3 id="admin-modal-title" style="color:#fff; font-size:1.35rem;">إضافة شقة / وحدة جديدة</h3>
+      <h3 id="admin-modal-title" style="color:#fff; font-size:1.35rem;">إضافة فيلا / عقار حقيقي</h3>
       <button id="admin-modal-close" style="background:none; border:none; color:var(--text-muted); font-size:1.6rem; cursor:pointer;">&times;</button>
     </div>
 
@@ -2818,26 +1661,26 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       
       <div class="form-grid-2">
         <div class="form-field-admin">
-          <label>اسم الشقة أو الوحدة</label>
-          <input type="text" id="form-prop-title" placeholder="مثال: جناح الجامعة الفندقي — K101" required>
+          <label>اسم العقار أو الشقة أو الفيلا *</label>
+          <input type="text" id="form-prop-title" placeholder="مثال: فيلا الياسمين — 3 أدوار" required>
         </div>
 
         <div class="form-field-admin">
-          <label>قسم / نوع العقار</label>
+          <label>القسم / التصنيف</label>
           <select id="form-prop-category">
-            <option value="hotel">أجنحة فندقية</option>
+            <option value="hotel">أجنحة وفلل فندقية</option>
             <option value="student">سكن طلابي VIP</option>
-            <option value="family">شقق عائلية فاخرة</option>
+            <option value="family">شقق عائلية وبنتهاوس</option>
           </select>
         </div>
 
         <div class="form-field-admin">
-          <label>السعر (مثال: 6,500 ج.م / شهر)</label>
-          <input type="text" id="form-prop-price" placeholder="مثال: 7,000 ج.م / شهر" required>
+          <label>السعر المطلوب *</label>
+          <input type="text" id="form-prop-price" placeholder="مثال: 14,000 ج.م / شهر" required>
         </div>
 
         <div class="form-field-admin">
-          <label>حالة الوحدة</label>
+          <label>حالة العقار</label>
           <select id="form-prop-status">
             <option value="available">🟢 متاح للحجز الفوري</option>
             <option value="reserved">🟡 محجوز مؤقتاً</option>
@@ -2846,64 +1689,75 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         </div>
 
         <div class="form-field-admin full">
-          <label>الموقع التفصيلي</label>
-          <input type="text" id="form-prop-location" placeholder="مثال: أمام بوابة جامعة أسيوط الرئيسية" required>
+          <label>الموقع والعنوان بالتفصيل *</label>
+          <input type="text" id="form-prop-location" placeholder="مثال: أسيوط - حي النميس أمام النيل" required>
         </div>
 
         <div class="form-field-admin">
           <label>المساحة</label>
-          <input type="text" id="form-prop-area" placeholder="مثال: 120 م²" required>
+          <input type="text" id="form-prop-area" placeholder="مثال: 320 م²" required>
         </div>
 
         <div class="form-field-admin">
           <label>الغرف والمواصفات</label>
-          <input type="text" id="form-prop-rooms" placeholder="مثال: 3 غرف ماستر" required>
+          <input type="text" id="form-prop-rooms" placeholder="مثال: 4 غرف ماستر + ريسبشن" required>
         </div>
 
         <div class="form-field-admin">
           <label>الحمامات والتجهيزات</label>
-          <input type="text" id="form-prop-baths" placeholder="مثال: 2 حمام فاخر" required>
+          <input type="text" id="form-prop-baths" placeholder="مثال: 3 حمامات فاخرة" required>
         </div>
 
         <div class="form-field-admin">
           <label>شارة التميز (Badge)</label>
-          <input type="text" id="form-prop-badge" placeholder="مثال: متاح للحجز، أو إطلالة نيلية">
+          <input type="text" id="form-prop-badge" placeholder="مثال: فيلا مستقلة / إطلالة نيلية">
         </div>
 
-        <div class="form-field-admin full">
-                    <label>صورة الشقة</label>
+        <!-- رفع الصورة ومعالجتها بجودة HD للفايربيس -->
+        <div class="form-field-admin full" style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:16px; border-radius:12px;">
+          <label style="color:var(--gold-light); font-size:0.95rem; font-weight:700;">📸 صورة الفيلا أو العقار (تُرفع إلى Firebase وتظهر فوراً للجميع):</label>
           <input type="hidden" id="form-prop-image">
-          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <label for="form-prop-file" class="btn-outline" style="cursor:pointer; padding:10px 16px; margin:0;">📷 اختيار صورة من الجهاز</label>
-            <input type="file" id="form-prop-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
-            <button type="button" class="btn-outline" id="form-prop-image-clear" style="padding:10px 16px;">حذف الصورة</button>
+          
+          <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:8px;">
+            <label for="form-prop-file" class="btn-primary" style="cursor:pointer; padding:10px 18px; margin:0; font-size:0.88rem;">
+              📁 رفع صورة من جهازك / هاتفك
+            </label>
+            <input type="file" id="form-prop-file" accept="image/*" style="display:none">
+            <button type="button" class="btn-outline" id="form-prop-image-clear" style="padding:10px 16px;">إزالة الصورة</button>
           </div>
-          <img id="form-prop-image-preview" alt="معاينة الصورة" style="display:none; margin-top:10px; max-width:220px; max-height:150px; border-radius:10px; object-fit:cover;">
-          <input type="text" id="form-prop-image-url" placeholder="أو الصق رابط صورة https://... (اختياري)" style="margin-top:10px">
+
+          <div id="upload-status" style="font-size:0.82rem; color:var(--cyan); margin-top:8px; display:none;">
+            ✓ تم معالجة الصورة بأعلى دقة HD وتجهيزها للرفع على Firebase!
+          </div>
+
+          <div style="margin-top:12px; display:flex; align-items:center; gap:14px;">
+            <img id="form-prop-image-preview" alt="معاينة الصورة" style="display:none; width:160px; height:110px; border-radius:10px; object-fit:cover; border:2px solid var(--gold);">
+            <div id="preview-placeholder" style="color:var(--text-muted); font-size:0.85rem;">لم يتم اختيار صورة بعد (اختر صورة من جهازك أو الصق رابط).</div>
+          </div>
+
+          <input type="text" id="form-prop-image-url" placeholder="أو الصق رابط صورة خارجي (https://...) اختياري" style="margin-top:12px">
         </div>
       </div>
 
-      <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+      <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
         <button type="button" class="btn-outline" id="admin-modal-cancel">إلغاء</button>
-        <button type="submit" class="btn-primary" style="padding:10px 28px;">حفظ ونشر الشقة فوراً</button>
+        <button type="submit" class="btn-primary" style="padding:10px 28px;">حفظ ونشر على Firebase فوراً</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal: Add / Edit Student Modal -->
+<!-- Modal: إضافة وتعديل الطالب بالكامل -->
 <div class="admin-sub-modal" id="admin-student-modal">
   <div class="admin-sub-card">
     <div class="box-header" style="margin-bottom:20px;">
-      <h3 id="admin-student-modal-title" style="color:#fff; font-size:1.35rem;">إضافة طالب / ساكن جديد</h3>
+      <h3 id="admin-student-modal-title" style="color:#fff; font-size:1.35rem;">بيانات الطالب في السكن الجامعي</h3>
       <button type="button" id="admin-student-modal-close" style="background:none; border:none; color:var(--text-muted); font-size:1.6rem; cursor:pointer;">&times;</button>
     </div>
 
     <form id="admin-student-form">
       <input type="hidden" id="form-student-id">
 
-      <!-- Section: Student Info -->
-      <div style="font-weight:700; color:var(--gold); margin-bottom:12px; font-size:0.95rem;">بيانات الطالب الشخصية:</div>
       <div class="form-grid-2">
         <div class="form-field-admin">
           <label>اسم الطالب بالكامل *</label>
@@ -2912,166 +1766,649 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
 
         <div class="form-field-admin">
           <label>رقم الموبايل / الواتساب *</label>
-          <input type="tel" id="form-student-phone" placeholder="مثال: 01028096211" dir="ltr" style="text-align:right" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>البلد / المحافظة</label>
-          <input type="text" id="form-student-city" placeholder="مثال: أسيوط، سوهاج، قنا...">
+          <input type="tel" id="form-student-phone" placeholder="010XXXXXXXX" dir="ltr" style="text-align:right" required>
         </div>
 
         <div class="form-field-admin">
           <label>الكلية / الجامعة</label>
-          <input type="text" id="form-student-college" placeholder="مثال: طب بشري، صيدلة، هندسة...">
+          <input type="text" id="form-student-college" placeholder="مثال: طب بشري">
         </div>
-      </div>
 
-      <!-- Section: Housing & Owner Info -->
-      <div style="font-weight:700; color:var(--gold); margin:18px 0 12px; font-size:0.95rem; border-top:1px solid var(--border-subtle); padding-top:14px;">بيانات السكن والمالك:</div>
-      <div class="form-grid-2">
+        <div class="form-field-admin">
+          <label>البلد / المحافظة</label>
+          <input type="text" id="form-student-city" placeholder="مثال: أسيوط / سوهاج">
+        </div>
+
         <div class="form-field-admin">
           <label>اسم العمارة *</label>
-          <input type="text" id="form-student-building" placeholder="مثال: عمارة صابر 3" required>
+          <input type="text" id="form-student-building" placeholder="مثال: عمارة الروضة 1" required>
         </div>
 
         <div class="form-field-admin">
           <label>رقم الشقة والدور *</label>
-          <input type="text" id="form-student-apartment" placeholder="مثال: شقة أول بلكونة" required>
-        </div>
-
-        <div class="form-field-admin full">
-          <label>العنوان التفصيلي</label>
-          <input type="text" id="form-student-address" placeholder="مثال: أمام بوابة جامعة أسيوط، شارع النميس...">
+          <input type="text" id="form-student-apartment" placeholder="مثال: شقة 3 دور 2" required>
         </div>
 
         <div class="form-field-admin">
-          <label>اسم مالك العمارة / الشقة</label>
-          <input type="text" id="form-student-owner" placeholder="مثال: صابر">
+          <label>المشرف المسؤول *</label>
+          <input type="text" id="form-student-supervisor" placeholder="اسم المشرف المسؤول" required>
         </div>
 
         <div class="form-field-admin">
-          <label>المشرف المسؤول عن الشقة *</label>
-          <input type="text" id="form-student-supervisor" list="supervisor-list" placeholder="اكتب اسم المشرف" required><datalist id="supervisor-list"></datalist>
+          <label>اسم صاحب العمارة (المالك)</label>
+          <input type="text" id="form-student-owner" placeholder="مثال: الحاج أحمد">
         </div>
-      </div>
 
-      <!-- Section: Financials -->
-      <div style="font-weight:700; color:var(--gold); margin:18px 0 12px; font-size:0.95rem; border-top:1px solid var(--border-subtle); padding-top:14px;">البيانات المالية والملاحظات:</div>
-      <div class="form-grid-2">
         <div class="form-field-admin">
           <label>الإيجار الشهري (ج.م) *</label>
-          <input type="number" id="form-student-rent" placeholder="1100" required>
+          <input type="number" id="form-student-rent" placeholder="1500" required>
         </div>
 
         <div class="form-field-admin">
           <label>مبلغ التأمين (ج.م)</label>
-          <input type="number" id="form-student-insurance" placeholder="1100">
+          <input type="number" id="form-student-insurance" placeholder="1500">
         </div>
 
         <div class="form-field-admin full">
-          <label>ملاحظات واستهلاك (كهرباء / مياه / بنود إضافية)</label>
-          <input type="text" id="form-student-notes" placeholder="مثال: استهلاك 150 ج.م">
+          <label>ملاحظات واستهلاك إضافي (كهرباء / غاز / بنود أخرى)</label>
+          <input type="text" id="form-student-notes" placeholder="مثال: استهلاك صيانة 150 ج.م">
         </div>
       </div>
 
       <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px; border-top:1px solid var(--border-subtle); padding-top:16px;">
         <button type="button" class="btn-outline" id="admin-student-modal-cancel">إلغاء</button>
-        <button type="submit" class="btn-primary" style="padding:10px 28px;">حفظ بيانات الطالب</button>
+        <button type="submit" class="btn-primary" style="padding:10px 28px;">حفظ بيانات الطالب في Firebase</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal: Firebase Settings & Rules -->
-<div class="admin-sub-modal" id="admin-firebase-modal">
-  <div class="admin-sub-card">
-    <div class="box-header" style="margin-bottom:18px;">
-      <h3 style="color:#fff; font-size:1.35rem;">⚙️ ربط وإعدادات قاعدة بيانات Firebase</h3>
-      <button type="button" id="btn-close-firebase-modal" style="background:none; border:none; color:var(--text-muted); font-size:1.6rem; cursor:pointer;">&times;</button>
-    </div>
-
-    <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.8; margin-bottom:16px;">
-      الموقع مربوط بمستودع قاعدة بيانات Firebase على الرابط:<br>
-      <strong style="color:var(--gold-light); font-family:monospace; direction:ltr; display:inline-block;">https://kyan-b9581-default-rtdb.firebaseio.com/</strong>
-    </p>
-
-    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:16px;">
-      <div style="font-weight:700; color:#fff; margin-bottom:8px;">لحل مشكلة (Permission Denied) وفتح المزامنة التلقائية:</div>
-      <ol style="padding-right:20px; color:#cbd7e6; font-size:0.9rem; line-height:1.9;">
-        <li>افتح موقع <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold);">Firebase Console</a> وادخل على مشروعك <b>kyan-b9581</b>.</li>
-        <li>من القائمة الجانبية اضغط على <b>Realtime Database</b> ثم اضغط على تبويب <b>Rules (القواعد)</b>.</li>
-        <li>انسخ الكود بالأسفل بالضغط على الزر، والصقه هناك واضغط <b>Publish (نشر)</b>.</li>
-      </ol>
-    </div>
-
-    <div style="position:relative; margin-bottom:18px;">
-      <pre id="firebase-rules-snippet" style="background:#070d18; border:1px solid var(--border); border-radius:8px; padding:14px; font-family:monospace; font-size:0.85rem; color:#38ef7d; direction:ltr; text-align:left; overflow-x:auto;">{
-  "rules": {
-    ".read": false,
-    ".write": false,
-    "properties": {
-      ".read": true,
-      ".write": "auth != null && auth.token.email == 'citykayan3@gmail.com'"
-    },
-    "settings": {
-      ".read": true,
-      ".write": "auth != null && auth.token.email == 'citykayan3@gmail.com'"
-    },
-    "students": {
-      ".read": "auth != null && auth.token.email == 'citykayan3@gmail.com'",
-      ".write": "auth != null && auth.token.email == 'citykayan3@gmail.com'"
-    }
-  }
-}</pre>
-      <button type="button" class="btn-primary" id="btn-copy-firebase-rules" style="margin-top:10px; padding:8px 18px; font-size:0.85rem;">📋 نسخ القواعد الجاهزة</button>
-    </div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:16px;">
-      <button type="button" class="btn-primary" id="btn-test-firebase-connection">🔄 فحص واختبار الاتصال الآن</button>
-      <span style="font-size:0.82rem; color:var(--text-muted);">جميع بياناتك محفوظة محلياً أيضاً بأمان تام</span>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Change Admin Passcode -->
-<div class="admin-sub-modal" id="admin-change-passcode-modal">
-  <div class="admin-sub-card" style="max-width:480px;">
-    <div class="box-header" style="margin-bottom:18px;">
-      <h3 style="color:#fff; font-size:1.35rem;">🔑 تغيير الرقم السري للوحة التحكم</h3>
-      <button type="button" id="btn-close-change-passcode" style="background:none; border:none; color:var(--text-muted); font-size:1.6rem; cursor:pointer;">&times;</button>
-    </div>
-
-    <form id="form-change-passcode">
-      <div class="form-field-admin">
-        <label>الرقم السري الحالي *</label>
-        <input type="password" id="input-old-passcode" placeholder="الرقم السري الحالي (الافتراضي 123456)" required>
-      </div>
-
-      <div class="form-field-admin">
-        <label>الرقم السري الجديد *</label>
-        <input type="password" id="input-new-passcode" placeholder="أدخل الرقم السري الجديد" required>
-      </div>
-
-      <div class="form-field-admin">
-        <label>تأكيد الرقم السري الجديد *</label>
-        <input type="password" id="input-confirm-passcode" placeholder="أعد إدخال الرقم السري للتأكيد" required>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
-        <button type="submit" class="btn-primary" style="padding:10px 24px;">حفظ الرقم السري الجديد</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-<!-- Floating Toast Notice -->
 <div class="toast-notice" id="toast">تم التحديث بنجاح!</div>
 
-<!-- Firebase (Realtime Database + Authentication) -->
+<!-- ========================================================
+     مكتبات Firebase الرسمية (Realtime Database Online)
+     ======================================================== -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="app.js" charset="utf-8" defer></script>
+
+<script>
+// تهيئة Firebase بمفاتيح مشروعك الحقيقية
+const firebaseConfig = {
+  apiKey: "AIzaSyDJ5Bl1G-mYkzO9ovilFrsa7Z5OhcI0vO4",
+  authDomain: "kyan-b9581.firebaseapp.com",
+  databaseURL: "https://kyan-b9581-default-rtdb.firebaseio.com",
+  projectId: "kyan-b9581",
+  storageBucket: "kyan-b9581.firebasestorage.app",
+  messagingSenderId: "275317091922",
+  appId: "1:275317091922:web:60e95ecb19caad26dd798b",
+  measurementId: "G-CC4NJM594S"
+};
+
+// تشغيل Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
+const MONTHS_LIST = ["أكتوبر", "نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو"];
+
+let propertiesList = [];
+let studentsList = [];
+let currentFilter = "all";
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  setTimeout(() => { t.style.display = "none"; }, 3000);
+}
+
+// ضاغط الصور الذكي بدقة HD للفايربيس
+function processImageFile(file, callback) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      let width = img.width;
+      let height = img.height;
+      const MAX_DIM = 1200; // دقة HD واضحة جداً للفلل والشقق
+
+      if (width > height && width > MAX_DIM) {
+        height = Math.round((height * MAX_DIM) / width);
+        width = MAX_DIM;
+      } else if (height > MAX_DIM) {
+        width = Math.round((width * MAX_DIM) / height);
+        height = MAX_DIM;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+      callback(compressedDataUrl);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// 1. الاستماع الحي والمباشر للعقارات من Firebase
+db.ref("properties").on("value", (snapshot) => {
+  const data = snapshot.val();
+  propertiesList = [];
+  if (data) {
+    Object.keys(data).forEach(key => {
+      propertiesList.push({ id: key, ...data[key] });
+    });
+  }
+  renderPublicProperties();
+  renderAdminProperties();
+});
+
+// 2. الاستماع الحي لسجل الطلاب من Firebase
+db.ref("students").on("value", (snapshot) => {
+  const data = snapshot.val();
+  studentsList = [];
+  if (data) {
+    Object.keys(data).forEach(key => {
+      studentsList.push({ id: key, ...data[key] });
+    });
+  }
+  renderStudents();
+});
+
+// عرض العقارات في الموقع الخارجي للزوار
+function renderPublicProperties() {
+  const grid = document.getElementById("properties-grid");
+  const filtered = currentFilter === "all" ? propertiesList : propertiesList.filter(p => p.category === currentFilter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state-box">
+        <h3>لا توجد عقارات مضافة في هذا القسم حالياً</h3>
+        <p style="margin-top:8px;">يمكنك الدخول إلى لوحة التحكم بالرمز السري وإضافة شققك وفللك الحقيقية وصورها فوراً.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const isSold = p.status === "sold";
+    const isRes = p.status === "reserved";
+    let badgeText = p.badge || (isSold ? "تم البيع" : isRes ? "محجوز مؤقتاً" : "متاح للحجز");
+    let badgeClass = isSold ? "card-badge sold" : isRes ? "card-badge reserved" : "card-badge";
+    const imgUrl = p.image || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80";
+
+    return `
+      <div class="property-card ${isSold ? 'sold-card' : ''}">
+        <div class="card-img-wrap" onclick="openLightbox('${imgUrl}')" title="اضغط لتكبير الصورة">
+          ${isSold ? '<div class="sold-ribbon">SOLD OUT</div>' : ''}
+          <div class="${badgeClass}">${badgeText}</div>
+          <img src="${imgUrl}" alt="${p.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'">
+          <div class="card-price">${p.price}</div>
+          <div class="card-zoom-hint">🔍 انقر للتكبير</div>
+        </div>
+        <div class="card-body">
+          <h3>${p.title}</h3>
+          <div class="card-location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>${p.location}</span>
+          </div>
+          <div class="card-features">
+            <div class="card-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              <span>${p.area}</span>
+            </div>
+            <div class="card-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              <span>${p.rooms}</span>
+            </div>
+            <div class="card-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 12h16M4 18h16"/></svg>
+              <span>${p.baths}</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            ${isSold ? `
+              <span class="btn-sold">تم البيع بالكامل</span>
+            ` : `
+              <a href="#contact" class="btn-primary" style="flex:1; justify-content:center;">احجز معاينة فوراً</a>
+              <a href="https://wa.me/201095046646?text=${encodeURIComponent('مرحباً، أود الاستفسار عن: ' + p.title)}" target="_blank" class="btn-outline" style="padding:10px 14px;" title="محادثة واتساب سريعة">💬</a>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// نافذة تكبير الصورة (Lightbox)
+function openLightbox(url) {
+  const box = document.getElementById("image-lightbox");
+  const img = document.getElementById("lightbox-img");
+  img.src = url;
+  box.classList.add("active");
+}
+function closeLightbox() {
+  document.getElementById("image-lightbox").classList.remove("active");
+}
+
+// عرض العقارات في جدول الإدارة
+function renderAdminProperties() {
+  const tbody = document.getElementById("admin-props-tbody");
+  let availCount = 0, soldCount = 0;
+  
+  propertiesList.forEach(p => {
+    if (p.status === "available") availCount++;
+    else if (p.status === "sold") soldCount++;
+  });
+
+  document.getElementById("kpi-total-units").textContent = propertiesList.length;
+  document.getElementById("kpi-avail-units").textContent = availCount;
+  document.getElementById("kpi-sold-units").textContent = soldCount;
+
+  if (propertiesList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">لا توجد عقارات مسجلة في Firebase بعد. اضغط على زر "+ إضافة عقار / فيلا حقيقية" أعلاه.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = propertiesList.map(p => {
+    const imgUrl = p.image || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=70";
+    return `
+      <tr>
+        <td>
+          <img src="${imgUrl}" class="property-thumb" alt="${p.title}" onclick="openLightbox('${imgUrl}')" style="cursor:pointer;" title="تكبير الصورة">
+        </td>
+        <td><b>${p.title}</b></td>
+        <td>${p.category === 'hotel' ? 'فلل وأجنحة فندقية' : p.category === 'student' ? 'سكن طلابي' : 'شقق عائلية'}</td>
+        <td style="color:var(--gold); font-weight:700;">${p.price}</td>
+        <td>${p.location}</td>
+        <td>${p.area} — ${p.rooms}</td>
+        <td>
+          <select onchange="updatePropertyStatus('${p.id}', this.value)" style="background:#091322; color:#fff; border:1px solid var(--border-subtle); padding:5px 8px; border-radius:6px; font-family:inherit;">
+            <option value="available" ${p.status === 'available' ? 'selected' : ''}>🟢 متاح</option>
+            <option value="reserved" ${p.status === 'reserved' ? 'selected' : ''}>🟡 محجوز</option>
+            <option value="sold" ${p.status === 'sold' ? 'selected' : ''}>🔴 تم البيع</option>
+          </select>
+        </td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <button onclick="editProperty('${p.id}')" class="btn-outline" style="padding:4px 10px; font-size:0.8rem;">تعديل</button>
+            <button onclick="deleteProperty('${p.id}')" class="btn-outline" style="padding:4px 10px; font-size:0.8rem; color:#ef4444; border-color:rgba(239,68,68,0.3);">حذف</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function updatePropertyStatus(id, newStatus) {
+  db.ref("properties/" + id + "/status").set(newStatus).then(() => {
+    showToast("تم تحديث الحالة في Firebase!");
+  });
+}
+
+function deleteProperty(id) {
+  if (confirm("هل تريد بالتأكيد حذف هذا العقار من Firebase نهائياً؟")) {
+    db.ref("properties/" + id).remove().then(() => {
+      showToast("تم حذف العقار من Firebase!");
+    });
+  }
+}
+
+function editProperty(id) {
+  const p = propertiesList.find(item => item.id === id);
+  if (!p) return;
+
+  document.getElementById("form-prop-id").value = p.id;
+  document.getElementById("form-prop-title").value = p.title;
+  document.getElementById("form-prop-category").value = p.category;
+  document.getElementById("form-prop-price").value = p.price;
+  document.getElementById("form-prop-status").value = p.status;
+  document.getElementById("form-prop-location").value = p.location;
+  document.getElementById("form-prop-area").value = p.area;
+  document.getElementById("form-prop-rooms").value = p.rooms;
+  document.getElementById("form-prop-baths").value = p.baths;
+  document.getElementById("form-prop-badge").value = p.badge || "";
+  document.getElementById("form-prop-image").value = p.image || "";
+  document.getElementById("form-prop-image-url").value = p.image && !p.image.startsWith("data:") ? p.image : "";
+
+  const prev = document.getElementById("form-prop-image-preview");
+  const ph = document.getElementById("preview-placeholder");
+  if (p.image) {
+    prev.src = p.image;
+    prev.style.display = "block";
+    ph.style.display = "none";
+  } else {
+    prev.style.display = "none";
+    ph.style.display = "block";
+  }
+
+  document.getElementById("admin-modal-title").textContent = "تعديل بيانات العقار";
+  document.getElementById("admin-property-modal").classList.add("open");
+}
+
+// عرض وإدارة سجل الطلاب مع إمكانية التعديل الشامل
+function renderStudents() {
+  const tbody = document.getElementById("admin-students-tbody");
+  const search = document.getElementById("student-search-box").value.trim().toLowerCase();
+
+  const filtered = studentsList.filter(st => {
+    return !search || (st.name && st.name.toLowerCase().includes(search)) ||
+           (st.phone && st.phone.includes(search)) ||
+           (st.building && st.building.toLowerCase().includes(search)) ||
+           (st.college && st.college.toLowerCase().includes(search));
+  });
+
+  let totalRent = 0, totalIns = 0;
+  studentsList.forEach(st => {
+    totalRent += Number(st.rent || 0);
+    totalIns += Number(st.insurance || 0);
+  });
+
+  document.getElementById("kpi-students-total").textContent = studentsList.length;
+  document.getElementById("kpi-students-rent").textContent = totalRent.toLocaleString() + " ج.م";
+  document.getElementById("kpi-students-insurance").textContent = totalIns.toLocaleString() + " ج.م";
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">لا يوجد طلاب مسجلون في Firebase حالياً. اضغط على "+ إضافة طالب جديد" لإدخال سجلك.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((st, idx) => {
+    const payments = st.payments || {};
+    const monthsHtml = MONTHS_LIST.map(m => {
+      const isPaid = payments[m] === true;
+      return `<span class="month-badge-item ${isPaid ? 'paid' : 'unpaid'}" onclick="toggleStudentPayment('${st.id}', '${m}', ${!isPaid})" title="اضغط لتغيير حالة السداد">${m} ${isPaid ? '✓' : '✗'}</span>`;
+    }).join("");
+
+    return `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>
+          <b>${st.name}</b>
+          <div style="font-size:0.8rem; color:var(--text-muted);">${st.phone}</div>
+        </td>
+        <td>${st.college || '-'} <br><span style="font-size:0.8rem; color:var(--gold-light);">${st.city || ''}</span></td>
+        <td><b>${st.building}</b><br><span style="font-size:0.8rem;">${st.apartment}</span></td>
+        <td>${st.supervisor || '-'}<br><span style="font-size:0.8rem; color:var(--text-muted);">${st.owner || ''}</span></td>
+        <td>
+          <span style="color:var(--cyan); font-weight:700;">${Number(st.rent).toLocaleString()} ج.م</span>
+          ${st.insurance ? `<br><small style="color:#60a5fa;">تأمين: ${Number(st.insurance).toLocaleString()}</small>` : ''}
+          ${st.notes ? `<br><small style="color:var(--warning);">${st.notes}</small>` : ''}
+        </td>
+        <td><div class="month-badges-grid">${monthsHtml}</div></td>
+        <td>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button onclick="editStudent('${st.id}')" class="btn-outline" style="padding:3px 8px; font-size:0.75rem;">تعديل ✏️</button>
+            <a href="https://wa.me/2${st.phone}" target="_blank" class="btn-wa-sm" title="واتساب">💬</a>
+            <button onclick="deleteStudent('${st.id}')" class="btn-outline" style="padding:3px 8px; font-size:0.75rem; color:#ef4444; border-color:rgba(239,68,68,0.3);">حذف</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+// تعديل حالة دفع الشهر
+function toggleStudentPayment(id, month, newStatus) {
+  db.ref(`students/${id}/payments/${month}`).set(newStatus).then(() => {
+    showToast(`تم تحديث سداد شهر ${month}!`);
+  });
+}
+
+// تعديل بيانات طالب بالكامل
+function editStudent(id) {
+  const st = studentsList.find(s => s.id === id);
+  if (!st) return;
+
+  document.getElementById("form-student-id").value = st.id;
+  document.getElementById("form-student-name").value = st.name || "";
+  document.getElementById("form-student-phone").value = st.phone || "";
+  document.getElementById("form-student-college").value = st.college || "";
+  document.getElementById("form-student-city").value = st.city || "";
+  document.getElementById("form-student-building").value = st.building || "";
+  document.getElementById("form-student-apartment").value = st.apartment || "";
+  document.getElementById("form-student-supervisor").value = st.supervisor || "";
+  document.getElementById("form-student-owner").value = st.owner || "";
+  document.getElementById("form-student-rent").value = st.rent || "";
+  document.getElementById("form-student-insurance").value = st.insurance || "";
+  document.getElementById("form-student-notes").value = st.notes || "";
+
+  document.getElementById("admin-student-modal-title").textContent = "تعديل بيانات الطالب: " + st.name;
+  document.getElementById("admin-student-modal").classList.add("open");
+}
+
+function deleteStudent(id) {
+  if (confirm("هل تريد حذف هذا الطالب من سجل Firebase نهائياً؟")) {
+    db.ref("students/" + id).remove().then(() => {
+      showToast("تم حذف الطالب من السجل!");
+    });
+  }
+}
+
+// الأحداث والتفاعل
+document.addEventListener("DOMContentLoaded", () => {
+  // فلاتر الأقسام
+  document.querySelectorAll(".filter-tabs .tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-tabs .tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.filter;
+      renderPublicProperties();
+    });
+  });
+
+  // فتح وإغلاق لوحة التحكم
+  const lockBtn = document.getElementById("floating-admin-trigger");
+  const passcodeModal = document.getElementById("admin-passcode-modal");
+  const passcodeInput = document.getElementById("passcode-input");
+  const passcodeErr = document.getElementById("passcode-err");
+  const adminPanel = document.getElementById("integrated-admin-panel");
+
+  lockBtn.addEventListener("click", () => {
+    passcodeModal.classList.add("show");
+    passcodeInput.value = "";
+    passcodeErr.style.display = "none";
+    passcodeInput.focus();
+  });
+
+  document.getElementById("passcode-cancel").addEventListener("click", () => {
+    passcodeModal.classList.remove("show");
+  });
+
+  document.getElementById("passcode-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const pass = passcodeInput.value.trim();
+    if (pass === "123456") {
+      passcodeModal.classList.remove("show");
+      adminPanel.classList.add("open");
+    } else {
+      passcodeErr.style.display = "block";
+    }
+  });
+
+  document.getElementById("btn-return-site").addEventListener("click", () => {
+    adminPanel.classList.remove("open");
+  });
+
+  document.getElementById("btn-logout-panel").addEventListener("click", () => {
+    adminPanel.classList.remove("open");
+    showToast("تم تسجيل الخروج وقفل اللوحة");
+  });
+
+  // فتح نافذة إضافة عقار
+  document.getElementById("btn-open-add-unit").addEventListener("click", () => {
+    document.getElementById("admin-property-form").reset();
+    document.getElementById("form-prop-id").value = "";
+    document.getElementById("form-prop-image").value = "";
+    document.getElementById("form-prop-image-preview").style.display = "none";
+    document.getElementById("preview-placeholder").style.display = "block";
+    document.getElementById("upload-status").style.display = "none";
+    document.getElementById("admin-modal-title").textContent = "إضافة فيلا / عقار حقيقي";
+    document.getElementById("admin-property-modal").classList.add("open");
+  });
+
+  document.getElementById("admin-modal-close").addEventListener("click", () => {
+    document.getElementById("admin-property-modal").classList.remove("open");
+  });
+  document.getElementById("admin-modal-cancel").addEventListener("click", () => {
+    document.getElementById("admin-property-modal").classList.remove("open");
+  });
+
+  // رفع وتجهيز الصورة بجودة HD
+  const fileInput = document.getElementById("form-prop-file");
+  const hiddenImageInput = document.getElementById("form-prop-image");
+  const imagePreview = document.getElementById("form-prop-image-preview");
+  const placeholder = document.getElementById("preview-placeholder");
+  const uploadStatus = document.getElementById("upload-status");
+
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      processImageFile(file, (dataUrl) => {
+        hiddenImageInput.value = dataUrl;
+        imagePreview.src = dataUrl;
+        imagePreview.style.display = "block";
+        placeholder.style.display = "none";
+        uploadStatus.style.display = "block";
+        showToast("تم معالجة الصورة بأعلى دقة HD!");
+      });
+    }
+  });
+
+  document.getElementById("form-prop-image-clear").addEventListener("click", () => {
+    hiddenImageInput.value = "";
+    fileInput.value = "";
+    document.getElementById("form-prop-image-url").value = "";
+    imagePreview.style.display = "none";
+    placeholder.style.display = "block";
+    uploadStatus.style.display = "none";
+  });
+
+  document.getElementById("form-prop-image-url").addEventListener("input", (e) => {
+    const url = e.target.value.trim();
+    if (url) {
+      hiddenImageInput.value = url;
+      imagePreview.src = url;
+      imagePreview.style.display = "block";
+      placeholder.style.display = "none";
+    }
+  });
+
+  // حفظ ونشر العقار مباشرة في Firebase
+  document.getElementById("admin-property-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const id = document.getElementById("form-prop-id").value || ("prop_" + Date.now());
+    let finalImage = hiddenImageInput.value || document.getElementById("form-prop-image-url").value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80";
+
+    const propData = {
+      title: document.getElementById("form-prop-title").value.trim(),
+      category: document.getElementById("form-prop-category").value,
+      price: document.getElementById("form-prop-price").value.trim(),
+      status: document.getElementById("form-prop-status").value,
+      location: document.getElementById("form-prop-location").value.trim(),
+      area: document.getElementById("form-prop-area").value.trim(),
+      rooms: document.getElementById("form-prop-rooms").value.trim(),
+      baths: document.getElementById("form-prop-baths").value.trim(),
+      badge: document.getElementById("form-prop-badge").value.trim(),
+      image: finalImage
+    };
+
+    db.ref("properties/" + id).set(propData).then(() => {
+      document.getElementById("admin-property-modal").classList.remove("open");
+      showToast("تم نشر العقار في Firebase بنجاح!");
+    }).catch(err => {
+      alert("خطأ في الاتصال بقاعدة البيانات: " + err.message);
+    });
+  });
+
+  // نافذة إضافة / تعديل طالب
+  document.getElementById("btn-open-add-student").addEventListener("click", () => {
+    document.getElementById("admin-student-form").reset();
+    document.getElementById("form-student-id").value = "";
+    document.getElementById("admin-student-modal-title").textContent = "إضافة طالب / ساكن جديد";
+    document.getElementById("admin-student-modal").classList.add("open");
+  });
+  document.getElementById("admin-student-modal-close").addEventListener("click", () => {
+    document.getElementById("admin-student-modal").classList.remove("open");
+  });
+  document.getElementById("admin-student-modal-cancel").addEventListener("click", () => {
+    document.getElementById("admin-student-modal").classList.remove("open");
+  });
+
+  // حفظ بيانات الطالب في Firebase
+  document.getElementById("admin-student-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const id = document.getElementById("form-student-id").value || ("st_" + Date.now());
+    
+    // الاحتفاظ بالدفعات السابقة إذا كان تعديلاً
+    const existingStudent = studentsList.find(s => s.id === id);
+    const existingPayments = existingStudent ? (existingStudent.payments || {}) : {};
+
+    const studentData = {
+      name: document.getElementById("form-student-name").value.trim(),
+      phone: document.getElementById("form-student-phone").value.trim(),
+      college: document.getElementById("form-student-college").value.trim(),
+      city: document.getElementById("form-student-city").value.trim(),
+      building: document.getElementById("form-student-building").value.trim(),
+      apartment: document.getElementById("form-student-apartment").value.trim(),
+      supervisor: document.getElementById("form-student-supervisor").value.trim(),
+      owner: document.getElementById("form-student-owner").value.trim(),
+      rent: document.getElementById("form-student-rent").value,
+      insurance: document.getElementById("form-student-insurance").value,
+      notes: document.getElementById("form-student-notes").value.trim(),
+      payments: existingPayments
+    };
+
+    db.ref("students/" + id).set(studentData).then(() => {
+      document.getElementById("admin-student-modal").classList.remove("open");
+      showToast("تم حفظ بيانات الطالب في Firebase أونلاين!");
+    }).catch(err => {
+      alert("خطأ في الحفظ: " + err.message);
+    });
+  });
+
+  // تصدير إكسيل
+  document.getElementById("btn-export-students-excel").addEventListener("click", () => {
+    if (studentsList.length === 0) return alert("لا يوجد طلاب لتصديرهم");
+    let csv = "الاسم,الموبايل,الكلية,العمارة,الشقة,المشرف,الإيجار,التأمين,الملاحظات\n";
+    studentsList.forEach(s => {
+      csv += `"${s.name}","${s.phone}","${s.college || ''}","${s.building}","${s.apartment}","${s.supervisor}","${s.rent}","${s.insurance || ''}","${s.notes || ''}"\n`;
+    });
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `سجل_طلاب_كيان_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  });
+
+  document.getElementById("student-search-box").addEventListener("input", renderStudents);
+
+  // تبديل التبويبات
+  document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const target = btn.dataset.adminTab;
+      document.querySelectorAll(".admin-tab-pane").forEach(p => p.style.display = "none");
+      document.getElementById(target).style.display = "block";
+    });
+  });
+
+  // نموذج الحجز السريع
+  document.getElementById("booking-request-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = document.getElementById("book-name").value;
+    const phone = document.getElementById("book-phone").value;
+    const type = document.getElementById("book-type").value;
+    const text = encodeURIComponent(`طلب حجز جديد من موقع كيان سيتي:\nالاسم: ${name}\nرقم الهاتف: ${phone}\nنوع العقار: ${type}`);
+    window.open(`https://wa.me/201095046646?text=${text}`, "_blank");
+  });
+});
+</script>
 </body>
 </html>
