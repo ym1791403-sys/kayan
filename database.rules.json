@@ -1,0 +1,18 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "properties": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "settings": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "students": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "كيان سيتي للتطوير العقاري",
+  "short_name": "كيان سيتي",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#070d18",
+  "background_color": "#070d18",
+  "display": "standalone",
+  "start_url": "/"
+}
