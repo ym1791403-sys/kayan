@@ -26,6 +26,91 @@ window.Kayan = window.Kayan || {};
   const passcodeCancel = document.getElementById("passcode-cancel");
   const passcodeErr = document.getElementById("passcode-err");
 
+  // ========================================================
+  // نظام الحماية ضد الهجمات والتخمين وحقن البيانات (Anti-Brute Force & Anti-Injection)
+  // ========================================================
+  const STORAGE_LOCKOUT_KEY = "kayan_sec_lockout_until";
+  const STORAGE_ATTEMPTS_KEY = "kayan_sec_failed_attempts";
+
+  function getLockoutRemaining(){
+    const until = parseInt(localStorage.getItem(STORAGE_LOCKOUT_KEY) || "0", 10);
+    const now = Date.now();
+    if(until > now){
+      return Math.ceil((until - now) / 1000);
+    }
+    return 0;
+  }
+
+  function recordFailedLogin(){
+    let count = parseInt(localStorage.getItem(STORAGE_ATTEMPTS_KEY) || "0", 10) + 1;
+    localStorage.setItem(STORAGE_ATTEMPTS_KEY, String(count));
+    if(count >= 10){
+      const lockSeconds = 15 * 60; // 15 دقيقة بعد 10 محاولات
+      localStorage.setItem(STORAGE_LOCKOUT_KEY, String(Date.now() + lockSeconds * 1000));
+      return lockSeconds;
+    } else if(count >= 5){
+      const lockSeconds = 60; // دقيقة واحدة بعد 5 محاولات
+      localStorage.setItem(STORAGE_LOCKOUT_KEY, String(Date.now() + lockSeconds * 1000));
+      return lockSeconds;
+    }
+    return 0;
+  }
+
+  function clearLockout(){
+    localStorage.removeItem(STORAGE_ATTEMPTS_KEY);
+    localStorage.removeItem(STORAGE_LOCKOUT_KEY);
+  }
+
+  // فحص وتعقيم كلمة السر ومنع ثغرات الحقن وتجاوز السعة (Buffer Overflow & Injection Payloads)
+  function sanitizeAndValidatePass(raw){
+    if(typeof raw !== "string") return { valid: false, message: "صيغة الرقم السري غير صالحة" };
+    const clean = raw.trim();
+    if(clean.includes("\0")){
+      return { valid: false, message: "تم اكتشاف رموز غير مسموح بها أمنياً" };
+    }
+    if(clean.length < 6){
+      return { valid: false, message: "الرقم السري يجب ألا يقل عن 6 خانات" };
+    }
+    if(clean.length > 128){
+      return { valid: false, message: "الرقم السري طويل جداً، غير مسموح به" };
+    }
+    return { valid: true, pass: clean };
+  }
+
+  let lockoutTimer = null;
+  function updateLockoutUI(){
+    const remaining = getLockoutRemaining();
+    if(remaining > 0){
+      if(passcodeErr){
+        passcodeErr.textContent = `⚠️ تم حظر المحاولات مؤقتاً لحماية اللوحة من هجمات التخمين. يرجى الانتظار (${remaining}) ثانية.`;
+        passcodeErr.style.display = "block";
+      }
+      const submitBtn = passcodeForm?.querySelector('button[type="submit"]');
+      if(submitBtn) submitBtn.disabled = true;
+      if(passcodeInput) passcodeInput.disabled = true;
+
+      clearInterval(lockoutTimer);
+      lockoutTimer = setInterval(() => {
+        const rem = getLockoutRemaining();
+        if(rem <= 0){
+          clearInterval(lockoutTimer);
+          if(passcodeErr) passcodeErr.style.display = "none";
+          if(submitBtn) submitBtn.disabled = false;
+          if(passcodeInput) {
+            passcodeInput.disabled = false;
+            passcodeInput.focus();
+          }
+        } else {
+          if(passcodeErr){
+            passcodeErr.textContent = `⚠️ تم حظر المحاولات مؤقتاً لحماية اللوحة من هجمات التخمين. يرجى الانتظار (${rem}) ثانية.`;
+          }
+        }
+      }, 1000);
+      return true;
+    }
+    return false;
+  }
+
   // تبويبات لوحة التحكم
   const adminTabBtns = document.querySelectorAll(".admin-tab-btn");
   const adminTabPanes = document.querySelectorAll(".admin-tab-pane");
@@ -95,7 +180,9 @@ window.Kayan = window.Kayan || {};
       if(passcodeModal) passcodeModal.classList.add("show");
       if(passcodeInput) passcodeInput.value = "";
       if(passcodeErr) passcodeErr.style.display = "none";
-      setTimeout(() => { if(passcodeInput) passcodeInput.focus(); }, 150);
+      if(!updateLockoutUI()){
+        setTimeout(() => { if(passcodeInput) passcodeInput.focus(); }, 150);
+      }
     }
   }
 
@@ -126,17 +213,27 @@ window.Kayan = window.Kayan || {};
         }
       };
 
+      if(updateLockoutUI()) return;
+
       if(!auth) return fail("قاعدة البيانات غير مربوطة بعد — راجع إعدادات KAYAN_CONFIG.FIREBASE.");
+
+      const rawPass = passcodeInput ? passcodeInput.value : "";
+      const validation = sanitizeAndValidatePass(rawPass);
+      if(!validation.valid){
+        return fail(validation.message);
+      }
+      const pass = validation.pass;
+
       if(btn) btn.disabled = true;
-      const pass = passcodeInput ? passcodeInput.value : "";
 
       const explain = (err) => {
         const c = (err && err.code) || "";
         if(c === "auth/network-request-failed") return "تعذر الاتصال بالإنترنت، حاول مرة أخرى";
         if(c === "auth/operation-not-allowed") return "فعّل Email/Password من Firebase Authentication";
-        if(c === "auth/too-many-requests") return "محاولات كثيرة، انتظر قليلاً ثم حاول مجدداً";
+        if(c === "auth/too-many-requests") return "محاولات كثيرة جداً، تم قفل الدخول مؤقتاً لحماية الموقع";
         if(c === "auth/operation-not-supported-in-this-environment") return "افتح الموقع من رابط https";
         if(c === "auth/weak-password") return "الرقم السري لازم يكون 6 خانات على الأقل";
+        if(c === "auth/invalid-credential" || c === "auth/wrong-password") return "الرقم السري غير صحيح!";
         if(c === "auth/api-key-not-valid" || c === "auth/invalid-api-key") return "مفتاح Firebase غير صحيح";
         return "تعذر الدخول (" + (c || "خطأ غير معروف") + ")";
       };
@@ -146,12 +243,15 @@ window.Kayan = window.Kayan || {};
       } catch(err){
         if(btn) btn.disabled = false;
         const c = (err && err.code) || "";
-        if(c === "auth/invalid-credential" || c === "auth/user-not-found" || c === "auth/wrong-password" || c === "auth/invalid-login-credentials"){
+
+        // تسجيل المحاولة الفاشلة وتفعيل القفل التلقائي
+        recordFailedLogin();
+        if(updateLockoutUI()) return;
+
+        if(c === "auth/user-not-found"){
           try {
             await auth.createUserWithEmailAndPassword(CFG.ADMIN_EMAIL, pass);
           } catch(e2){
-            if(btn) btn.disabled = false;
-            if(e2 && e2.code === "auth/email-already-in-use") return fail("الرقم السري غير صحيح. يمكنك تعيين كلمة سر لحساب " + CFG.ADMIN_EMAIL + " من Firebase Authentication");
             return fail(explain(e2));
           }
         } else {
@@ -162,9 +262,13 @@ window.Kayan = window.Kayan || {};
       if(!(await dbEngine.refreshAdminState(auth.currentUser))){
         await auth.signOut();
         if(btn) btn.disabled = false;
+        recordFailedLogin();
+        updateLockoutUI();
         return fail("هذا الحساب غير مصرح له بالدخول إلى لوحة التحكم.");
       }
 
+      // الدخول ناجح: مسح العدادات وفتح اللوحة
+      clearLockout();
       if(btn) btn.disabled = false;
       if(passcodeInput) passcodeInput.value = "";
       if(passcodeErr) passcodeErr.style.display = "none";
@@ -212,14 +316,17 @@ window.Kayan = window.Kayan || {};
   if(deleteModalForm){
     deleteModalForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const pass = (deleteModalInput ? deleteModalInput.value : "").trim();
-      if(!pass){
+      const raw = (deleteModalInput ? deleteModalInput.value : "").trim();
+      const validation = sanitizeAndValidatePass(raw);
+      if(!validation.valid){
         if(deleteModalErr){
-          deleteModalErr.textContent = "يرجى كتابة الرقم السري أولاً!";
+          deleteModalErr.textContent = validation.message;
           deleteModalErr.style.display = "block";
         }
         return;
       }
+      const pass = validation.pass;
+
       if(deleteModalSubmit){
         deleteModalSubmit.disabled = true;
         deleteModalSubmit.textContent = "جارٍ التحقق من كلمة السر...";
@@ -318,7 +425,8 @@ window.Kayan = window.Kayan || {};
     closeDashboard: closeDashboard,
     triggerLoginPrompt: triggerLoginPrompt,
     requestDeleteWithPassword: requestDeleteWithPassword,
-    closeDeleteModal: closeDeleteModal
+    closeDeleteModal: closeDeleteModal,
+    sanitizeAndValidatePass: sanitizeAndValidatePass
   };
 
   window.requestDeleteWithPassword = requestDeleteWithPassword;

@@ -353,6 +353,10 @@
       <div class="contact-form">
         <h4 style="font-size:1.4rem; color:#fff; margin-bottom:18px;">طلب حجز موعد معاينة أو استشارة</h4>
         <form id="booking-request-form">
+          <!-- Honeypot Field for anti-bot spam protection -->
+          <div style="display:none !important; opacity:0; position:absolute; left:-9999px;" aria-hidden="true">
+            <input type="text" name="booking_company_hp" id="booking-hp" tabindex="-1" autocomplete="off">
+          </div>
           <div class="form-group">
             <label>الاسم بالكامل *</label>
             <input type="text" id="booking-name" placeholder="مثال: د. محمد أحمد" required>

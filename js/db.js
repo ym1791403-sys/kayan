@@ -42,9 +42,14 @@ window.Kayan = window.Kayan || {};
   }
 
   async function refreshAdminState(user){
-    if(!user){ isAdmin = false; return false; }
+    if(!user || !user.email){ isAdmin = false; return false; }
     try {
-      const token = await user.getIdTokenResult();
+      await user.getIdTokenResult();
+      const adminEmail = (CFG.ADMIN_EMAIL || "").toLowerCase().trim();
+      if(user.email.toLowerCase().trim() !== adminEmail){
+        isAdmin = false;
+        return false;
+      }
       isAdmin = true;
     } catch(e) {
       console.warn("Unable to verify administrator authorization", e);

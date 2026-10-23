@@ -129,7 +129,7 @@ window.Kayan = window.Kayan || {};
             <a href="https://wa.me/${waPhone}" target="_blank" rel="noopener" class="btn-wa-sm" title="واتساب مباشر مع العميل">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             </a>
-            <a href="tel:${esc(req.phone)}" class="btn-tel-sm" title="اتصال هاتفي بالعميل">
+            <a href="tel:${cleanPhone}" class="btn-tel-sm" title="اتصال هاتفي بالعميل">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             </a>
             <button class="btn-icon delete" type="button" data-req-action="delete-request" data-req-id="${esc(req.id)}" title="حذف الطلب">
@@ -205,15 +205,47 @@ window.Kayan = window.Kayan || {};
     bookingForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const submitBtn = document.getElementById("booking-submit-btn");
+      // 1. فحص مصيدة البوتات الخفية (Honeypot Anti-Bot Protection)
+      const hp = document.getElementById("booking-hp");
+      if(hp && hp.value.trim() !== ""){
+        console.warn("Spam bot submission blocked via honeypot.");
+        if(submitBtn) submitBtn.disabled = false;
+        localStorage.setItem("kayan_sec_last_booking_submit", String(Date.now()));
+      bookingForm.reset();
+        return;
+      }
+
+      // 2. نظام منع الإغراق وتكرار الطلبات (Anti-Flood / Anti-DDoS Rate Limiting)
+      const LAST_REQ_KEY = "kayan_sec_last_booking_submit";
+      const lastSubmit = parseInt(localStorage.getItem(LAST_REQ_KEY) || "0", 10);
+      const now = Date.now();
+      if(now - lastSubmit < 25000){
+        const wait = Math.ceil((25000 - (now - lastSubmit)) / 1000);
+        alert(`يرجى الانتظار (${wait}) ثانية قبل إرسال طلب جديد لمنع التكرار والإغراق.`);
+        if(submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
       const name = (document.getElementById("booking-name")?.value || "").trim();
       const phone = (document.getElementById("booking-phone")?.value || "").trim();
       const type = document.getElementById("booking-type")?.value || "معاينة وحجز شقة مفروشة";
-      const notes = (document.getElementById("booking-notes")?.value || "").trim();
+      const rawNotes = (document.getElementById("booking-notes")?.value || "").trim();
 
-      if(!name || !phone){
-        alert("يرجى إدخال الاسم ورقم الهاتف.");
+      // 3. التحقق الصارم من صحة المدخلات ومنع الحقن (Input Validation & Anti-Injection)
+      if(!name || name.length < 2 || name.length > 80){
+        alert("يرجى إدخال اسم صحيح يتراوح بين 2 و 80 حرفاً.");
+        if(submitBtn) submitBtn.disabled = false;
         return;
       }
+
+      const cleanPhoneDigits = phone.replace(/[^\d+]/g, "");
+      if(cleanPhoneDigits.length < 10 || cleanPhoneDigits.length > 20){
+        alert("يرجى إدخال رقم هاتف صحيح ومكتمل.");
+        if(submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      const notes = rawNotes.slice(0, 500); // منع الحمولات الزائدة
 
       if(submitBtn){
         submitBtn.disabled = true;
@@ -293,6 +325,7 @@ window.Kayan = window.Kayan || {};
         submitBtn.textContent = "إرسال طلب الحجز فوراً";
       }
 
+      localStorage.setItem("kayan_sec_last_booking_submit", String(Date.now()));
       bookingForm.reset();
 
       if(bookingSuccessModal){
