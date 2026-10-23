@@ -1798,6 +1798,21 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
 .dev-credit{margin-top:6px;font-size:.82rem;color:var(--text-muted);unicode-bidi:isolate}
 .dev-credit a{color:var(--gold);font-weight:700;text-decoration:none}
 .dev-credit a[href]:hover{text-decoration:underline}
+.footer-legal-links{display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;font-size:.9rem}
+.footer-legal-links a{color:var(--gold-light);text-decoration:none;transition:all .2s ease}
+.footer-legal-links a:hover{color:#fff;text-decoration:underline;text-shadow:0 0 10px rgba(212,175,55,.4)}
+.footer-legal-links .sep{color:rgba(255,255,255,.25);font-size:.8rem}
+.form-legal-hint{font-size:.82rem;color:var(--text-muted);text-align:center;margin-top:12px;line-height:1.6}
+.form-legal-hint a{color:var(--gold);text-decoration:underline}
+.form-legal-hint a:hover{color:var(--gold-light)}
+.dev-credit-wrapper{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:.92rem;color:var(--text-muted)}
+.dev-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.45);padding:7px 18px;border-radius:24px;color:var(--gold-light);text-decoration:none;font-weight:700;transition:all .25s ease;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.dev-badge:hover{background:rgba(212,175,55,.22);border-color:var(--gold);color:#fff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(212,175,55,.3)}
+.dev-badge svg{fill:var(--gold);transition:all .2s ease;flex-shrink:0}
+.dev-badge:hover svg{fill:#25d366;transform:scale(1.1)}
+.dev-badge .dev-name{color:#fff;font-size:.95rem}
+.dev-badge .dev-sep{color:var(--gold);opacity:.6}
+.dev-badge .dev-num{color:var(--gold-light);font-family:monospace,sans-serif;font-size:.98rem;font-weight:700;letter-spacing:.5px}
 @media (max-width:768px),(hover:none){*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.navbar{background:rgba(8,15,28,.96)}}
 .hero-viewport{contain:layout paint}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -1834,6 +1849,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       <li><a href="#properties">الوحدات والمشاريع</a></li>
       <li><a href="#services">خدمات الإدارة</a></li>
       <li><a href="#contact">تواصل معنا</a></li>
+      <li><a href="terms.html">الشروط والخصوصية</a></li>
     </ul>
 
     <div class="nav-cta">
@@ -2113,6 +2129,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
             </select>
           </div>
           <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:14px; margin-top:10px;">إرسال طلب الحجز فوراً</button>
+          <p class="form-legal-hint">بإرسالك للطلب، أنت توافق على <a href="terms.html" target="_blank">الشروط والأحكام</a> و <a href="privacy.html" target="_blank">سياسة الخصوصية</a></p>
         </form>
       </div>
     </div>
@@ -2143,6 +2160,8 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
           <li><a href="#properties">الشقق المتاحة</a></li>
           <li><a href="#services">خدمات الإدارة</a></li>
           <li><a href="#contact">تواصل معنا</a></li>
+          <li><a href="terms.html">الشروط والأحكام</a></li>
+          <li><a href="privacy.html">سياسة الخصوصية</a></li>
         </ul>
       </div>
 
@@ -2166,8 +2185,23 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
     </div>
 
     <div class="footer-bottom">
+      <div class="footer-legal-links">
+        <a href="terms.html">الشروط والأحكام</a>
+        <span class="sep">•</span>
+        <a href="privacy.html">سياسة الخصوصية</a>
+        <span class="sep">•</span>
+        <a href="security.html">سياسة الأمان والشفافية</a>
+      </div>
       <p>© 2026 شركة كيان سيتي للتطوير العقاري وإدارة الأصول. جميع الحقوق محفوظة.</p>
-      <p class="dev-credit" dir="ltr">Developed by <a href="https://wa.me/201095046646" target="_blank" rel="noopener">JOO</a> &amp; <a id="dev-malak" href="https://wa.me/201015366757" target="_blank" rel="noopener">Malak</a></p>
+      <div class="dev-credit-wrapper">
+        <span class="dev-title">تصميم وتطوير وبرمجة:</span>
+        <a href="https://wa.me/201095046646" target="_blank" rel="noopener" class="dev-badge" title="تواصل واتساب مع المطور جؤؤ">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+          <span class="dev-name">جؤؤ (JOO)</span>
+          <span class="dev-sep">|</span>
+          <span class="dev-num" dir="ltr">01095046646</span>
+        </a>
+      </div>
     </div>
   </div>
 </footer>
