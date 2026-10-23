@@ -347,12 +347,12 @@ window.KAYAN_CONFIG = {
   const fbApp = (FB.apiKey && FB.projectId && window.firebase) ? firebase.initializeApp(FB) : null;
   const db = fbApp ? firebase.database() : null;
   const auth = fbApp ? firebase.auth() : null;
-  const created = { properties: new Map(), students: new Map() }; // وقت الإنشاء لترتيب الأحدث أولاً
+  const created = { properties: new Map(), students: new Map(), requests: new Map() }; // وقت الإنشاء لترتيب الأحدث أولاً
   const EMPTY_AD = { enabled: false, text: "", tag: "", btnText: "" };
   const PH = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%230d172a'/></svg>";
-  let PROPS = [], STUDENTS = [], AD = EMPTY_AD;
+  let PROPS = [], STUDENTS = [], REQUESTS = [], AD = EMPTY_AD;
   let loaded = false, isAdmin = false;
-  const snaps = { properties: new Map(), students: new Map() };
+  const snaps = { properties: new Map(), students: new Map(), requests: new Map() };
   let queue = Promise.resolve();
 
   function esc(v){
@@ -675,26 +675,28 @@ window.KAYAN_CONFIG = {
     }
   };
 
-  // Admin: Delete Unit
+  // Admin: Delete Unit (مؤمن بكلمة سر لوحة التحكم في فايربيس)
   window.adminDeleteProp = function(id){
-    if(confirm("هل أنت متأكد من حذف هذه الشقة نهائياً؟")){
+    const prop = getProps().find(p => p.id === id);
+    const title = prop && prop.title ? `الشقة "${prop.title}"` : "هذه الشقة";
+    requestDeleteWithPassword(`هل أنت متأكد من رغبتك في حذف ${title} نهائياً؟`, () => {
       let props = getProps();
       props = props.filter(p => p.id !== id);
       saveProps(props);
       renderAdminTable();
       renderPublicProperties();
-      showToast("تم حذف الشقة بنجاح!");
-    }
+      showToast("تم حذف الشقة بنجاح بعد التحقق من كلمة السر!");
+    });
   };
 
   // Admin: Clear All Units (Start from Scratch)
-  document.getElementById("btn-clear-all-units").addEventListener("click", () => {
-    if(confirm("تحذير: هل أنت متأكد من رغبتك في مسح كل الشقق المسجلة لبدء إدخال شققك الحقيقية من الصفر؟")){
+  document.getElementById("btn-clear-all-units")?.addEventListener("click", () => {
+    requestDeleteWithPassword("تحذير أمني شديد: هل أنت متأكد من رغبتك في مسح كافة الشقق المسجلة من الصفر؟", () => {
       saveProps([]);
       renderAdminTable();
       renderPublicProperties();
-      showToast("تم مسح كافة الوحدات. اللوحة جاهزة لاستقبال بياناتك الحقيقية!");
-    }
+      showToast("تم مسح كافة الوحدات بنجاح بعد التحقق من كلمة السر!");
+    });
   });
 
 
@@ -1065,15 +1067,17 @@ window.KAYAN_CONFIG = {
     document.getElementById("admin-student-modal").classList.add("open");
   };
 
-  // Delete Student
+  // Delete Student (مؤمن بكلمة سر لوحة التحكم في فايربيس)
   window.adminDeleteStudent = function(id){
-    if(confirm("هل أنت متأكد من حذف هذا الطالب من السجل؟")){
+    const st = getStudents().find(s => s.id === id);
+    const name = st && st.name ? `الطالب "${st.name}"` : "هذا الطالب";
+    requestDeleteWithPassword(`هل أنت متأكد من رغبتك في حذف ${name} من السجل نهائياً؟`, () => {
       let list = getStudents();
       list = list.filter(s => s.id !== id);
       saveStudents(list);
       renderStudentsTable();
-      showToast("تم حذف الطالب من السجل بنجاح!");
-    }
+      showToast("تم حذف الطالب من السجل بنجاح بعد التحقق من كلمة السر!");
+    });
   };
 
   // Student Search and Filter listeners
@@ -1144,13 +1148,13 @@ window.KAYAN_CONFIG = {
     });
   }
 
-  // Clear All Students
+  // Clear All Students (مؤمن بكلمة سر لوحة التحكم في فايربيس)
   document.getElementById("btn-clear-all-students")?.addEventListener("click", () => {
-    if(confirm("تحذير: هل أنت متأكد من مسح جميع الطلاب المسجلين للبدء من الصفر بقائمة فارغة؟")){
+    requestDeleteWithPassword("تحذير أمني شديد جداً: هل أنت متأكد من رغبتك في مسح كافة الطلاب المسجلين بالكامل من السجل؟", () => {
       saveStudents([]);
       renderStudentsTable();
-      showToast("تم مسح جميع الطلاب بنجاح. السجل فارغ وجاهز!");
-    }
+      showToast("تم مسح جميع بيانات الطلاب بنجاح بعد التحقق من كلمة السر!");
+    });
   });
 
 
@@ -1251,7 +1255,7 @@ window.KAYAN_CONFIG = {
 
   if(btnDeleteAd){
     btnDeleteAd.addEventListener("click", () => {
-      if(confirm("هل تريد بالتأكيد حذف الإعلان وإخفاء الشريط تماماً من الموقع؟")){
+      requestDeleteWithPassword("هل تريد بالتأكيد حذف شريط الإعلان وإلغاء تفعيله تماماً من الموقع؟", () => {
         adminAdEnabled.checked = false;
         adminAdText.value = "";
         adminAdTag.value = "";
@@ -1265,8 +1269,8 @@ window.KAYAN_CONFIG = {
         localStorage.removeItem("kayan_ad_banner");
         renderPublicAd();
         updateAdPreview();
-        showToast("تم حذف وإلغاء الإعلان تماماً وإخفاء الشريط من الموقع!");
-      }
+        showToast("تم حذف وإلغاء الإعلان بنجاح بعد التحقق من كلمة السر!");
+      });
     });
   }
 
@@ -1279,6 +1283,7 @@ window.KAYAN_CONFIG = {
     "admin-tab-units": "إدارة الشقق والوحدات المعروضة",
     "admin-tab-students": "سجل الطلاب والسكن الجامعي",
     "admin-tab-ads": "نظام الإعلانات والعروض الترويجية",
+    "admin-tab-requests": "طلبات الحجز واستفسارات العملاء",
     "admin-tab-stats": "الإحصائيات والمبيعات"
   };
 
@@ -1293,6 +1298,7 @@ window.KAYAN_CONFIG = {
       adminPageTitle.innerText = adminTitles[targetId] || "لوحة التحكم";
       if(targetId === "admin-tab-students") renderStudentsTable();
       if(targetId === "admin-tab-units") renderAdminTable();
+      if(targetId === "admin-tab-requests") renderRequestsTable();
     });
   });
 
@@ -1319,6 +1325,8 @@ window.KAYAN_CONFIG = {
     loadAdminAd();
     try { await loadStudents(); } catch(e){ console.error(e); showToast("تعذر تحميل سجل الطلاب: " + (e.message || "")); }
     renderStudentsTable();
+    try { await loadRequests(); } catch(e){ console.error(e); }
+    renderRequestsTable();
   }
 
   function closeDashboard(){
@@ -1404,6 +1412,102 @@ window.KAYAN_CONFIG = {
     });
   }
 
+  // ===== 6. تأكيد الحذف بكلمة سر لوحة التحكم في فايربيس =====
+  const deleteModal = document.getElementById("admin-delete-modal");
+  const deleteModalForm = document.getElementById("delete-modal-form");
+  const deleteModalInput = document.getElementById("delete-modal-passcode");
+  const deleteModalMsg = document.getElementById("delete-modal-msg");
+  const deleteModalErr = document.getElementById("delete-modal-err");
+  const deleteModalCancel = document.getElementById("delete-modal-cancel");
+  const deleteModalSubmit = document.getElementById("delete-modal-submit");
+  let pendingDeleteAction = null;
+
+  function requestDeleteWithPassword(message, onConfirmAction){
+    pendingDeleteAction = onConfirmAction;
+    if(deleteModalMsg) deleteModalMsg.textContent = message || "هل أنت متأكد من الحذف؟";
+    if(deleteModalInput) deleteModalInput.value = "";
+    if(deleteModalErr) deleteModalErr.style.display = "none";
+    if(deleteModalSubmit){
+      deleteModalSubmit.disabled = false;
+      deleteModalSubmit.textContent = "تأكيد الحذف نهائياً";
+    }
+    if(deleteModal) deleteModal.classList.add("show");
+    setTimeout(() => { if(deleteModalInput) deleteModalInput.focus(); }, 150);
+  }
+
+  function closeDeleteModal(){
+    if(deleteModal) deleteModal.classList.remove("show");
+    pendingDeleteAction = null;
+  }
+
+  if(deleteModalCancel){
+    deleteModalCancel.addEventListener("click", closeDeleteModal);
+  }
+  if(deleteModal){
+    deleteModal.addEventListener("click", (e) => {
+      if(e.target === deleteModal) closeDeleteModal();
+    });
+  }
+
+  if(deleteModalForm){
+    deleteModalForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const pass = (deleteModalInput.value || "").trim();
+      if(!pass){
+        deleteModalErr.textContent = "يرجى كتابة الرقم السري أولاً!";
+        deleteModalErr.style.display = "block";
+        return;
+      }
+      deleteModalSubmit.disabled = true;
+      deleteModalSubmit.textContent = "جارٍ التحقق من كلمة السر...";
+
+      try {
+        if(!auth || !firebase.auth){
+          throw new Error("قاعدة البيانات غير مربوطة");
+        }
+        const cred = firebase.auth.EmailAuthProvider.credential(CFG.ADMIN_EMAIL, pass);
+        if(auth.currentUser){
+          await auth.currentUser.reauthenticateWithCredential(cred);
+        } else {
+          await auth.signInWithEmailAndPassword(CFG.ADMIN_EMAIL, pass);
+        }
+
+        deleteModalSubmit.disabled = false;
+        deleteModalSubmit.textContent = "تأكيد الحذف نهائياً";
+        const actionToRun = pendingDeleteAction;
+        closeDeleteModal();
+        if(typeof actionToRun === "function"){
+          await actionToRun();
+        }
+      } catch(err){
+        deleteModalSubmit.disabled = false;
+        deleteModalSubmit.textContent = "تأكيد الحذف نهائياً";
+        deleteModalErr.textContent = "الرقم السري غير صحيح! تعذر إجراء الحذف.";
+        deleteModalErr.style.display = "block";
+        if(deleteModalInput){
+          deleteModalInput.focus();
+          deleteModalInput.select();
+        }
+      }
+    });
+  }
+
+  // Mobile Navbar Drawer Toggle
+  const navMobileToggle = document.getElementById("nav-mobile-toggle");
+  const mainNavLinks = document.getElementById("main-nav-links");
+  if(navMobileToggle && mainNavLinks){
+    navMobileToggle.addEventListener("click", () => {
+      const open = mainNavLinks.classList.toggle("mobile-open");
+      navMobileToggle.classList.toggle("active", open);
+    });
+    mainNavLinks.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => {
+        mainNavLinks.classList.remove("mobile-open");
+        navMobileToggle.classList.remove("active");
+      });
+    });
+  }
+
   // Return to public site
   if(returnSiteBtn){
     returnSiteBtn.addEventListener("click", closeDashboard);
@@ -1439,10 +1543,276 @@ window.KAYAN_CONFIG = {
     if(control.dataset.adminAction === "delete-student") window.adminDeleteStudent(control.dataset.studentId);
   });
 
-  document.getElementById("booking-request-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    alert("تم استلام طلبك بنجاح! سيتواصل معك فريق الإدارة خلال 15 دقيقة.");
+  // ========================================================
+  // 5. BOOKING REQUESTS SYSTEM (نظام طلبات الحجز والعملاء وقاعدة البيانات)
+  // ========================================================
+  function getRequests(){ return REQUESTS; }
+  function saveRequests(r){ REQUESTS = r; syncTable("requests", r); }
+
+  async function loadRequests(){
+    if(!db) return;
+    try {
+      REQUESTS = await fetchAll("requests");
+      setSnap("requests", REQUESTS);
+      renderRequestsTable();
+    } catch(e){
+      console.warn("Requests load error:", e);
+    }
+  }
+
+  function formatDateTime(ts){
+    if(!ts) return "—";
+    const d = new Date(ts);
+    return d.toLocaleDateString("ar-EG", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
+  }
+
+  function buildRequestWhatsAppText(req){
+    const dStr = req.createdAt ? new Date(req.createdAt).toLocaleString("ar-EG") : "";
+    return encodeURIComponent(
+      `السلام عليكم، تفاصيل طلب حجز جديد عبر موقع كيان سيتي:\n` +
+      `👤 اسم العميل: ${req.name || ""}\n` +
+      `📱 الهاتف: ${req.phone || ""}\n` +
+      `🏢 نوع الطلب: ${req.type || ""}\n` +
+      (req.notes ? `📝 تفاصيل إضافية: ${req.notes}\n` : '') +
+      (dStr ? `⏰ تاريخ الطلب: ${dStr}\n` : '') +
+      `🔢 رقم الطلب: #${String(req.id || "").slice(-6)}`
+    );
+  }
+
+  function updateRequestsBadge(){
+    const badge = document.getElementById("admin-requests-badge");
+    if(!badge) return;
+    const newCount = REQUESTS.filter(r => !r.status || r.status === "new").length;
+    if(newCount > 0){
+      badge.textContent = newCount;
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
+  }
+
+  function renderRequestsTable(){
+    const tbody = document.getElementById("admin-requests-tbody");
+    if(!tbody) return;
+    tbody.innerHTML = "";
+
+    const search = (document.getElementById("requests-search-box")?.value || "").toLowerCase().trim();
+    const statusFilter = document.getElementById("requests-status-filter")?.value || "all";
+
+    let filtered = REQUESTS.filter(r => {
+      const matchSearch = !search ||
+        (r.name && r.name.toLowerCase().includes(search)) ||
+        (r.phone && r.phone.includes(search)) ||
+        (r.type && r.type.toLowerCase().includes(search));
+      const rStatus = r.status || "new";
+      const matchStatus = statusFilter === "all" || rStatus === statusFilter;
+      return matchSearch && matchStatus;
+    });
+
+    const totalEl = document.getElementById("kpi-total-requests");
+    const newEl = document.getElementById("kpi-new-requests");
+    const contactedEl = document.getElementById("kpi-contacted-requests");
+    if(totalEl) totalEl.textContent = REQUESTS.length;
+    if(newEl) newEl.textContent = REQUESTS.filter(r => !r.status || r.status === "new").length;
+    if(contactedEl) contactedEl.textContent = REQUESTS.filter(r => r.status === "contacted" || r.status === "booked").length;
+    updateRequestsBadge();
+
+    if(filtered.length === 0){
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:36px; color:var(--text-muted); font-size:1.05rem;">لا توجد أي طلبات واردة حالياً</td></tr>`;
+      return;
+    }
+
+    filtered.forEach((req, idx) => {
+      const tr = document.createElement("tr");
+      const cleanPhone = (req.phone || "").replace(/[^\d]/g, "");
+      const waPhone = cleanPhone.startsWith("0") ? "2" + cleanPhone : cleanPhone;
+      const status = req.status || "new";
+      const encodedMsg = buildRequestWhatsAppText(req);
+
+      tr.innerHTML = `
+        <td style="font-weight:700; color:var(--text-muted);">${idx + 1}</td>
+        <td>
+          <div style="font-weight:600; color:#fff; font-size:0.9rem;">${formatDateTime(req.createdAt)}</div>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;">#${esc(String(req.id || "").slice(-6))}</span>
+        </td>
+        <td>
+          <strong style="color:var(--gold-light); font-size:1rem; display:block;">${esc(req.name || "عميل")}</strong>
+          <span style="font-size:0.85rem; color:#cbd7e6; font-family:monospace;" dir="ltr">${esc(req.phone || "—")}</span>
+        </td>
+        <td>
+          <div style="font-weight:600; color:#fff; font-size:0.92rem;">${esc(req.type || "معاينة")}</div>
+          ${req.notes ? `<div style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">${esc(req.notes)}</div>` : ''}
+        </td>
+        <td>
+          <div class="team-forward-grid" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <a href="https://wa.me/201017006541?text=${encodedMsg}" target="_blank" rel="noopener" class="btn-sm wa" style="padding:4px 8px; font-size:0.78rem;" title="تحويل واتساب إلى م. مصطفى طلعت">
+              <span>م. مصطفى</span>
+            </a>
+            <a href="https://wa.me/201091048919?text=${encodedMsg}" target="_blank" rel="noopener" class="btn-sm wa" style="padding:4px 8px; font-size:0.78rem;" title="تحويل واتساب إلى أ. أحمد ناصر">
+              <span>أ. أحمد</span>
+            </a>
+            <a href="https://wa.me/201029105138?text=${encodedMsg}" target="_blank" rel="noopener" class="btn-sm wa" style="padding:4px 8px; font-size:0.78rem;" title="تحويل واتساب إلى أ. عمرو جلال">
+              <span>أ. عمرو</span>
+            </a>
+            <a href="https://wa.me/201070451554?text=${encodedMsg}" target="_blank" rel="noopener" class="btn-sm wa" style="padding:4px 8px; font-size:0.78rem;" title="تحويل واتساب إلى أ. عمر قاسم">
+              <span>أ. عمر</span>
+            </a>
+          </div>
+        </td>
+        <td>
+          <select class="req-status-select status-${status}" data-req-action="change-status" data-req-id="${esc(req.id)}" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-subtle); color:#fff; padding:6px 10px; border-radius:6px; font-size:0.85rem; font-family:inherit; cursor:pointer;">
+            <option value="new" ${status === 'new' ? 'selected' : ''}>جديد 🔴</option>
+            <option value="contacted" ${status === 'contacted' ? 'selected' : ''}>تم التواصل 🟢</option>
+            <option value="booked" ${status === 'booked' ? 'selected' : ''}>تم الحجز 🟡</option>
+            <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>ملغي ⚪</option>
+          </select>
+        </td>
+        <td>
+          <div class="action-group">
+            <a href="https://wa.me/${waPhone}" target="_blank" rel="noopener" class="btn-wa-sm" title="واتساب مباشر مع العميل">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </a>
+            <a href="tel:${esc(req.phone)}" class="btn-tel-sm" title="اتصال هاتفي بالعميل">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </a>
+            <button class="btn-icon delete" type="button" data-req-action="delete-request" data-req-id="${esc(req.id)}" title="حذف الطلب">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Requests Table Listeners
+  document.getElementById("admin-requests-tbody")?.addEventListener("change", (e) => {
+    const sel = e.target.closest('[data-req-action="change-status"]');
+    if(!sel) return;
+    const reqId = sel.dataset.reqId;
+    const newStatus = sel.value;
+    const list = getRequests();
+    const item = list.find(r => r.id === reqId);
+    if(item){
+      item.status = newStatus;
+      saveRequests(list);
+      updateRequestsBadge();
+      showToast("تم تحديث حالة الطلب بنجاح!");
+    }
   });
+
+  document.getElementById("admin-requests-tbody")?.addEventListener("click", (e) => {
+    const btn = e.target.closest('[data-req-action="delete-request"]');
+    if(!btn) return;
+    const reqId = btn.dataset.reqId;
+    const item = getRequests().find(r => r.id === reqId);
+    const label = item && item.name ? `طلب العميل "${item.name}"` : "هذا الطلب";
+    requestDeleteWithPassword(`هل أنت متأكد من حذف ${label} نهائياً؟`, () => {
+      let list = getRequests().filter(r => r.id !== reqId);
+      saveRequests(list);
+      renderRequestsTable();
+      showToast("تم حذف الطلب بنجاح بعد التحقق من كلمة السر!");
+    });
+  });
+
+  document.getElementById("btn-clear-all-requests")?.addEventListener("click", () => {
+    requestDeleteWithPassword("تحذير: هل أنت متأكد من مسح جميع طلبات الحجز والاستفسارات الواردة؟", () => {
+      saveRequests([]);
+      renderRequestsTable();
+      showToast("تم مسح كافة الطلبات بنجاح!");
+    });
+  });
+
+  document.getElementById("requests-search-box")?.addEventListener("input", () => renderRequestsTable());
+  document.getElementById("requests-status-filter")?.addEventListener("change", () => renderRequestsTable());
+
+  // Public Booking Form Handler
+  const bookingForm = document.getElementById("booking-request-form");
+  const bookingSuccessModal = document.getElementById("booking-success-modal");
+  const bookingSuccessClose = document.getElementById("booking-success-close");
+
+  if(bookingSuccessClose && bookingSuccessModal){
+    bookingSuccessClose.addEventListener("click", () => {
+      bookingSuccessModal.classList.remove("show");
+    });
+    bookingSuccessModal.addEventListener("click", (e) => {
+      if(e.target === bookingSuccessModal) bookingSuccessModal.classList.remove("show");
+    });
+  }
+
+  if(bookingForm){
+    bookingForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById("booking-submit-btn");
+      const name = (document.getElementById("booking-name")?.value || "").trim();
+      const phone = (document.getElementById("booking-phone")?.value || "").trim();
+      const type = document.getElementById("booking-type")?.value || "معاينة وحجز شقة مفروشة";
+      const notes = (document.getElementById("booking-notes")?.value || "").trim();
+
+      if(!name || !phone){
+        alert("يرجى إدخال الاسم ورقم الهاتف.");
+        return;
+      }
+
+      if(submitBtn){
+        submitBtn.disabled = true;
+        submitBtn.textContent = "جارٍ حفظ وإرسال الطلب...";
+      }
+
+      const reqId = "req_" + Date.now();
+      const reqData = {
+        id: reqId,
+        name: name,
+        phone: phone,
+        type: type,
+        notes: notes,
+        status: "new",
+        createdAt: Date.now()
+      };
+
+      try {
+        if(db){
+          await db.ref("requests/" + reqId).set(reqData);
+        }
+      } catch(err){
+        console.warn("Failed to write request to db:", err);
+      }
+
+      const encodedMsg = encodeURIComponent(
+        `السلام عليكم، قمت بإرسال طلب حجز عبر موقع كيان سيتي:\n` +
+        `👤 الاسم: ${name}\n` +
+        `📱 الهاتف: ${phone}\n` +
+        `🏢 نوع الطلب: ${type}\n` +
+        (notes ? `📝 ملاحظات: ${notes}\n` : '') +
+        `🔢 رقم الطلب: #${reqId.slice(-6)}`
+      );
+
+      const team1 = document.getElementById("wa-send-team-1");
+      const team2 = document.getElementById("wa-send-team-2");
+      const team3 = document.getElementById("wa-send-team-3");
+      const team4 = document.getElementById("wa-send-team-4");
+      if(team1) team1.href = `https://wa.me/201017006541?text=${encodedMsg}`;
+      if(team2) team2.href = `https://wa.me/201091048919?text=${encodedMsg}`;
+      if(team3) team3.href = `https://wa.me/201029105138?text=${encodedMsg}`;
+      if(team4) team4.href = `https://wa.me/201070451554?text=${encodedMsg}`;
+
+      const reqIdEl = document.getElementById("success-req-id");
+      if(reqIdEl) reqIdEl.textContent = `رقم الطلب: #${reqId.slice(-6)}`;
+
+      if(submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.textContent = "إرسال طلب الحجز فوراً";
+      }
+
+      bookingForm.reset();
+
+      if(bookingSuccessModal){
+        bookingSuccessModal.classList.add("show");
+      } else {
+        alert("تم استلام طلبك بنجاح وحفظه في النظام! سيتواصل معك فريق الإدارة فوراً.");
+      }
+    });
+  }
 
   // Initialize
   renderPublicAd();
@@ -1450,7 +1820,7 @@ window.KAYAN_CONFIG = {
   if(db){
     auth.onAuthStateChanged(async user => {
       await refreshAdminState(user);
-      if(isAdmin){ try { await loadStudents(); } catch(e){} }
+      if(isAdmin){ try { await loadStudents(); } catch(e){} try { await loadRequests(); } catch(e){} }
     });
     loadPublic();
   } else {

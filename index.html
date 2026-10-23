@@ -49,7 +49,7 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Reem+Kufi:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -195,7 +195,7 @@ body {
 }
 
 .brand-text b {
-  font-family: 'Reem Kufi', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 1.45rem;
   color: #fff;
   display: block;
@@ -377,7 +377,7 @@ body {
 }
 
 .hero-title {
-  font-family: 'Reem Kufi', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: clamp(2.6rem, 5.2vw, 4.2rem);
   font-weight: 700;
   line-height: 1.15;
@@ -507,7 +507,7 @@ body {
 }
 
 .stat-num {
-  font-family: 'Reem Kufi', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 2.8rem;
   font-weight: 700;
   background: var(--gold-gradient);
@@ -546,7 +546,7 @@ section {
 }
 
 .section-title {
-  font-family: 'Reem Kufi', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: clamp(2rem, 3.5vw, 2.7rem);
   font-weight: 700;
   color: #fff;
@@ -1010,7 +1010,7 @@ footer {
 }
 
 .passcode-card h3 {
-  font-family: 'Reem Kufi', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   color: #fff;
   font-size: 1.7rem;
   margin-bottom: 8px;
@@ -1198,7 +1198,7 @@ footer {
 }
 
 .kpi-number {
-  font-family: 'Reem Kufi', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 2.2rem;
   font-weight: 700;
   color: #fff;
@@ -1768,8 +1768,23 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
   margin-top: 10px;
 }
 
+/* Mobile & Responsive enhancements */
+button, a, input, select { touch-action: manipulation; }
+.table-responsive { -webkit-overflow-scrolling: touch; }
+.nav-mobile-toggle { display: none; background: transparent; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 8px; cursor: pointer; flex-direction: column; gap: 5px; width: 42px; height: 42px; justify-content: center; align-items: center; transition: all 0.2s ease; }
+.nav-mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--gold-light); border-radius: 2px; transition: all 0.3s ease; }
+.nav-mobile-toggle:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--gold); }
+.nav-mobile-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-mobile-toggle.active span:nth-child(2) { opacity: 0; }
+.nav-mobile-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+@keyframes navSlideDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+
 @media (max-width: 992px) {
-  .nav-links { display: none; }
+  .nav-mobile-toggle { display: flex; }
+  .nav-links { position: fixed; top: 72px; right: 0; left: 0; background: rgba(8, 15, 28, 0.98); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); flex-direction: column; padding: 20px 24px; gap: 12px; display: none; box-shadow: 0 20px 40px rgba(0,0,0,0.6); z-index: 999; }
+  .nav-links.mobile-open { display: flex; animation: navSlideDown 0.25s ease forwards; }
+  .nav-links a { font-size: 1.05rem; padding: 10px 14px; border-radius: 8px; display: block; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+  .nav-links a:hover { background: rgba(212, 175, 55, 0.1); color: var(--gold-light); }
   .contact-container { grid-template-columns: 1fr; padding: 28px; }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .admin-sidebar { width: 70px; padding: 18px 10px; }
@@ -1778,11 +1793,34 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
   .form-grid-2 { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 768px) {
+  .hero-stage { height: 260vh; }
+  .hero-title { font-size: 2.2rem; }
+  .hero-desc { font-size: 1rem; }
+  .hero-actions { flex-direction: column; width: 100%; }
+  .hero-actions a { width: 100%; text-align: center; }
+  .admin-main { padding: 18px 12px; }
+  .kpi-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .admin-kpi { padding: 16px 12px; }
+  .admin-kpi .kpi-number { font-size: 1.35rem; }
+  .student-search-input, .student-filter-select { width: 100%; min-width: 100%; }
+  .modal-dialog, .property-modal-card { width: 95%; max-height: 90vh; }
+}
+
 @media (max-width: 600px) {
   .footer-top { grid-template-columns: 1fr; }
   .properties-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .stat-item::after { display: none; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.85rem; }
+  .navbar { padding: 12px 14px; }
+  .brand-text b { font-size: 1rem; }
+  .brand-text span { font-size: 0.68rem; }
+  .kpi-row { grid-template-columns: 1fr; }
+  .contact-container { padding: 20px 14px; }
 }
 
 /* ===== Polish & performance ===== */
@@ -1795,9 +1833,9 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
 .pager button[disabled],.btn-outline[disabled]{opacity:.4;cursor:not-allowed}
 .admin-table tbody tr{transition:background .15s ease}
 .admin-table tbody tr:hover{background:rgba(212,175,55,.05)}
-.dev-credit{margin-top:6px;font-size:.82rem;color:var(--text-muted);unicode-bidi:isolate}
-.dev-credit a{color:var(--gold);font-weight:700;text-decoration:none}
-.dev-credit a[href]:hover{text-decoration:underline}
+.dev-credit{margin-top:8px;font-size:.92rem;color:#94a5bd;unicode-bidi:isolate}
+.dev-credit a{color:var(--gold);font-weight:700;text-decoration:none;transition:color .2s}
+.dev-credit a:hover{color:#fff;text-decoration:underline}
 .footer-legal-links{display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;font-size:.9rem}
 .footer-legal-links a{color:var(--gold-light);text-decoration:none;transition:all .2s ease}
 .footer-legal-links a:hover{color:#fff;text-decoration:underline;text-shadow:0 0 10px rgba(212,175,55,.4)}
@@ -1805,14 +1843,6 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
 .form-legal-hint{font-size:.82rem;color:var(--text-muted);text-align:center;margin-top:12px;line-height:1.6}
 .form-legal-hint a{color:var(--gold);text-decoration:underline}
 .form-legal-hint a:hover{color:var(--gold-light)}
-.dev-credit-wrapper{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:.92rem;color:var(--text-muted)}
-.dev-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.45);padding:7px 18px;border-radius:24px;color:var(--gold-light);text-decoration:none;font-weight:700;transition:all .25s ease;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.dev-badge:hover{background:rgba(212,175,55,.22);border-color:var(--gold);color:#fff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(212,175,55,.3)}
-.dev-badge svg{fill:var(--gold);transition:all .2s ease;flex-shrink:0}
-.dev-badge:hover svg{fill:#25d366;transform:scale(1.1)}
-.dev-badge .dev-name{color:#fff;font-size:.95rem}
-.dev-badge .dev-sep{color:var(--gold);opacity:.6}
-.dev-badge .dev-num{color:var(--gold-light);font-family:monospace,sans-serif;font-size:.98rem;font-weight:700;letter-spacing:.5px}
 @media (max-width:768px),(hover:none){*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.navbar{background:rgba(8,15,28,.96)}}
 .hero-viewport{contain:layout paint}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -1844,7 +1874,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       </div>
     </a>
 
-    <ul class="nav-links">
+    <ul class="nav-links" id="main-nav-links">
       <li><a href="#about">عن المشروع</a></li>
       <li><a href="#properties">الوحدات والمشاريع</a></li>
       <li><a href="#services">خدمات الإدارة</a></li>
@@ -1856,6 +1886,9 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       <a href="#contact" class="btn-primary">
         <span>احجز معاينة</span>
       </a>
+      <button class="nav-mobile-toggle" id="nav-mobile-toggle" aria-label="فتح القائمة" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 </div>
@@ -2052,7 +2085,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
     <div class="contact-container">
       <div class="contact-info">
         <span class="section-subtitle">تواصل مباشر</span>
-        <h3 style="font-family:'Reem Kufi',sans-serif; font-size:2rem; color:#fff; margin-bottom:12px;">فريق إدارة كيان سيتي في خدمتك</h3>
+        <h3 style="font-family:'Cairo', system-ui, -apple-system, sans-serif; font-size:2rem; color:#fff; margin-bottom:12px;">فريق إدارة كيان سيتي في خدمتك</h3>
         <p style="color:var(--text-muted); margin-bottom:24px;">يسعدنا استقبال استفسارات الملاك والمستأجرين وتحديد مواعيد المعاينات الميدانية فوراً.</p>
 
         <div class="team-list">
@@ -2113,28 +2146,79 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         <h4 style="font-size:1.4rem; color:#fff; margin-bottom:18px;">طلب حجز موعد معاينة أو استشارة</h4>
         <form id="booking-request-form">
           <div class="form-group">
-            <label>الاسم بالكامل</label>
-            <input type="text" placeholder="مثال: د. محمد أحمد" required>
+            <label>الاسم بالكامل *</label>
+            <input type="text" id="booking-name" placeholder="مثال: د. محمد أحمد" required>
           </div>
           <div class="form-group">
-            <label>رقم الهاتف / الواتساب</label>
-            <input type="tel" placeholder="010XXXXXXXX" dir="ltr" style="text-align:right" required>
+            <label>رقم الهاتف / الواتساب *</label>
+            <input type="tel" id="booking-phone" placeholder="010XXXXXXXX" dir="ltr" style="text-align:right" required>
           </div>
           <div class="form-group">
-            <label>نوع الطلب</label>
-            <select>
-              <option>معاينة وحجز شقة مفروشة</option>
-              <option>تسجيل شقة تحت إدارة كيان سيتي (للملاك)</option>
-              <option>شراء واستثمار وحدات</option>
+            <label>نوع الطلب *</label>
+            <select id="booking-type">
+              <option value="معاينة وحجز شقة مفروشة">معاينة وحجز شقة مفروشة</option>
+              <option value="تسجيل شقة تحت إدارة كيان سيتي (للملاك)">تسجيل شقة تحت إدارة كيان سيتي (للملاك)</option>
+              <option value="شراء واستثمار وحدات">شراء واستثمار وحدات</option>
+              <option value="سكن طلابي VIP">سكن طلابي VIP</option>
             </select>
           </div>
-          <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:14px; margin-top:10px;">إرسال طلب الحجز فوراً</button>
+          <div class="form-group">
+            <label>ملاحظات أو تفاصيل إضافية (اختياري)</label>
+            <input type="text" id="booking-notes" placeholder="اكتب أي استفسار أو موعد مفضل...">
+          </div>
+          <button type="submit" id="booking-submit-btn" class="btn-primary" style="width:100%; justify-content:center; padding:14px; margin-top:10px;">إرسال طلب الحجز فوراً</button>
           <p class="form-legal-hint">بإرسالك للطلب، أنت توافق على <a href="terms.html" target="_blank">الشروط والأحكام</a> و <a href="privacy.html" target="_blank">سياسة الخصوصية</a></p>
         </form>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Client Booking Success Modal with 4 WhatsApp Team Dispatch -->
+<div class="admin-passcode-modal" id="booking-success-modal">
+  <div class="passcode-card" style="max-width:540px; border-color: rgba(56, 239, 125, 0.45); box-shadow: 0 25px 60px rgba(56, 239, 125, 0.15);">
+    <div style="width:62px; height:62px; margin:0 auto 16px; border-radius:50%; background:rgba(56, 239, 125, 0.12); border:1px solid #38ef7d; display:flex; align-items:center; justify-content:center; color:#38ef7d;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3 style="color:#fff; font-size:1.6rem; margin-bottom:6px;">تم استلام طلبك بنجاح!</h3>
+    <p style="color:var(--cyan); font-weight:700; font-size:0.95rem; margin-bottom:12px;" id="success-req-id">رقم الطلب: #</p>
+    <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.7; margin-bottom:20px;">
+      تم حفظ طلبك بنجاح في قاعدة بيانات كيان سيتي وسيتم التواصل معك. 
+      <br><b style="color:#fff;">للمتابعة الفورية والتواصل السريع، يمكنك إرسال بيانات طلبك عبر واتساب بضغطة واحدة لأحد مسؤولينا الأربعة:</b>
+    </p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+      <a id="wa-send-team-1" href="#" target="_blank" rel="noopener" class="team-dispatch-btn" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:all .2s;">
+        <div style="text-align:right;">
+          <b style="color:var(--gold-light); display:block; font-size:0.95rem;">م. مصطفى طلعت</b>
+          <span style="font-size:0.8rem; color:var(--text-muted);">المدير التنفيذي لإدارة الأصول</span>
+        </div>
+        <span style="background:#25d366; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700; display:flex; align-items:center; gap:6px;">واتساب 💬</span>
+      </a>
+      <a id="wa-send-team-2" href="#" target="_blank" rel="noopener" class="team-dispatch-btn" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:all .2s;">
+        <div style="text-align:right;">
+          <b style="color:var(--gold-light); display:block; font-size:0.95rem;">أ. أحمد ناصر</b>
+          <span style="font-size:0.8rem; color:var(--text-muted);">مدير العمليات وشؤون الملاك</span>
+        </div>
+        <span style="background:#25d366; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700; display:flex; align-items:center; gap:6px;">واتساب 💬</span>
+      </a>
+      <a id="wa-send-team-3" href="#" target="_blank" rel="noopener" class="team-dispatch-btn" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:all .2s;">
+        <div style="text-align:right;">
+          <b style="color:var(--gold-light); display:block; font-size:0.95rem;">أ. عمرو جلال</b>
+          <span style="font-size:0.8rem; color:var(--text-muted);">مسؤول علاقات النزلاء والتعاقدات</span>
+        </div>
+        <span style="background:#25d366; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700; display:flex; align-items:center; gap:6px;">واتساب 💬</span>
+      </a>
+      <a id="wa-send-team-4" href="#" target="_blank" rel="noopener" class="team-dispatch-btn" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:all .2s;">
+        <div style="text-align:right;">
+          <b style="color:var(--gold-light); display:block; font-size:0.95rem;">أ. عمر قاسم</b>
+          <span style="font-size:0.8rem; color:var(--text-muted);">مسؤول شؤون وتسكين الطلاب</span>
+        </div>
+        <span style="background:#25d366; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700; display:flex; align-items:center; gap:6px;">واتساب 💬</span>
+      </a>
+    </div>
+    <button type="button" class="btn-outline" id="booking-success-close" style="width:100%; justify-content:center;">تم، إغلاق النافذة</button>
+  </div>
+</div>
 
 <!-- Footer -->
 <footer>
@@ -2193,15 +2277,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         <a href="security.html">سياسة الأمان والشفافية</a>
       </div>
       <p>© 2026 شركة كيان سيتي للتطوير العقاري وإدارة الأصول. جميع الحقوق محفوظة.</p>
-      <div class="dev-credit-wrapper">
-        <span class="dev-title">تصميم وتطوير وبرمجة:</span>
-        <a href="https://wa.me/201095046646" target="_blank" rel="noopener" class="dev-badge" title="تواصل واتساب مع المطور جؤؤ">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-          <span class="dev-name">جؤؤ (JOO)</span>
-          <span class="dev-sep">|</span>
-          <span class="dev-num" dir="ltr">01095046646</span>
-        </a>
-      </div>
+      <p class="dev-credit" dir="ltr">Developed by <a href="https://wa.me/201095046646" target="_blank" rel="noopener">JOO</a></p>
     </div>
   </div>
 </footer>
@@ -2231,6 +2307,29 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
       <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:13px; margin-bottom:12px;">دخول لوحة التحكم</button>
       <button type="button" class="btn-outline" id="passcode-cancel" style="width:100%; justify-content:center;">إلغاء</button>
       <div id="passcode-err" style="color:#ef4444; font-size:0.88rem; font-weight:700; margin-top:12px; display:none;">الرقم السري غير صحيح</div>
+    </form>
+  </div>
+</div>
+
+<!-- Security Password Confirmation Modal for Deletions -->
+<div class="admin-passcode-modal" id="admin-delete-modal">
+  <div class="passcode-card" style="border-color: rgba(239, 68, 68, 0.45); box-shadow: 0 25px 60px rgba(239, 68, 68, 0.2);">
+    <div style="width:58px; height:58px; margin:0 auto 18px; border-radius:50%; background:rgba(239, 68, 68, 0.12); border:1px solid #ef4444; display:flex; align-items:center; justify-content:center; color:#ef4444;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+    </div>
+    <h3 style="color:#ef4444;">تأكيد أمني لحذف البيانات</h3>
+    <p id="delete-modal-msg" style="color:#fff; font-size:0.95rem; margin-bottom:12px; font-weight:600; line-height:1.6;">هل أنت متأكد من الحذف؟</p>
+    <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:20px;">لحماية البيانات من الحذف غير المقصود، يرجى كتابة الرقم السري للوحة التحكم للمتابعة:</p>
+    
+    <form id="delete-modal-form">
+      <input type="password" class="passcode-input" id="delete-modal-passcode" placeholder="أدخل الرقم السري للوحة التحكم" autocomplete="current-password" required>
+      <div id="delete-modal-err" style="color:#ef4444; font-size:0.88rem; font-weight:700; margin:10px 0; display:none;">الرقم السري غير صحيح! تعذر إجراء الحذف.</div>
+      <button type="submit" class="btn-primary" id="delete-modal-submit" style="width:100%; justify-content:center; padding:13px; margin-bottom:12px; background:#ef4444; border-color:#ef4444;">تأكيد الحذف نهائياً</button>
+      <button type="button" class="btn-outline" id="delete-modal-cancel" style="width:100%; justify-content:center;">إلغاء الأمر</button>
     </form>
   </div>
 </div>
@@ -2272,6 +2371,13 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
         </button>
       </li>
       <li>
+        <button class="admin-tab-btn" data-admin-tab="admin-tab-requests">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+          <span>طلبات الحجز والعملاء</span>
+          <span class="badge-count" id="admin-requests-badge" style="display:none; background:#ef4444; color:#fff; border-radius:10px; padding:2px 8px; font-size:0.75rem; font-weight:700; margin-right:auto;">0</span>
+        </button>
+      </li>
+      <li>
         <button class="admin-tab-btn" data-admin-tab="admin-tab-stats">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span>الإحصائيات والمبيعات</span>
@@ -2295,7 +2401,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
   <main class="admin-main">
     <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
       <div>
-        <h1 id="admin-page-title" style="font-family:'Reem Kufi',sans-serif; font-size:1.9rem; color:#fff;">إدارة الشقق والوحدات المعروضة</h1>
+        <h1 id="admin-page-title" style="font-family:'Cairo', system-ui, -apple-system, sans-serif; font-size:1.9rem; color:#fff;">إدارة الشقق والوحدات المعروضة</h1>
         <p style="color:var(--text-muted); font-size:0.92rem;">تحكم كامل في الأسعار، الصور، وحالة البيع (متاح / محجوز / تم البيع)</p>
       </div>
 
@@ -2501,6 +2607,69 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
               <button style="background:#091322; color:#fff; border:none; padding:6px 16px; border-radius:999px; font-weight:700; cursor:pointer;" id="admin-ad-preview-btn">احجز الآن</button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Booking Requests -->
+    <div class="admin-tab-pane" id="admin-tab-requests" style="display:none;">
+      <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h2 style="font-family:'Cairo', system-ui, -apple-system, sans-serif; font-size:1.8rem; color:#fff;">طلبات الحجز واستفسارات العملاء</h2>
+          <p style="color:var(--text-muted); font-size:0.9rem;">إدارة كافة الطلبات الواردة من الموقع العام مع إمكانية تحويلها للأشخاص الأربعة وتحديث الحالة</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn-outline" id="btn-clear-all-requests" style="color:#ef4444; border-color:rgba(239,68,68,0.4);" title="مسح كافة الطلبات">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span>مسح جميع الطلبات</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="kpi-row">
+        <div class="admin-kpi">
+          <div class="kpi-label">إجمالي الطلبات المستلمة</div>
+          <div class="kpi-number" id="kpi-total-requests">0</div>
+        </div>
+        <div class="admin-kpi danger">
+          <div class="kpi-label">طلبات جديدة قيد الانتظار</div>
+          <div class="kpi-number" id="kpi-new-requests" style="color:#ef4444">0</div>
+        </div>
+        <div class="admin-kpi success">
+          <div class="kpi-label">طلبات تم التواصل معها</div>
+          <div class="kpi-number" id="kpi-contacted-requests" style="color:var(--cyan)">0</div>
+        </div>
+      </div>
+
+      <div class="content-box">
+        <div class="student-search-bar" style="margin-bottom:20px;">
+          <input type="text" class="student-search-input" id="requests-search-box" placeholder="🔍 بحث باسم العميل أو رقم الهاتف...">
+          <select class="student-filter-select" id="requests-status-filter">
+            <option value="all">جميع الحالات</option>
+            <option value="new">طلبات جديدة</option>
+            <option value="contacted">تم التواصل</option>
+            <option value="booked">تم الحجز / التعاقد</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width:40px;">#</th>
+                <th>التاريخ والوقت</th>
+                <th>بيانات العميل</th>
+                <th>نوع الطلب / تفاصيل</th>
+                <th>تحويل للأشخاص الأربعة</th>
+                <th>حالة الطلب</th>
+                <th style="width:110px;">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="admin-requests-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
