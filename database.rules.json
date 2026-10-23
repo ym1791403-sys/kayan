@@ -2,32 +2,25 @@
   "rules": {
     ".read": false,
     ".write": false,
-
     "properties": {
       ".read": true,
-      ".write": "auth != null && auth.token.email === 'admin@kayancity.com'"
+      ".write": "auth != null"
     },
-
     "settings": {
       ".read": true,
-      ".write": "auth != null && auth.token.email === 'admin@kayancity.com'"
+      ".write": "auth != null"
     },
-
     "students": {
-      ".read": "auth != null && auth.token.email === 'admin@kayancity.com'",
-      ".write": "auth != null && auth.token.email === 'admin@kayancity.com'"
+      ".read": "auth != null",
+      ".write": "auth != null"
     },
-
     "requests": {
-      ".read": "auth != null && auth.token.email === 'admin@kayancity.com'",
-      "$req_id": {
-        ".write": "auth != null && auth.token.email === 'admin@kayancity.com' || (!data.exists() && newData.exists() && newData.hasChildren(['name', 'phone', 'type', 'status']) && newData.child('status').val() === 'new' && newData.child('name').isString() && newData.child('name').val().length <= 100 && newData.child('phone').isString() && newData.child('phone').val().length <= 25)"
-      }
+      ".read": "auth != null",
+      ".write": true
     },
-
     "request_counter": {
       ".read": true,
-      ".write": "auth != null && auth.token.email === 'admin@kayancity.com' || (newData.isNumber() && (!data.exists() || newData.val() === data.val() + 1))"
+      ".write": true
     }
   }
 }
