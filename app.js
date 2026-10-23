@@ -1,4 +1,4 @@
-
+﻿
 // ===== إعدادات قاعدة البيانات (Firebase) =====
 // املأ القيم من: Firebase Console > Project settings (⚙️) > General > Your apps > Web app > SDK setup and configuration
 window.KAYAN_CONFIG = {
@@ -1481,6 +1481,8 @@ window.KAYAN_CONFIG = {
             await auth.createUserWithEmailAndPassword(CFG.ADMIN_EMAIL, pass);
           } catch(e2){
             btn.disabled = false;
+            recordFailedLogin();
+            updateLockoutUI();
             if(e2 && e2.code === "auth/email-already-in-use") return fail("الرقم السري غير صحيح. يمكنك تعيين كلمة سر لحساب " + CFG.ADMIN_EMAIL + " من Firebase > Authentication");
             return fail(explain(e2));
           }
@@ -1545,12 +1547,13 @@ window.KAYAN_CONFIG = {
   if(deleteModalForm){
     deleteModalForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const pass = (deleteModalInput.value || "").trim();
-      if(!pass){
-        deleteModalErr.textContent = "يرجى كتابة الرقم السري أولاً!";
+      const validation = validateAndSanitizePass(deleteModalInput.value);
+      if(!validation.valid){
+        deleteModalErr.textContent = validation.message;
         deleteModalErr.style.display = "block";
         return;
       }
+      const pass = validation.pass;
       deleteModalSubmit.disabled = true;
       deleteModalSubmit.textContent = "جارٍ التحقق من كلمة السر...";
 
