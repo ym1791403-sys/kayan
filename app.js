@@ -388,7 +388,9 @@ window.KAYAN_CONFIG = {
         r.months = mo;
       }
       created[table].set(id, r.createdAt || 0);
-      delete r.createdAt;
+      if(table !== "requests"){
+        delete r.createdAt;
+      }
       return r;
     });
     const validRows = rows.filter(Boolean);
@@ -1566,8 +1568,9 @@ window.KAYAN_CONFIG = {
     return d.toLocaleDateString("ar-EG", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
   }
 
-  function buildRequestWhatsAppText(req){
+  function buildRequestWhatsAppText(req, idx){
     const dStr = req.createdAt ? new Date(req.createdAt).toLocaleString("ar-EG") : "";
+    const num = req.orderNum || (req.id && /^req_\d+$/.test(req.id) ? req.id.replace("req_", "") : (idx != null ? (idx + 1) : ""));
     return encodeURIComponent(
       `السلام عليكم، تفاصيل طلب حجز جديد عبر موقع كيان سيتي:\n` +
       `👤 اسم العميل: ${req.name || ""}\n` +
@@ -1575,7 +1578,7 @@ window.KAYAN_CONFIG = {
       `🏢 نوع الطلب: ${req.type || ""}\n` +
       (req.notes ? `📝 تفاصيل إضافية: ${req.notes}\n` : '') +
       (dStr ? `⏰ تاريخ الطلب: ${dStr}\n` : '') +
-      `🔢 رقم الطلب: #${String(req.id || "").slice(-6)}`
+      (num ? `🔢 رقم الطلب: #${num}` : '')
     );
   }
 
@@ -1627,13 +1630,15 @@ window.KAYAN_CONFIG = {
       const cleanPhone = (req.phone || "").replace(/[^\d]/g, "");
       const waPhone = cleanPhone.startsWith("0") ? "2" + cleanPhone : cleanPhone;
       const status = req.status || "new";
-      const encodedMsg = buildRequestWhatsAppText(req);
+      const reqNum = req.orderNum || (req.id && /^req_\d+$/.test(req.id) ? req.id.replace("req_", "") : (idx + 1));
+      const encodedMsg = buildRequestWhatsAppText(req, idx);
+      const reqDate = req.createdAt || (created["requests"] ? created["requests"].get(req.id) : null);
 
       tr.innerHTML = `
         <td style="font-weight:700; color:var(--text-muted);">${idx + 1}</td>
         <td>
-          <div style="font-weight:600; color:#fff; font-size:0.9rem;">${formatDateTime(req.createdAt)}</div>
-          <span style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;">#${esc(String(req.id || "").slice(-6))}</span>
+          <div style="font-weight:600; color:#fff; font-size:0.9rem;">${formatDateTime(reqDate)}</div>
+          <span style="font-size:0.8rem; color:var(--gold-light); font-weight:700;">طلب #${esc(reqNum)}</span>
         </td>
         <td>
           <strong style="color:var(--gold-light); font-size:1rem; display:block;">${esc(req.name || "عميل")}</strong>
@@ -1759,9 +1764,36 @@ window.KAYAN_CONFIG = {
         submitBtn.textContent = "جارٍ حفظ وإرسال الطلب...";
       }
 
-      const reqId = "req_" + Date.now();
+      let reqNum = 1;
+      if(db){
+        try {
+          const txRes = await db.ref("request_counter").transaction(current => {
+            return (current || 0) + 1;
+          });
+          if(txRes && txRes.committed && txRes.snapshot && txRes.snapshot.val() != null){
+            reqNum = txRes.snapshot.val();
+          } else {
+            const fallbackSnap = await db.ref("request_counter").get();
+            if(fallbackSnap && fallbackSnap.exists() && fallbackSnap.val()){
+              reqNum = fallbackSnap.val();
+            }
+          }
+        } catch(e){
+          console.warn("Counter transaction failed, falling back:", e);
+          const localCount = parseInt(localStorage.getItem("kayan_local_req_counter") || "0", 10) + 1;
+          localStorage.setItem("kayan_local_req_counter", String(localCount));
+          reqNum = localCount;
+        }
+      } else {
+        const localCount = parseInt(localStorage.getItem("kayan_local_req_counter") || "0", 10) + 1;
+        localStorage.setItem("kayan_local_req_counter", String(localCount));
+        reqNum = localCount;
+      }
+
+      const reqId = "req_" + reqNum;
       const reqData = {
         id: reqId,
+        orderNum: reqNum,
         name: name,
         phone: phone,
         type: type,
@@ -1779,12 +1811,12 @@ window.KAYAN_CONFIG = {
       }
 
       const encodedMsg = encodeURIComponent(
-        `السلام عليكم، قمت بإرسال طلب حجز عبر موقع كيان سيتي:\n` +
+        `السلام عليكم، تفاصيل طلب حجز جديد عبر موقع كيان سيتي:\n` +
         `👤 الاسم: ${name}\n` +
         `📱 الهاتف: ${phone}\n` +
         `🏢 نوع الطلب: ${type}\n` +
-        (notes ? `📝 ملاحظات: ${notes}\n` : '') +
-        `🔢 رقم الطلب: #${reqId.slice(-6)}`
+        (notes ? `📝 تفاصيل إضافية: ${notes}\n` : '') +
+        `🔢 رقم الطلب: #${reqNum}`
       );
 
       const team1 = document.getElementById("wa-send-team-1");
@@ -1797,7 +1829,7 @@ window.KAYAN_CONFIG = {
       if(team4) team4.href = `https://wa.me/201070451554?text=${encodedMsg}`;
 
       const reqIdEl = document.getElementById("success-req-id");
-      if(reqIdEl) reqIdEl.textContent = `رقم الطلب: #${reqId.slice(-6)}`;
+      if(reqIdEl) reqIdEl.textContent = `رقم الطلب: #${reqNum}`;
 
       if(submitBtn){
         submitBtn.disabled = false;
@@ -1809,7 +1841,7 @@ window.KAYAN_CONFIG = {
       if(bookingSuccessModal){
         bookingSuccessModal.classList.add("show");
       } else {
-        alert("تم استلام طلبك بنجاح وحفظه في النظام! سيتواصل معك فريق الإدارة فوراً.");
+        alert(`تم استلام طلبك بنجاح برقم (#${reqNum})! سيتواصل معك فريق الإدارة فوراً.`);
       }
     });
   }

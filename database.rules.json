@@ -17,6 +17,10 @@
     "requests": {
       ".read": "auth != null",
       ".write": true
+    },
+    "request_counter": {
+      ".read": true,
+      ".write": true
     }
   }
 }

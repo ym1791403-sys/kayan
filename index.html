@@ -980,13 +980,14 @@ footer {
   opacity: 1;
 }
 
-/* Passcode Modal */
+/* Passcode & Security Deletion Modal */
 .admin-passcode-modal {
   position: fixed;
   inset: 0;
   background: rgba(3, 7, 14, 0.88);
   backdrop-filter: blur(14px);
-  z-index: 100000;
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 30000000 !important;
   display: none;
   align-items: center;
   justify-content: center;
@@ -994,7 +995,7 @@ footer {
 }
 
 .admin-passcode-modal.show {
-  display: flex;
+  display: flex !important;
   animation: zoomIn 0.25s ease;
 }
 
@@ -1599,7 +1600,7 @@ input[type="checkbox"]:checked + .switch-toggle::after { transform: translateX(-
   font-weight: 700;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   display: none;
-  z-index: 10000000;
+  z-index: 40000000 !important;
 }
 
 /* Pagination Styling */
