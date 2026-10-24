@@ -359,14 +359,24 @@ window.KAYAN_CONFIG = {
     return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
 
+  function safeImg(url){
+    if(!url || typeof url !== "string") return PH;
+    const trimmed = url.trim();
+    if(trimmed.startsWith("data:image/")) return trimmed;
+    if(/^https?:\/\//i.test(trimmed)) return trimmed;
+    if(/^[a-zA-Z0-9_\-\.\/]+\.(png|jpe?g|webp|gif|svg)$/i.test(trimmed)) return trimmed;
+    return PH;
+  }
+
   // A signed-in Firebase user is not automatically an administrator. The
   // `admin` custom claim is assigned only by a trusted Admin SDK process.
   async function refreshAdminState(user){
     if(!user){ isAdmin = false; return false; }
     try {
       const token = await user.getIdTokenResult();
-      // TEMPORARY: email check; switch back to custom claim (grant-admin-claim.mjs).
-      isAdmin = true;
+      const email = (user.email || "").toLowerCase();
+      const adminEmail = (CFG.ADMIN_EMAIL || "").toLowerCase();
+      isAdmin = Boolean(token.claims && token.claims.admin === true || (adminEmail && email === adminEmail));
     } catch(e) {
       console.warn("Unable to verify administrator authorization", e);
       isAdmin = false;
@@ -530,7 +540,7 @@ window.KAYAN_CONFIG = {
 
       card.innerHTML = `
         <div class="card-img-wrap">
-          <img src="${esc(p.image || PH)}" alt="${esc(p.title)}" loading="lazy" decoding="async">
+          <img src="${esc(safeImg(p.image))}" alt="${esc(p.title)}" loading="lazy" decoding="async">
           ${isSold ? '<div class="sold-ribbon">تم البيع</div>' : ''}
           <div class="card-badge ${isSold ? 'sold' : (isReserved ? 'reserved' : '')}">
             ${isSold ? 'تم البيع / Sold Out' : (isReserved ? 'محجوز مؤقتاً' : esc(p.badge || 'متاح للحجز'))}
@@ -615,7 +625,7 @@ window.KAYAN_CONFIG = {
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><img src="${esc(p.image || PH)}" class="property-thumb" alt="${esc(p.title)}" loading="lazy" decoding="async"></td>
+        <td><img src="${esc(safeImg(p.image))}" class="property-thumb" alt="${esc(p.title)}" loading="lazy" decoding="async"></td>
         <td>
           <strong style="color:#fff; display:block;">${esc(p.title)}</strong>
           <span style="font-size:0.78rem; color:var(--gold);">${esc(p.badge || "")}</span>
