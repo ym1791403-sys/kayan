@@ -352,6 +352,62 @@ window.KAYAN_CONFIG = {
   const PH = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%230d172a'/></svg>";
   const DEFAULT_PROPERTIES = [
     {
+      id: "prop_shoheib_st_1",
+      title: "شقة للبيع 95م مرخصة بشارع شهيب – تشطيب كامل",
+      category: "family",
+      price: "2,200,000 ج.م",
+      status: "available",
+      location: "شارع شهيب - عمارة مرخصة الدور الثالث",
+      area: "95 م²",
+      rooms: "3 غرف وصالة",
+      baths: "مطبخ وحمام",
+      badge: "الدور الثالث - عمارة مرخصة",
+      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      video: ""
+    },
+    {
+      id: "prop_farouk_kaddis_1",
+      title: "شقة سوبر لوكس 75م بشارع فاروق قديس",
+      category: "family",
+      price: "1,300,000 ج.م",
+      status: "available",
+      location: "شارع فاروق قديس - دور أرضي سوبر لوكس",
+      area: "75 م²",
+      rooms: "غرفتين وصالة",
+      baths: "مطبخ وحمام",
+      badge: "دور أرضي - سوبر لوكس",
+      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      video: ""
+    },
+    {
+      id: "prop_city_branches_1",
+      title: "شقة للبيع 65م عمارة مباني جديدة بتفرعات سيتي",
+      category: "family",
+      price: "1,350,000 ج.م",
+      status: "available",
+      location: "تفرعات سيتي - عمارة مباني جديدة",
+      area: "65 م²",
+      rooms: "غرفتين وصالة",
+      baths: "مطبخ وحمام",
+      badge: "الدور الرابع - مباني جديدة",
+      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+      video: ""
+    },
+    {
+      id: "prop_masnaa_sayed_1",
+      title: "شقة للبيع 65م بمصنع سيد – تقسيم الحقوقيين",
+      category: "family",
+      price: "850,000 ج.م",
+      status: "available",
+      location: "مصنع سيد – شارع تقسيم الحقوقيين",
+      area: "65 م²",
+      rooms: "غرفتين وصالة",
+      baths: "مطبخ وحمام",
+      badge: "الدور الرابع - للبيع",
+      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80",
+      video: ""
+    },
+    {
       id: "prop_tawba_mosque_1",
       title: "شقة للبيع 80م عند مسجد التوبة",
       category: "family",
