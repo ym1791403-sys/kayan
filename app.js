@@ -868,8 +868,8 @@ window.KAYAN_CONFIG = {
     }
   }
 
-  // مستمعات رفع الفيديو في لوحة التحكم
-  document.getElementById("form-prop-video-file")?.addEventListener("change", (e) => {
+  // مستمعات رفع الفيديو في لوحة التحكم (رفع سحابي فوري يدعم أي حجم بدون قيود)
+  document.getElementById("form-prop-video-file")?.addEventListener("change", async (e) => {
     const file = e.target.files && e.target.files[0];
     if(!file) return;
     const msgEl = document.getElementById("form-prop-video-msg");
@@ -880,24 +880,65 @@ window.KAYAN_CONFIG = {
       msgEl.style.display = "block";
     };
 
-    if(file.size > 10 * 1024 * 1024){
-      showMsg("⚠️ حجم ملف الفيديو (" + (file.size / (1024*1024)).toFixed(1) + " ميجا) يتجاوز الحد المسموح للتخزين المباشر (10 ميجابايت). يمكنك رفع الفيديو على يوتيوب أو Google Drive ووضع الرابط بالأسفل.", true);
-      showToast("حجم الفيديو كبير جداً للتخزين المباشر!");
-      return;
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    showMsg(`جارٍ تجهيز ورفع الفيديو (${sizeMB} ميجا)... يرجى الانتظار`, false);
+
+    // 1. محاولة الرفع السحابي عبر Firebase Storage أولاً (يدعم أي حجم دون أي قيود)
+    if(window.firebase && firebase.storage){
+      try {
+        const storage = firebase.storage();
+        const safeName = Date.now() + "_" + (file.name || "video.mp4").replace(/[^\w\.\-]/g, "_");
+        const vRef = storage.ref("properties_videos/" + safeName);
+        const task = vRef.put(file);
+
+        task.on("state_changed", 
+          (snap) => {
+            const pct = snap.totalBytes ? Math.round((snap.bytesTransferred / snap.totalBytes) * 100) : 0;
+            showMsg(`جارٍ رفع الفيديو إلى السحابة: ${pct}% (${sizeMB} ميجا)...`, false);
+          },
+          (err) => {
+            console.warn("Storage upload failed, trying direct fallback:", err);
+            fallbackDirect(file, showMsg, err);
+          },
+          async () => {
+            try {
+              const downloadUrl = await vRef.getDownloadURL();
+              setPropVideo(downloadUrl);
+              showMsg(`✓ تم رفع وتثبيت الفيديو بنجاح في السحابة (${sizeMB} ميجا)!`, false);
+              showToast("تم رفع الفيديو بنجاح! 🎥");
+            } catch(e2){
+              fallbackDirect(file, showMsg, e2);
+            }
+          }
+        );
+        return;
+      } catch(err){
+        console.warn("Storage init failed:", err);
+      }
     }
 
-    showMsg("جارٍ تحميل وتجهيز ملف الفيديو... يرجى الانتظار", false);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      setPropVideo(ev.target.result);
-      showMsg("✓ تم إرفاق ملف الفيديو بنجاح!", false);
-      showToast("تم إرفاق الفيديو بنجاح! 🎥");
-    };
-    reader.onerror = () => {
-      showMsg("تعذر قراءة ملف الفيديو من الجهاز، حاول مرة أخرى", true);
-    };
-    reader.readAsDataURL(file);
+    fallbackDirect(file, showMsg);
   });
+
+  function fallbackDirect(file, showMsg, previousErr){
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    if(file.size <= 25 * 1024 * 1024){
+      showMsg(`جارٍ إرفاق الفيديو مباشرة (${sizeMB} ميجا)...`, false);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setPropVideo(ev.target.result);
+        showMsg(`✓ تم إرفاق ملف الفيديو بنجاح (${sizeMB} ميجا)!`, false);
+        showToast("تم إرفاق الفيديو بنجاح! 🎥");
+      };
+      reader.onerror = () => {
+        showMsg("تعذر قراءة ملف الفيديو، يمكنك استخدام رابط فيديو مباشر في الخانة بالأسفل", true);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      showMsg(`⚠️ حجم الفيديو (${sizeMB} ميجا) كبير للتخزين المباشر. يمكنك بسهولة لصق رابط الفيديو من YouTube أو Google Drive في الخانة بالأسفل وسيعمل فوراً بدون أي حدود للحجم!`, true);
+      showToast("استخدم رابط يوتيوب أو درايف للفيديوهات الكبيرة");
+    }
+  }
 
   document.getElementById("form-prop-video-url")?.addEventListener("input", (e) => {
     const v = e.target.value.trim();
