@@ -1,4 +1,4 @@
-﻿
+
 // ===== إعدادات قاعدة البيانات (Firebase) =====
 // املأ القيم من: Firebase Console > Project settings (⚙️) > General > Your apps > Web app > SDK setup and configuration
 window.KAYAN_CONFIG = {
@@ -820,18 +820,23 @@ window.KAYAN_CONFIG = {
   function parseVideoSource(rawUrl){
     if(!rawUrl || typeof rawUrl !== "string") return { type: "html5", src: "" };
     const u = rawUrl.trim();
+    // 1. YouTube (Watch, Share, Shorts, Embed)
     const ytMatch = u.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/i);
     if(ytMatch && ytMatch[1]){
       return { type: "iframe", src: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=1&rel=0` };
     }
-    const driveMatch = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
-    if(driveMatch && driveMatch[1]){
-      return { type: "iframe", src: `https://drive.google.com/file/d/${driveMatch[1]}/preview` };
+    // 2. Google Drive (All link variations: /file/d/ID/..., open?id=ID, uc?id=ID)
+    const driveMatch = u.match(/drive\.google\.com\/(?:file\/d\/([a-zA-Z0-9_-]+)|open\?id=([a-zA-Z0-9_-]+)|uc\?id=([a-zA-Z0-9_-]+))/i);
+    const driveId = driveMatch ? (driveMatch[1] || driveMatch[2] || driveMatch[3]) : null;
+    if(driveId){
+      return { type: "iframe", src: `https://drive.google.com/file/d/${driveId}/preview` };
     }
+    // 3. Vimeo
     const vimeoMatch = u.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)/i);
     if(vimeoMatch && vimeoMatch[3]){
       return { type: "iframe", src: `https://player.vimeo.com/video/${vimeoMatch[3]}?autoplay=1` };
     }
+    // 4. Direct video URL / MP4 / WebM / Blob
     return { type: "html5", src: u };
   }
 
@@ -846,7 +851,9 @@ window.KAYAN_CONFIG = {
     const msgEl = document.getElementById("form-prop-video-msg");
 
     if(hiddenIn) hiddenIn.value = v;
-    if(urlIn) urlIn.value = (v && !/^data:/i.test(v)) ? v : "";
+    if(urlIn && urlIn !== document.activeElement) {
+      urlIn.value = (v && !/^data:/i.test(v)) ? v : "";
+    }
 
     if(v){
       if(clearBtn) clearBtn.style.display = "inline-flex";
@@ -868,80 +875,106 @@ window.KAYAN_CONFIG = {
     }
   }
 
-  // مستمعات رفع الفيديو في لوحة التحكم (رفع سحابي فوري يدعم أي حجم بدون قيود)
-  document.getElementById("form-prop-video-file")?.addEventListener("change", async (e) => {
-    const file = e.target.files && e.target.files[0];
-    if(!file) return;
-    const msgEl = document.getElementById("form-prop-video-msg");
-    const showMsg = (m, isErr) => {
-      if(!msgEl) return;
-      msgEl.textContent = m;
-      msgEl.style.color = isErr ? "#ef4444" : "var(--gold)";
-      msgEl.style.display = "block";
-    };
+  // دالة الرفع السحابي عبر Firebase Storage
+  async function uploadFileToFirebaseStorage(file, onProgress){
+    if(!window.firebase || !firebase.storage){
+      throw new Error("storage-sdk-missing");
+    }
+    const bucketCandidates = [
+      (CFG.FIREBASE && CFG.FIREBASE.storageBucket) || "kyan-b9581.firebasestorage.app",
+      "kyan-b9581.appspot.com",
+      "kyan-b9581.firebasestorage.app"
+    ].filter((v, i, a) => a.indexOf(v) === i);
 
-    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-    showMsg(`جارٍ تجهيز ورفع الفيديو (${sizeMB} ميجا)... يرجى الانتظار`, false);
-
-    // 1. محاولة الرفع السحابي عبر Firebase Storage أولاً (يدعم أي حجم دون أي قيود)
-    if(window.firebase && firebase.storage){
+    let lastErr = null;
+    for(const b of bucketCandidates){
       try {
-        const storage = firebase.storage();
+        const storage = firebase.app().storage("gs://" + b);
         const safeName = Date.now() + "_" + (file.name || "video.mp4").replace(/[^\w\.\-]/g, "_");
         const vRef = storage.ref("properties_videos/" + safeName);
         const task = vRef.put(file);
 
-        task.on("state_changed", 
-          (snap) => {
-            const pct = snap.totalBytes ? Math.round((snap.bytesTransferred / snap.totalBytes) * 100) : 0;
-            showMsg(`جارٍ رفع الفيديو إلى السحابة: ${pct}% (${sizeMB} ميجا)...`, false);
-          },
-          (err) => {
-            console.warn("Storage upload failed, trying direct fallback:", err);
-            fallbackDirect(file, showMsg, err);
-          },
-          async () => {
-            try {
-              const downloadUrl = await vRef.getDownloadURL();
-              setPropVideo(downloadUrl);
-              showMsg(`✓ تم رفع وتثبيت الفيديو بنجاح في السحابة (${sizeMB} ميجا)!`, false);
-              showToast("تم رفع الفيديو بنجاح! 🎥");
-            } catch(e2){
-              fallbackDirect(file, showMsg, e2);
+        const downloadUrl = await new Promise((resolve, reject) => {
+          task.on("state_changed",
+            (snap) => {
+              const pct = snap.totalBytes ? Math.round((snap.bytesTransferred / snap.totalBytes) * 100) : 0;
+              if(onProgress) onProgress(pct);
+            },
+            (err) => reject(err),
+            async () => {
+              try {
+                const u = await vRef.getDownloadURL();
+                resolve(u);
+              } catch(e) {
+                reject(e);
+              }
             }
-          }
-        );
-        return;
+          );
+        });
+
+        if(downloadUrl) return downloadUrl;
       } catch(err){
-        console.warn("Storage init failed:", err);
+        lastErr = err;
       }
     }
-
-    fallbackDirect(file, showMsg);
-  });
-
-  function fallbackDirect(file, showMsg, previousErr){
-    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-    if(file.size <= 25 * 1024 * 1024){
-      showMsg(`جارٍ إرفاق الفيديو مباشرة (${sizeMB} ميجا)...`, false);
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setPropVideo(ev.target.result);
-        showMsg(`✓ تم إرفاق ملف الفيديو بنجاح (${sizeMB} ميجا)!`, false);
-        showToast("تم إرفاق الفيديو بنجاح! 🎥");
-      };
-      reader.onerror = () => {
-        showMsg("تعذر قراءة ملف الفيديو، يمكنك استخدام رابط فيديو مباشر في الخانة بالأسفل", true);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      showMsg(`⚠️ حجم الفيديو (${sizeMB} ميجا) كبير للتخزين المباشر. يمكنك بسهولة لصق رابط الفيديو من YouTube أو Google Drive في الخانة بالأسفل وسيعمل فوراً بدون أي حدود للحجم!`, true);
-      showToast("استخدم رابط يوتيوب أو درايف للفيديوهات الكبيرة");
-    }
+    throw lastErr || new Error("storage-not-configured");
   }
+
+  // مستمعات رفع الفيديو في لوحة التحكم (رفع سحابي دائم يدعم أي حجم وبأعلى جودة)
+  document.getElementById("form-prop-video-file")?.addEventListener("change", async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const msgEl = document.getElementById("form-prop-video-msg");
+    const showMsg = (html) => {
+      if(!msgEl) return;
+      msgEl.innerHTML = html;
+      msgEl.style.display = "block";
+    };
+
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    showMsg(
+      <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
+        <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+        <span>جارٍ تجهيز ورفع الفيديو سحابياً ( + sizeMB +  ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
+      </div>
+    );
+
+    try {
+      const url = await uploadFileToFirebaseStorage(file, (pct) => {
+        const el = document.getElementById("prop-upload-pct");
+        if(el) el.textContent = pct + "%";
+      });
+      setPropVideo(url);
+      showMsg(
+        <div style="color:#10b981; font-weight:bold; margin-top:4px;">
+          ✓ تم رفع وتثبيت الفيديو بنجاح في السحابة ( + sizeMB +  ميجا)! 🎥
+        </div>
+      );
+      showToast("تم رفع وتثبيت الفيديو بنجاح! 🎥");
+    } catch(err){
+      console.warn("Storage upload failed:", err);
+      showMsg(
+        <div style="background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.4); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
+          <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚙️ تفعيل رفع الفيديوهات المباشرة من جهازك (لمرة واحدة فقط):</div>
+          <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
+            لرفع أي فيديو مباشرة من موبايلك أو كمبيوترك لأي حجم وبأعلى جودة، تحتاج خدمة Firebase Storage للضغط على <b>Get Started</b> مرة واحدة فقط في حسابك:
+          </div>
+          <a href="https://console.firebase.google.com/project/kyan-b9581/storage" target="_blank" rel="noopener noreferrer" style="display:inline-block; background:#e0a93b; color:#000; font-weight:700; padding:7px 15px; border-radius:6px; font-size:0.83rem; text-decoration:none; margin-bottom:8px;">
+            🚀 اضغط هنا لتفعيل Storage في Firebase بضغطة واحدة
+          </a>
+          <div style="font-size:0.82rem; color:#94a3b8; border-top:1px dashed rgba(255,255,255,0.15); padding-top:6px;">
+            ⚡ <b>أو بديل فوري بدون أي خطوات:</b> ارفع الفيديو على <b>YouTube</b> أو <b>Google Drive</b> والصق الرابط في الخانة بالأعلى وسيعمل فوراً بجودة فائقة وبأي حجم!
+          </div>
+        </div>
+      );
+      showToast("فعّل Firebase Storage أو الصق رابط الفيديو");
+    }
+  });
 
   document.getElementById("form-prop-video-url")?.addEventListener("input", (e) => {
     const v = e.target.value.trim();
+    const msgEl = document.getElementById("form-prop-video-msg");
+    if(msgEl) msgEl.style.display = "none";
     if(!v){ setPropVideo(""); return; }
     setPropVideo(v);
   });
@@ -950,6 +983,8 @@ window.KAYAN_CONFIG = {
     setPropVideo("");
     const fileIn = document.getElementById("form-prop-video-file");
     if(fileIn) fileIn.value = "";
+    const msgEl = document.getElementById("form-prop-video-msg");
+    if(msgEl) msgEl.style.display = "none";
     showToast("تم حذف الفيديو المرفق");
   });
 
