@@ -932,12 +932,12 @@ window.KAYAN_CONFIG = {
     };
 
     const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-    showMsg(
+    showMsg(`
       <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
         <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-        <span>جارٍ تجهيز ورفع الفيديو سحابياً ( + sizeMB +  ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
+        <span>جارٍ تجهيز ورفع الفيديو سحابياً (${sizeMB} ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
       </div>
-    );
+    `);
 
     try {
       const url = await uploadFileToFirebaseStorage(file, (pct) => {
@@ -945,15 +945,15 @@ window.KAYAN_CONFIG = {
         if(el) el.textContent = pct + "%";
       });
       setPropVideo(url);
-      showMsg(
+      showMsg(`
         <div style="color:#10b981; font-weight:bold; margin-top:4px;">
-          ✓ تم رفع وتثبيت الفيديو بنجاح في السحابة ( + sizeMB +  ميجا)! 🎥
+          ✓ تم رفع وتثبيت الفيديو بنجاح في السحابة (${sizeMB} ميجا)! 🎥
         </div>
-      );
+      `);
       showToast("تم رفع وتثبيت الفيديو بنجاح! 🎥");
     } catch(err){
       console.warn("Storage upload failed:", err);
-      showMsg(
+      showMsg(`
         <div style="background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.4); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
           <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚙️ تفعيل رفع الفيديوهات المباشرة من جهازك (لمرة واحدة فقط):</div>
           <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
@@ -966,7 +966,7 @@ window.KAYAN_CONFIG = {
             ⚡ <b>أو بديل فوري بدون أي خطوات:</b> ارفع الفيديو على <b>YouTube</b> أو <b>Google Drive</b> والصق الرابط في الخانة بالأعلى وسيعمل فوراً بجودة فائقة وبأي حجم!
           </div>
         </div>
-      );
+      `);
       showToast("فعّل Firebase Storage أو الصق رابط الفيديو");
     }
   });
