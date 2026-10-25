@@ -350,7 +350,23 @@ window.KAYAN_CONFIG = {
   const created = { properties: new Map(), students: new Map(), requests: new Map() }; // وقت الإنشاء لترتيب الأحدث أولاً
   const EMPTY_AD = { enabled: false, text: "", tag: "", btnText: "" };
   const PH = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%230d172a'/></svg>";
-  let PROPS = [], STUDENTS = [], REQUESTS = [], AD = EMPTY_AD;
+  const DEFAULT_PROPERTIES = [
+    {
+      id: "prop_tawba_mosque_1",
+      title: "شقة للبيع 80م عند مسجد التوبة",
+      category: "family",
+      price: "2,500,000 ج.م",
+      status: "available",
+      location: "عند مسجد التوبة - الدور الأول بلكونة",
+      area: "80 م²",
+      rooms: "3 غرف وصالة",
+      baths: "حمام ومطبخ",
+      badge: "أول بلكونة - للبيع",
+      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
+      video: ""
+    }
+  ];
+  let PROPS = DEFAULT_PROPERTIES.slice(), STUDENTS = [], REQUESTS = [], AD = EMPTY_AD;
   let loaded = false, isAdmin = false;
   const snaps = { properties: new Map(), students: new Map(), requests: new Map() };
   let queue = Promise.resolve();
@@ -459,7 +475,7 @@ window.KAYAN_CONFIG = {
         fetchAll("properties"),
         db.ref("settings/ad_banner").get()
       ]);
-      PROPS = props; setSnap("properties", PROPS);
+      PROPS = (props && props.length > 0) ? props : DEFAULT_PROPERTIES.slice(); setSnap("properties", PROPS);
       const adVal = ad.val();
       AD = (adVal && adVal.value) || EMPTY_AD;
     } catch(e){
