@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -1847,6 +1847,45 @@ button, a, input, select { touch-action: manipulation; }
 @media (max-width:768px),(hover:none){*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.navbar{background:rgba(8,15,28,.96)}}
 .hero-viewport{contain:layout paint}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.video-play-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(13, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  z-index: 4;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+.video-play-badge:hover {
+  background: var(--gold);
+  color: #070d18;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(212,175,55,0.4);
+}
+.btn-video-trigger {
+  padding: 8px 14px;
+  border-color: rgba(212,175,55,0.4);
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.btn-video-trigger:hover {
+  border-color: var(--gold);
+  background: rgba(212,175,55,0.12);
+  color: #fff;
+}
 </style>
 </head>
 <body>
@@ -2317,6 +2356,21 @@ button, a, input, select { touch-action: manipulation; }
 </div>
 
 <!-- Security Password Confirmation Modal for Deletions -->
+<!-- Property Video Player Modal -->
+<div class="admin-passcode-modal" id="property-video-modal" style="z-index: 35000000 !important;">
+  <div class="passcode-card" style="max-width:760px; width:95%; padding:22px; border-color: rgba(212,175,55,0.45); box-shadow: 0 25px 60px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border-subtle);">
+      <h3 style="color:#fff; font-size:1.25rem; margin:0; display:flex; align-items:center; gap:8px;">
+        <span style="color:var(--gold);">🎥</span>
+        <span id="video-modal-heading">فيديو معاينة الشقة</span>
+      </h3>
+      <button type="button" id="video-modal-close" style="background:none; border:none; color:var(--text-muted); font-size:1.8rem; cursor:pointer; line-height:1; transition:color 0.2s;">&times;</button>
+    </div>
+    <div id="video-modal-player-container" style="position:relative; width:100%; border-radius:12px; overflow:hidden; background:#000; min-height:260px; display:flex; align-items:center; justify-content:center;">
+    </div>
+  </div>
+</div>
+
 <div class="admin-passcode-modal" id="admin-delete-modal">
   <div class="passcode-card" style="border-color: rgba(239, 68, 68, 0.45); box-shadow: 0 25px 60px rgba(239, 68, 68, 0.2);">
     <div style="width:58px; height:58px; margin:0 auto 18px; border-radius:50%; background:rgba(239, 68, 68, 0.12); border:1px solid #ef4444; display:flex; align-items:center; justify-content:center; color:#ef4444;">
@@ -2788,6 +2842,28 @@ button, a, input, select { touch-action: manipulation; }
           </div>
           <img id="form-prop-image-preview" alt="معاينة الصورة" style="display:none; margin-top:10px; max-width:220px; max-height:150px; border-radius:10px; object-fit:cover;">
           <input type="text" id="form-prop-image-url" placeholder="أو الصق رابط صورة https://... (اختياري)" style="margin-top:10px">
+        </div>
+
+        <div class="form-field-admin full">
+          <label style="display:flex; justify-content:space-between; align-items:center;">
+            <span>فيديو الشقة (اختياري)</span>
+            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">فيديو من جهازك أو رابط يوتيوب/MP4</span>
+          </label>
+          <input type="hidden" id="form-prop-video">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <label for="form-prop-video-file" class="btn-outline" style="cursor:pointer; padding:10px 16px; margin:0; display:inline-flex; align-items:center; gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+              <span>🎥 رفع فيديو من الجهاز</span>
+            </label>
+            <input type="file" id="form-prop-video-file" accept="video/mp4,video/webm,video/ogg,video/quicktime" style="display:none">
+            <button type="button" class="btn-outline" id="form-prop-video-clear" style="padding:10px 16px; display:none;">حذف الفيديو</button>
+          </div>
+          <div id="form-prop-video-preview-wrap" style="display:none; margin-top:10px;">
+            <video id="form-prop-video-preview" controls playsinline style="max-width:100%; width:280px; max-height:160px; border-radius:10px; background:#000; border:1px solid var(--border-subtle); display:none;"></video>
+            <iframe id="form-prop-video-iframe" style="display:none; width:280px; height:160px; border-radius:10px; border:1px solid var(--border-subtle);" allowfullscreen></iframe>
+          </div>
+          <input type="text" id="form-prop-video-url" placeholder="أو اكتب رابط فيديو مباشر (MP4 أو YouTube أو Google Drive)" style="margin-top:10px">
+          <div id="form-prop-video-msg" style="display:none; font-size:0.8rem; margin-top:6px; color:var(--gold);"></div>
         </div>
       </div>
 

@@ -545,6 +545,7 @@ window.KAYAN_CONFIG = {
           <div class="card-badge ${isSold ? 'sold' : (isReserved ? 'reserved' : '')}">
             ${isSold ? 'تم البيع / Sold Out' : (isReserved ? 'محجوز مؤقتاً' : esc(p.badge || 'متاح للحجز'))}
           </div>
+          ${p.video ? `<button type="button" class="video-play-badge" data-video-prop-id="${esc(p.id)}" title="مشاهدة فيديو الشقة">🎥 فيديو الشقة</button>` : ''}
           <div class="card-price">${esc(p.price)}</div>
         </div>
         <div class="card-body">
@@ -572,6 +573,7 @@ window.KAYAN_CONFIG = {
               '<span class="btn-sold">تم البيع بالكامل</span>' : 
               '<a href="#contact" class="btn-primary" style="flex:1; justify-content:center;">حجز الشقة</a>'
             }
+            ${p.video ? `<button type="button" class="btn-outline btn-video-trigger" data-video-prop-id="${esc(p.id)}" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;"><span>🎥 فيديو</span></button>` : ''}
             <a href="#contact" class="btn-outline">معاينة 3D</a>
           </div>
         </div>
@@ -628,7 +630,10 @@ window.KAYAN_CONFIG = {
         <td><img src="${esc(safeImg(p.image))}" class="property-thumb" alt="${esc(p.title)}" loading="lazy" decoding="async"></td>
         <td>
           <strong style="color:#fff; display:block;">${esc(p.title)}</strong>
-          <span style="font-size:0.78rem; color:var(--gold);">${esc(p.badge || "")}</span>
+          <div style="display:flex; align-items:center; gap:6px; margin-top:2px; flex-wrap:wrap;">
+            <span style="font-size:0.78rem; color:var(--gold);">${esc(p.badge || "")}</span>
+            ${p.video ? `<button type="button" class="btn-video-admin-badge" data-video-prop-id="${esc(p.id)}" title="تشغيل فيديو الشقة" style="background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:var(--gold); font-size:0.72rem; padding:1px 6px; border-radius:4px; cursor:pointer; font-family:inherit;">🎥 فيديو</button>` : ''}
+          </div>
         </td>
         <td>
           <span style="color:var(--text-muted); font-size:0.85rem;">
@@ -730,6 +735,7 @@ window.KAYAN_CONFIG = {
     document.getElementById("form-prop-baths").value = item.baths;
     document.getElementById("form-prop-badge").value = item.badge || "";
         setPropImage(item.image || "");
+        setPropVideo(item.video || "");
 
     document.getElementById("admin-property-modal").classList.add("open");
   };
@@ -793,6 +799,176 @@ window.KAYAN_CONFIG = {
     if(ok){ prev.src = ok; prev.style.display = "block"; } else { prev.style.display = "none"; }
   });
   document.getElementById("form-prop-image-clear").addEventListener("click", () => setPropImage(""));
+
+  // ===== إدارة وفحص وعرض فيديو الشقة =====
+  function parseVideoSource(rawUrl){
+    if(!rawUrl || typeof rawUrl !== "string") return { type: "html5", src: "" };
+    const u = rawUrl.trim();
+    const ytMatch = u.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/i);
+    if(ytMatch && ytMatch[1]){
+      return { type: "iframe", src: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=1&rel=0` };
+    }
+    const driveMatch = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+    if(driveMatch && driveMatch[1]){
+      return { type: "iframe", src: `https://drive.google.com/file/d/${driveMatch[1]}/preview` };
+    }
+    const vimeoMatch = u.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)/i);
+    if(vimeoMatch && vimeoMatch[3]){
+      return { type: "iframe", src: `https://player.vimeo.com/video/${vimeoMatch[3]}?autoplay=1` };
+    }
+    return { type: "html5", src: u };
+  }
+
+  function setPropVideo(v){
+    v = (v || "").trim();
+    const hiddenIn = document.getElementById("form-prop-video");
+    const urlIn = document.getElementById("form-prop-video-url");
+    const clearBtn = document.getElementById("form-prop-video-clear");
+    const wrap = document.getElementById("form-prop-video-preview-wrap");
+    const vidPrev = document.getElementById("form-prop-video-preview");
+    const ifrPrev = document.getElementById("form-prop-video-iframe");
+    const msgEl = document.getElementById("form-prop-video-msg");
+
+    if(hiddenIn) hiddenIn.value = v;
+    if(urlIn) urlIn.value = (v && !/^data:/i.test(v)) ? v : "";
+
+    if(v){
+      if(clearBtn) clearBtn.style.display = "inline-flex";
+      if(wrap) wrap.style.display = "block";
+      const parsed = parseVideoSource(v);
+      if(parsed.type === "iframe"){
+        if(vidPrev){ vidPrev.pause(); vidPrev.removeAttribute("src"); vidPrev.style.display = "none"; }
+        if(ifrPrev){ ifrPrev.src = parsed.src; ifrPrev.style.display = "block"; }
+      } else {
+        if(ifrPrev){ ifrPrev.removeAttribute("src"); ifrPrev.style.display = "none"; }
+        if(vidPrev){ vidPrev.src = parsed.src; vidPrev.style.display = "block"; }
+      }
+    } else {
+      if(clearBtn) clearBtn.style.display = "none";
+      if(wrap) wrap.style.display = "none";
+      if(vidPrev){ vidPrev.pause(); vidPrev.removeAttribute("src"); vidPrev.style.display = "none"; }
+      if(ifrPrev){ ifrPrev.removeAttribute("src"); ifrPrev.style.display = "none"; }
+      if(msgEl) msgEl.style.display = "none";
+    }
+  }
+
+  // مستمعات رفع الفيديو في لوحة التحكم
+  document.getElementById("form-prop-video-file")?.addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const msgEl = document.getElementById("form-prop-video-msg");
+    const showMsg = (m, isErr) => {
+      if(!msgEl) return;
+      msgEl.textContent = m;
+      msgEl.style.color = isErr ? "#ef4444" : "var(--gold)";
+      msgEl.style.display = "block";
+    };
+
+    if(file.size > 10 * 1024 * 1024){
+      showMsg("⚠️ حجم ملف الفيديو (" + (file.size / (1024*1024)).toFixed(1) + " ميجا) يتجاوز الحد المسموح للتخزين المباشر (10 ميجابايت). يمكنك رفع الفيديو على يوتيوب أو Google Drive ووضع الرابط بالأسفل.", true);
+      showToast("حجم الفيديو كبير جداً للتخزين المباشر!");
+      return;
+    }
+
+    showMsg("جارٍ تحميل وتجهيز ملف الفيديو... يرجى الانتظار", false);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setPropVideo(ev.target.result);
+      showMsg("✓ تم إرفاق ملف الفيديو بنجاح!", false);
+      showToast("تم إرفاق الفيديو بنجاح! 🎥");
+    };
+    reader.onerror = () => {
+      showMsg("تعذر قراءة ملف الفيديو من الجهاز، حاول مرة أخرى", true);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("form-prop-video-url")?.addEventListener("input", (e) => {
+    const v = e.target.value.trim();
+    if(!v){ setPropVideo(""); return; }
+    setPropVideo(v);
+  });
+
+  document.getElementById("form-prop-video-clear")?.addEventListener("click", () => {
+    setPropVideo("");
+    const fileIn = document.getElementById("form-prop-video-file");
+    if(fileIn) fileIn.value = "";
+    showToast("تم حذف الفيديو المرفق");
+  });
+
+  // نافذة تشغيل الفيديو
+  function openVideoModal(propId){
+    const props = getProps();
+    const p = props.find(x => x.id === propId);
+    if(!p || !p.video) return;
+
+    const modal = document.getElementById("property-video-modal");
+    const heading = document.getElementById("video-modal-heading");
+    const container = document.getElementById("video-modal-player-container");
+    if(!modal || !container) return;
+
+    if(heading) heading.textContent = `فيديو: ${p.title}`;
+    container.innerHTML = "";
+
+    const vUrl = (p.video || "").trim();
+    const parsed = parseVideoSource(vUrl);
+
+    if(parsed.type === "iframe"){
+      const ifr = document.createElement("iframe");
+      ifr.src = parsed.src;
+      ifr.style.width = "100%";
+      ifr.style.height = "400px";
+      ifr.style.border = "none";
+      ifr.setAttribute("allowfullscreen", "true");
+      ifr.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+      container.appendChild(ifr);
+    } else {
+      const vid = document.createElement("video");
+      vid.src = parsed.src;
+      vid.controls = true;
+      vid.autoplay = true;
+      vid.playsInline = true;
+      vid.style.width = "100%";
+      vid.style.maxHeight = "460px";
+      vid.style.borderRadius = "8px";
+      vid.style.background = "#000";
+      container.appendChild(vid);
+    }
+
+    modal.classList.add("show");
+  }
+
+  function closeVideoModal(){
+    const modal = document.getElementById("property-video-modal");
+    if(!modal) return;
+    modal.classList.remove("show");
+    const container = document.getElementById("video-modal-player-container");
+    if(container){
+      const vid = container.querySelector("video");
+      if(vid) vid.pause();
+      container.innerHTML = "";
+    }
+  }
+
+  document.body.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-video-prop-id]");
+    if(btn){
+      e.preventDefault();
+      openVideoModal(btn.dataset.videoPropId);
+    }
+  });
+
+  document.getElementById("video-modal-close")?.addEventListener("click", closeVideoModal);
+  document.getElementById("property-video-modal")?.addEventListener("click", (e) => {
+    if(e.target === document.getElementById("property-video-modal")) closeVideoModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape"){
+      closeVideoModal();
+    }
+  });
+
   // Admin: Add Unit Modal
   const addModal = document.getElementById("admin-property-modal");
   const addForm = document.getElementById("admin-property-form");
@@ -805,6 +981,7 @@ window.KAYAN_CONFIG = {
     addForm.reset();
     document.getElementById("form-prop-id").value = "";
         setPropImage("");
+        setPropVideo("");
     addModal.classList.add("open");
   });
 
@@ -836,7 +1013,8 @@ window.KAYAN_CONFIG = {
       rooms: document.getElementById("form-prop-rooms").value.trim(),
       baths: document.getElementById("form-prop-baths").value.trim(),
       badge: document.getElementById("form-prop-badge").value.trim() || (document.getElementById("form-prop-status").value === "sold" ? "تم البيع" : "متاح للحجز"),
-      image: document.getElementById("form-prop-image").value.trim()
+      image: document.getElementById("form-prop-image").value.trim(),
+      video: (document.getElementById("form-prop-video").value || "").trim()
     };
 
     if(id){
