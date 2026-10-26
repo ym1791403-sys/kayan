@@ -931,6 +931,22 @@ window.KAYAN_CONFIG = {
     }
   }
 
+  // فحص توفر خدمة التخزين السحابي Firebase Storage بسرعة وبدون تجميد
+  async function checkStorageBucketExists(bucket){
+    try {
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 1200);
+      const res = await fetch("https://firebasestorage.googleapis.com/v0/b/" + bucket + "/o?maxResults=1", {
+        method: "GET",
+        signal: ctrl.signal
+      });
+      clearTimeout(tid);
+      return res.status !== 404;
+    } catch(e) {
+      return false;
+    }
+  }
+
   // دالة الرفع السحابي عبر Firebase Storage
   async function uploadFileToFirebaseStorage(file, onProgress){
     if(!window.firebase || !firebase.storage){
@@ -942,22 +958,33 @@ window.KAYAN_CONFIG = {
       "kyan-b9581.firebasestorage.app"
     ].filter((v, i, a) => a.indexOf(v) === i);
 
-    let lastErr = null;
     for(const b of bucketCandidates){
+      // فحص سريع: هل الباكت موجود أصلاً لتفادي التجميد؟
+      const available = await checkStorageBucketExists(b);
+      if(!available) continue;
+
       try {
         const storage = firebase.app().storage("gs://" + b);
+        storage.setMaxUploadRetryTime(8000);
+        storage.setMaxOperationRetryTime(8000);
         const safeName = Date.now() + "_" + (file.name || "video.mp4").replace(/[^\w\.\-]/g, "_");
         const vRef = storage.ref("properties_videos/" + safeName);
         const task = vRef.put(file);
 
         const downloadUrl = await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            try { task.cancel(); } catch(e){}
+            reject(new Error("upload-timeout"));
+          }, 45000);
+
           task.on("state_changed",
             (snap) => {
               const pct = snap.totalBytes ? Math.round((snap.bytesTransferred / snap.totalBytes) * 100) : 0;
               if(onProgress) onProgress(pct);
             },
-            (err) => reject(err),
+            (err) => { clearTimeout(timeout); reject(err); },
             async () => {
+              clearTimeout(timeout);
               try {
                 const u = await vRef.getDownloadURL();
                 resolve(u);
@@ -970,10 +997,10 @@ window.KAYAN_CONFIG = {
 
         if(downloadUrl) return downloadUrl;
       } catch(err){
-        lastErr = err;
+        console.warn("Storage upload failed on bucket " + b + ":", err);
       }
     }
-    throw lastErr || new Error("storage-not-configured");
+    throw new Error("storage-not-configured");
   }
 
   // مستمعات رفع الفيديو في لوحة التحكم (دعم الرفع السحابي والمباشر من الجهاز)
@@ -991,10 +1018,11 @@ window.KAYAN_CONFIG = {
     showMsg(`
       <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
         <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-        <span>جارٍ تجهيز ورفع الفيديو (${sizeMB} ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
+        <span>جارٍ تجهيز وقراءة الفيديو (${sizeMB} ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
       </div>
     `);
 
+    // 1. محاولة الرفع السحابي (إذا كانت الخدمة مفعلة في المشروع)
     try {
       const url = await uploadFileToFirebaseStorage(file, (pct) => {
         const el = document.getElementById("prop-upload-pct");
@@ -1007,47 +1035,50 @@ window.KAYAN_CONFIG = {
         </div>
       `);
       showToast("تم رفع وتثبيت الفيديو بنجاح! 🎥");
+      return;
     } catch(err){
       console.warn("Storage upload not available, processing direct file attach:", err);
-      if(file.size <= 8 * 1024 * 1024){
+    }
+
+    // 2. إرفاق الفيديو مباشرة من الجهاز (يعمل فوراً وبدون الحاجة لأي إعدادات خارجية)
+    if(file.size <= 15 * 1024 * 1024){
+      showMsg(`
+        <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
+          <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+          <span>جارٍ إرفاق الفيديو مباشرة من جهازك (${sizeMB} ميجا)...</span>
+        </div>
+      `);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setPropVideo(ev.target.result);
         showMsg(`
-          <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
-            <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-            <span>جارٍ معالجة وتثبيت ملف الفيديو مباشرة (${sizeMB} ميجا)...</span>
+          <div style="color:#10b981; font-weight:bold; margin-top:4px;">
+            ✓ تم إرفاق ومعاينة الفيديو بنجاح من جهازك (${sizeMB} ميجا)! اضغط "حفظ ونشر الشقة" لحفظه 🎥
           </div>
         `);
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          setPropVideo(ev.target.result);
-          showMsg(`
-            <div style="color:#10b981; font-weight:bold; margin-top:4px;">
-              ✓ تم إرفاق ومعاينة الفيديو بنجاح من جهازك (${sizeMB} ميجا)! يمكنك الآن حفظ الشقة 🎥
-            </div>
-          `);
-          showToast("تم إرفاق الفيديو بنجاح! 🎥");
-        };
-        reader.onerror = () => {
-          showMsg(`
-            <div style="color:#ef4444; font-weight:bold;">
-              تعذر قراءة ملف الفيديو من الجهاز، حاول مرة أخرى أو استخدم رابط الفيديو.
-            </div>
-          `);
-        };
-        reader.readAsDataURL(file);
-      } else {
+        showToast("تم إرفاق الفيديو بنجاح من جهازك! 🎥");
+      };
+      reader.onerror = () => {
         showMsg(`
-          <div style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.5); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
-            <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚠️ حجم ملف الفيديو (${sizeMB} ميجا) كبير للحفظ المباشر</div>
-            <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
-              حتى يعمل الفيديو بسرعة فائقة وبدون أي بطء للموقع على الموبايل:
-            </div>
-            <div style="font-size:0.82rem; color:#e2e8f0; line-height:1.7;">
-              📌 ارفع الفيديو على <b>Google Drive</b> أو <b>YouTube</b> والصق الرابط في خانة الرابط وسيعمل فوراً بجودة فائقة وبأي حجم!
-            </div>
+          <div style="color:#ef4444; font-weight:bold;">
+            تعذر قراءة ملف الفيديو من الجهاز، حاول مرة أخرى أو استخدم رابط فيديو.
           </div>
         `);
-        showToast("استخدم رابط YouTube أو Google Drive للفيديوهات الكبيرة");
-      }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      showMsg(`
+        <div style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.5); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
+          <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚠️ حجم ملف الفيديو (${sizeMB} ميجا) كبير للحفظ المباشر</div>
+          <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
+            حتى يعمل الفيديو بسرعة فائقة وبدون أي بطء للموقع على الموبايل:
+          </div>
+          <div style="font-size:0.82rem; color:#e2e8f0; line-height:1.7;">
+            📌 ارفع الفيديو على <b>Google Drive</b> أو <b>YouTube</b> والصق الرابط في خانة الرابط وسيعمل فوراً بجودة فائقة وبأي حجم!
+          </div>
+        </div>
+      `);
+      showToast("استخدم رابط YouTube أو Google Drive للفيديوهات الكبيرة");
     }
   });
 
