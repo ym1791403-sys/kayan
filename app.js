@@ -976,7 +976,7 @@ window.KAYAN_CONFIG = {
     throw lastErr || new Error("storage-not-configured");
   }
 
-  // مستمعات رفع الفيديو في لوحة التحكم (رفع سحابي دائم يدعم أي حجم وبأعلى جودة)
+  // مستمعات رفع الفيديو في لوحة التحكم (دعم الرفع السحابي والمباشر من الجهاز)
   document.getElementById("form-prop-video-file")?.addEventListener("change", async (e) => {
     const file = e.target.files && e.target.files[0];
     if(!file) return;
@@ -991,7 +991,7 @@ window.KAYAN_CONFIG = {
     showMsg(`
       <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
         <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-        <span>جارٍ تجهيز ورفع الفيديو سحابياً (${sizeMB} ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
+        <span>جارٍ تجهيز ورفع الفيديو (${sizeMB} ميجا)... يرجى الانتظار <b id="prop-upload-pct">0%</b></span>
       </div>
     `);
 
@@ -1008,22 +1008,46 @@ window.KAYAN_CONFIG = {
       `);
       showToast("تم رفع وتثبيت الفيديو بنجاح! 🎥");
     } catch(err){
-      console.warn("Storage upload failed:", err);
-      showMsg(`
-        <div style="background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.4); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
-          <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚙️ تفعيل رفع الفيديوهات المباشرة من جهازك (لمرة واحدة فقط):</div>
-          <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
-            لرفع أي فيديو مباشرة من موبايلك أو كمبيوترك لأي حجم وبأعلى جودة، تحتاج خدمة Firebase Storage للضغط على <b>Get Started</b> مرة واحدة فقط في حسابك:
+      console.warn("Storage upload not available, processing direct file attach:", err);
+      if(file.size <= 8 * 1024 * 1024){
+        showMsg(`
+          <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+            <span>جارٍ معالجة وتثبيت ملف الفيديو مباشرة (${sizeMB} ميجا)...</span>
           </div>
-          <a href="https://console.firebase.google.com/project/kyan-b9581/storage" target="_blank" rel="noopener noreferrer" style="display:inline-block; background:#e0a93b; color:#000; font-weight:700; padding:7px 15px; border-radius:6px; font-size:0.83rem; text-decoration:none; margin-bottom:8px;">
-            🚀 اضغط هنا لتفعيل Storage في Firebase بضغطة واحدة
-          </a>
-          <div style="font-size:0.82rem; color:#94a3b8; border-top:1px dashed rgba(255,255,255,0.15); padding-top:6px;">
-            ⚡ <b>أو بديل فوري بدون أي خطوات:</b> ارفع الفيديو على <b>YouTube</b> أو <b>Google Drive</b> والصق الرابط في الخانة بالأعلى وسيعمل فوراً بجودة فائقة وبأي حجم!
+        `);
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          setPropVideo(ev.target.result);
+          showMsg(`
+            <div style="color:#10b981; font-weight:bold; margin-top:4px;">
+              ✓ تم إرفاق ومعاينة الفيديو بنجاح من جهازك (${sizeMB} ميجا)! يمكنك الآن حفظ الشقة 🎥
+            </div>
+          `);
+          showToast("تم إرفاق الفيديو بنجاح! 🎥");
+        };
+        reader.onerror = () => {
+          showMsg(`
+            <div style="color:#ef4444; font-weight:bold;">
+              تعذر قراءة ملف الفيديو من الجهاز، حاول مرة أخرى أو استخدم رابط الفيديو.
+            </div>
+          `);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        showMsg(`
+          <div style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.5); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
+            <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚠️ حجم ملف الفيديو (${sizeMB} ميجا) كبير للحفظ المباشر</div>
+            <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
+              حتى يعمل الفيديو بسرعة فائقة وبدون أي بطء للموقع على الموبايل:
+            </div>
+            <div style="font-size:0.82rem; color:#e2e8f0; line-height:1.7;">
+              📌 ارفع الفيديو على <b>Google Drive</b> أو <b>YouTube</b> والصق الرابط في خانة الرابط وسيعمل فوراً بجودة فائقة وبأي حجم!
+            </div>
           </div>
-        </div>
-      `);
-      showToast("فعّل Firebase Storage أو الصق رابط الفيديو");
+        `);
+        showToast("استخدم رابط YouTube أو Google Drive للفيديوهات الكبيرة");
+      }
     }
   });
 
