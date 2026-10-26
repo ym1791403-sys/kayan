@@ -507,9 +507,13 @@ window.KAYAN_CONFIG = {
       del.forEach(id => { updates[table + "/" + id] = null; stamps.delete(id); });
       await db.ref().update(updates);
     }).catch(err => {
-      console.error(err);
-      showToast("⚠️ فشل الحفظ في قاعدة البيانات: " + (err.message || ""));
-      reloadAll();
+      console.error("syncTable error:", err);
+      const msg = err ? (err.message || String(err)) : "";
+      if(msg.includes("exceeds maximum") || msg.includes("too large") || msg.includes("maximum allowed size")){
+        showToast("⚠️ فشل الحفظ: مساحة البيانات كبيرة على قاعدة البيانات (تأكد من عدم رفع ملف فيديو كبير مباشرة)");
+      } else {
+        showToast("⚠️ فشل الحفظ في قاعدة البيانات: " + msg);
+      }
     });
   }
 
@@ -935,13 +939,18 @@ window.KAYAN_CONFIG = {
   async function checkStorageBucketExists(bucket){
     try {
       const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), 1200);
+      const tid = setTimeout(() => ctrl.abort(), 1500);
       const res = await fetch("https://firebasestorage.googleapis.com/v0/b/" + bucket + "/o?maxResults=1", {
         method: "GET",
         signal: ctrl.signal
       });
       clearTimeout(tid);
-      return res.status !== 404;
+      if(res.status === 404) return false;
+      const data = await res.json().catch(() => null);
+      if(data && data.error && (data.error.code === 404 || (data.error.message && data.error.message.includes("Not Found")))) {
+        return false;
+      }
+      return res.ok;
     } catch(e) {
       return false;
     }
@@ -1040,46 +1049,28 @@ window.KAYAN_CONFIG = {
       console.warn("Storage upload not available, processing direct file attach:", err);
     }
 
-    // 2. إرفاق الفيديو مباشرة من الجهاز (يعمل فوراً وبدون الحاجة لأي إعدادات خارجية)
-    if(file.size <= 15 * 1024 * 1024){
-      showMsg(`
-        <div style="color:var(--gold); display:flex; align-items:center; gap:8px;">
-          <span style="display:inline-block; width:14px; height:14px; border:2px solid var(--gold); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-          <span>جارٍ إرفاق الفيديو مباشرة من جهازك (${sizeMB} ميجا)...</span>
+    // 2. إذا كانت خدمة Storage غير مفعلة في Firebase Console
+    setPropVideo("");
+    const fileIn = document.getElementById("form-prop-video-file");
+    if(fileIn) fileIn.value = "";
+
+    showMsg(`
+      <div style="background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.45); border-radius:10px; padding:14px; margin-top:8px; text-align:right; line-height:1.75; color:#fff;">
+        <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:6px;">
+          ⚠️ قاعدة البيانات مخصصة لبيانات الشقق والروابط، وحجم فيديوهات الموبايل يتجاوز الحد المسموح لقاعدة البيانات
         </div>
-      `);
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setPropVideo(ev.target.result);
-        showMsg(`
-          <div style="color:#10b981; font-weight:bold; margin-top:4px;">
-            ✓ تم إرفاق ومعاينة الفيديو بنجاح من جهازك (${sizeMB} ميجا)! اضغط "حفظ ونشر الشقة" لحفظه 🎥
-          </div>
-        `);
-        showToast("تم إرفاق الفيديو بنجاح من جهازك! 🎥");
-      };
-      reader.onerror = () => {
-        showMsg(`
-          <div style="color:#ef4444; font-weight:bold;">
-            تعذر قراءة ملف الفيديو من الجهاز، حاول مرة أخرى أو استخدم رابط فيديو.
-          </div>
-        `);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      showMsg(`
-        <div style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.5); border-radius:8px; padding:12px; margin-top:8px; text-align:right; line-height:1.6; color:#fff;">
-          <div style="font-weight:700; color:#fbbf24; font-size:0.95rem; margin-bottom:4px;">⚠️ حجم ملف الفيديو (${sizeMB} ميجا) كبير للحفظ المباشر</div>
-          <div style="font-size:0.83rem; color:#cbd5e1; margin-bottom:8px;">
-            حتى يعمل الفيديو بسرعة فائقة وبدون أي بطء للموقع على الموبايل:
-          </div>
-          <div style="font-size:0.82rem; color:#e2e8f0; line-height:1.7;">
-            📌 ارفع الفيديو على <b>Google Drive</b> أو <b>YouTube</b> والصق الرابط في خانة الرابط وسيعمل فوراً بجودة فائقة وبأي حجم!
-          </div>
+        <div style="font-size:0.84rem; color:#cbd5e1; margin-bottom:8px;">
+          لتشغيل الفيديو بجودة 4K وبدون أي بطء للموقع أو خطأ في الحفظ، اختر إحدى الطرق:
         </div>
-      `);
-      showToast("استخدم رابط YouTube أو Google Drive للفيديوهات الكبيرة");
-    }
+        <div style="font-size:0.83rem; color:#e2e8f0; line-height:1.8;">
+          🎥 <b>الطريقة الأسرع والأفضل (تعمل فوراً بأعلى جودة):</b><br>
+          ارفع الفيديو على <b>YouTube</b> (يمكنك ضبطه "غير مدرج") أو <b>Google Drive</b> والصق الرابط في خانة الرابط أعلاه وسيعمل فوراً بجودة فائقة وبأي مساحة!
+          <br><br>
+          💬 <b>أو أرسل الفيديو لي في الشات هنا:</b> وسأقوم بربطه بالشقة فوراً وبدون أي عناء منك!
+        </div>
+      </div>
+    `);
+    showToast("يرجى استخدام رابط YouTube أو Google Drive لتشغيل الفيديو بأعلى جودة");
   });
 
   document.getElementById("form-prop-video-url")?.addEventListener("input", (e) => {
@@ -1202,6 +1193,11 @@ window.KAYAN_CONFIG = {
 
   addForm.addEventListener("submit", (e) => {
     e.preventDefault();
+    const vidVal = (document.getElementById("form-prop-video").value || "").trim();
+    if(vidVal.startsWith("data:") && vidVal.length > 2 * 1024 * 1024){
+      showToast("⚠️ مساحة الفيديو المرفق كبيرة على قاعدة البيانات. يرجى وضع رابط الفيديو من YouTube أو Google Drive.");
+      return;
+    }
     const id = document.getElementById("form-prop-id").value;
     const props = getProps();
 
