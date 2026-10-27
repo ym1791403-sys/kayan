@@ -557,10 +557,16 @@ window.KAYAN_CONFIG = {
   function getAd(){ return AD || EMPTY_AD; }
   function saveAd(a){
     AD = a;
+    try { localStorage.setItem("kayan_ad_banner", JSON.stringify(a)); } catch(e){}
+    renderPublicAd();
+    if(isAdmin) loadAdminAd();
     if(!db) return;
     queue = queue.then(async () => {
       await db.ref("settings/ad_banner").set({ value: JSON.parse(JSON.stringify(a)) });
-    }).catch(err => { console.error(err); showToast("⚠️ فشل حفظ الإعلان: " + (err.message || "")); });
+    }).catch(err => {
+      console.error("saveAd error:", err);
+      showToast("⚠️ فشل حفظ الإعلان في قاعدة البيانات: " + (err.message || ""));
+    });
   }
 
   async function loadPublic(){
@@ -570,12 +576,19 @@ window.KAYAN_CONFIG = {
         fetchAll("properties"),
         db.ref("settings/ad_banner").get()
       ]);
-      PROPS = (props && props.length > 0) ? props : DEFAULT_PROPERTIES.slice(); setSnap("properties", PROPS);
+      PROPS = (props && props.length > 0) ? props : DEFAULT_PROPERTIES.slice();
+      setSnap("properties", PROPS);
       const adVal = ad.val();
-      AD = (adVal && adVal.value) || EMPTY_AD;
+      if(adVal){
+        AD = (adVal.value && typeof adVal.value === "object") ? adVal.value : (adVal.text !== undefined ? adVal : EMPTY_AD);
+      } else {
+        const localAd = localStorage.getItem("kayan_ad_banner");
+        AD = localAd ? JSON.parse(localAd) : EMPTY_AD;
+      }
     } catch(e){
-      console.error(e);
-      showToast("تعذر تحميل البيانات من قاعدة البيانات");
+      console.error("loadPublic error:", e);
+      const localAd = localStorage.getItem("kayan_ad_banner");
+      if(localAd) try { AD = JSON.parse(localAd); } catch(_){}
     }
     loaded = true;
     renderPublicAd();
@@ -604,16 +617,35 @@ window.KAYAN_CONFIG = {
     setTimeout(() => { t.style.display = "none"; }, 3000);
   }
 
-  // 1. Render Public Announcement Bar
+  // 1. Render Public Announcement Bar (شريط الإعلانات العام في أعلى الموقع)
   function renderPublicAd(){
     const ad = getAd();
     const adBar = document.getElementById("ad-announcement-bar");
-    if(ad && ad.enabled && ad.text && ad.text.trim() !== "" && adBar){
+    if(!adBar) return;
+    const isEnabled = ad && (ad.enabled === true || ad.enabled === "true") && ad.text && ad.text.trim() !== "";
+    if(isEnabled){
       adBar.style.display = "flex";
-      document.getElementById("ad-text-content").innerText = ad.text || "";
-      document.getElementById("ad-pill").innerText = ad.tag || "عرض خاص";
-      document.getElementById("ad-action-btn").innerText = ad.btnText || "احجز الآن";
-    } else if(adBar){
+      const txtEl = document.getElementById("ad-text-content");
+      if(txtEl) txtEl.innerText = ad.text.trim();
+
+      const pillEl = document.getElementById("ad-pill");
+      if(pillEl){
+        const tag = (ad.tag || "").trim();
+        if(tag){
+          pillEl.innerText = tag;
+          pillEl.style.display = "inline-block";
+        } else {
+          pillEl.style.display = "none";
+        }
+      }
+
+      const btnEl = document.getElementById("ad-action-btn");
+      if(btnEl){
+        const btnTxt = (ad.btnText || "").trim();
+        btnEl.innerText = btnTxt || "احجز الآن";
+        btnEl.style.display = "inline-flex";
+      }
+    } else {
       adBar.style.display = "none";
     }
   }
@@ -1660,33 +1692,56 @@ window.KAYAN_CONFIG = {
 
   function loadAdminAd(){
     const a = getAd();
-    adminAdEnabled.checked = a.enabled || false;
-    adminAdText.value = a.text || "";
-    adminAdTag.value = a.tag || "";
-    adminAdBtnText.value = a.btnText || "";
+    if(adminAdEnabled) adminAdEnabled.checked = (a.enabled === true || a.enabled === "true");
+    if(adminAdText) adminAdText.value = a.text || "";
+    if(adminAdTag) adminAdTag.value = a.tag || "";
+    if(adminAdBtnText) adminAdBtnText.value = a.btnText || "";
     updateAdPreview();
   }
 
   function updateAdPreview(){
-    adPreviewText.innerText = adminAdText.value || "اكتب نص الإعلان الذي تريده...";
-    adPreviewBtn.innerText = adminAdBtnText.value || "احجز الآن";
-    adPreviewBox.style.display = (adminAdEnabled.checked && adminAdText.value.trim() !== "") ? "flex" : "none";
+    const enabled = adminAdEnabled && adminAdEnabled.checked;
+    const txt = (adminAdText && adminAdText.value) || "";
+    const btn = (adminAdBtnText && adminAdBtnText.value) || "احجز الآن";
+
+    if(adPreviewText) adPreviewText.innerText = txt || "اكتب نص الإعلان الذي تريده...";
+    if(adPreviewBtn) adPreviewBtn.innerText = btn || "احجز الآن";
+    if(adPreviewBox){
+      adPreviewBox.style.display = (enabled && txt.trim() !== "") ? "flex" : "none";
+    }
   }
 
-  adminAdText.addEventListener("input", updateAdPreview);
-  adminAdBtnText.addEventListener("input", updateAdPreview);
-  adminAdEnabled.addEventListener("change", updateAdPreview);
+  adminAdText?.addEventListener("input", updateAdPreview);
+  adminAdTag?.addEventListener("input", updateAdPreview);
+  adminAdBtnText?.addEventListener("input", updateAdPreview);
+  adminAdEnabled?.addEventListener("change", updateAdPreview);
 
-  btnSaveAd.addEventListener("click", () => {
+  // جعل زر التبديل والـ Switch قابل للنقر والاستجابة الفورية
+  document.getElementById("switch-toggle-ad")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if(adminAdEnabled){
+      adminAdEnabled.checked = !adminAdEnabled.checked;
+      adminAdEnabled.dispatchEvent(new Event("change"));
+    }
+  });
+
+  btnSaveAd?.addEventListener("click", () => {
+    const txt = (adminAdText.value || "").trim();
+    if(adminAdEnabled.checked && !txt){
+      showToast("⚠️ يرجى كتابة نص الإعلان أولاً قبل الحفظ");
+      adminAdText.focus();
+      return;
+    }
     const a = {
       enabled: adminAdEnabled.checked,
-      text: adminAdText.value.trim(),
-      tag: adminAdTag.value.trim(),
-      btnText: adminAdBtnText.value.trim()
+      text: txt,
+      tag: (adminAdTag.value || "").trim(),
+      btnText: (adminAdBtnText.value || "").trim() || "احجز الآن"
     };
     saveAd(a);
     renderPublicAd();
-    showToast("تم حفظ الإعلان ونشره بالموقع بنجاح!");
+    updateAdPreview();
+    showToast("✓ تم حفظ وتطبيق الإعلان فوراً في الموقع! ✨");
   });
 
   if(btnDeleteAd){
@@ -2433,6 +2488,18 @@ window.KAYAN_CONFIG = {
     auth.onAuthStateChanged(async user => {
       await refreshAdminState(user);
       if(isAdmin){ try { await loadStudents(); } catch(e){} try { await loadRequests(); } catch(e){} }
+    });
+    // استماع لحظي لتحديثات الإعلان ليعمل على الفور بدون تأخير
+    db.ref("settings/ad_banner").on("value", snapshot => {
+      const val = snapshot.val();
+      if(val){
+        AD = (val.value && typeof val.value === "object") ? val.value : (val.text !== undefined ? val : EMPTY_AD);
+      } else {
+        AD = EMPTY_AD;
+      }
+      try { localStorage.setItem("kayan_ad_banner", JSON.stringify(AD)); } catch(e){}
+      renderPublicAd();
+      if(isAdmin) loadAdminAd();
     });
     loadPublic();
   } else {

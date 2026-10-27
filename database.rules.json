@@ -8,17 +8,17 @@
       ".read": true,
       ".write": true
     },
-    "request_counter": {
+    "students": {
       ".read": true,
       ".write": true
     },
     "requests": {
-      ".read": "auth != null",
+      ".read": true,
       ".write": true
     },
-    "students": {
-      ".read": "auth != null",
-      ".write": "auth != null"
+    "request_counter": {
+      ".read": true,
+      ".write": true
     }
   }
 }

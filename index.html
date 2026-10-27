@@ -2643,9 +2643,9 @@ button, a, input, select { touch-action: manipulation; }
         </div>
 
         <div class="ad-editor-box">
-          <label class="ad-switch-label">
-            <input type="checkbox" id="admin-ad-enabled" style="display:none">
-            <div class="switch-toggle"></div>
+          <label class="ad-switch-label" id="label-admin-ad-enabled" style="cursor:pointer; user-select:none;">
+            <input type="checkbox" id="admin-ad-enabled" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
+            <div class="switch-toggle" id="switch-toggle-ad"></div>
             <span>تفعيل شريط الإعلانات في أعلى الموقع العام</span>
           </label>
 
