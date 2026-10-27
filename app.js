@@ -427,8 +427,43 @@ window.KAYAN_CONFIG = {
   const snaps = { properties: new Map(), students: new Map(), requests: new Map() };
   let queue = Promise.resolve();
 
+  // تحسين دالة الهروب للوقاية الشاملة من ثغرات XSS
   function esc(v){
-    return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    if(v == null) return "";
+    return String(v).replace(/[&<>"'`=\/]/g, c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+      "`": "&#96;",
+      "=": "&#61;",
+      "/": "&#47;"
+    }[c] || c));
+  }
+
+  // تعقيم وفحص المدخلات لمنع ثغرات XSS وحقن الأكواد والوسوم
+  function sanitizeInput(str, maxLen){
+    if(str == null) return "";
+    let s = String(str).trim();
+    // إزالة أي وسوم HTML نهائياً
+    s = s.replace(/<[^>]*>?/gm, "");
+    // إزالة بروتوكولات الاستدعاء البرمجية
+    s = s.replace(/javascript\s*:/gi, "");
+    s = s.replace(/vbscript\s*:/gi, "");
+    s = s.replace(/on\w+\s*=/gi, "");
+    if(maxLen && s.length > maxLen){
+      s = s.slice(0, maxLen).trim();
+    }
+    return s;
+  }
+
+  function safeUrl(u){
+    if(!u || typeof u !== "string") return "";
+    const trimmed = u.trim();
+    if(/^https?:\/\//i.test(trimmed)) return trimmed;
+    if(/^data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,/i.test(trimmed)) return trimmed;
+    return "";
   }
 
   function safeImg(url){
@@ -1203,16 +1238,16 @@ window.KAYAN_CONFIG = {
 
     const newObj = {
       id: id || "prop_" + Date.now(),
-      title: document.getElementById("form-prop-title").value.trim(),
+      title: sanitizeInput(document.getElementById("form-prop-title").value, 120),
       category: document.getElementById("form-prop-category").value,
-      price: document.getElementById("form-prop-price").value.trim(),
+      price: sanitizeInput(document.getElementById("form-prop-price").value, 60),
       status: document.getElementById("form-prop-status").value,
-      location: document.getElementById("form-prop-location").value.trim(),
-      area: document.getElementById("form-prop-area").value.trim(),
-      rooms: document.getElementById("form-prop-rooms").value.trim(),
-      baths: document.getElementById("form-prop-baths").value.trim(),
-      badge: document.getElementById("form-prop-badge").value.trim() || (document.getElementById("form-prop-status").value === "sold" ? "تم البيع" : "متاح للحجز"),
-      image: document.getElementById("form-prop-image").value.trim(),
+      location: sanitizeInput(document.getElementById("form-prop-location").value, 150),
+      area: sanitizeInput(document.getElementById("form-prop-area").value, 40),
+      rooms: sanitizeInput(document.getElementById("form-prop-rooms").value, 60),
+      baths: sanitizeInput(document.getElementById("form-prop-baths").value, 60),
+      badge: sanitizeInput(document.getElementById("form-prop-badge").value, 60) || (document.getElementById("form-prop-status").value === "sold" ? "تم البيع" : "متاح للحجز"),
+      image: safeUrl(document.getElementById("form-prop-image").value.trim()) || safeImg(document.getElementById("form-prop-image").value.trim()),
       video: (document.getElementById("form-prop-video").value || "").trim()
     };
 
@@ -1516,18 +1551,18 @@ window.KAYAN_CONFIG = {
 
       const newStudent = {
         id: id || "std_" + Date.now(),
-        name: document.getElementById("form-student-name").value.trim(),
-        phone: document.getElementById("form-student-phone").value.trim(),
-        city: document.getElementById("form-student-city").value.trim(),
-        college: document.getElementById("form-student-college").value.trim(),
-        building: document.getElementById("form-student-building").value.trim(),
-        apartment: document.getElementById("form-student-apartment").value.trim(),
-        address: document.getElementById("form-student-address").value.trim(),
-        owner: document.getElementById("form-student-owner").value.trim(),
-        supervisor: document.getElementById("form-student-supervisor").value,
+        name: sanitizeInput(document.getElementById("form-student-name").value, 80),
+        phone: sanitizeInput(document.getElementById("form-student-phone").value, 25),
+        city: sanitizeInput(document.getElementById("form-student-city").value, 60),
+        college: sanitizeInput(document.getElementById("form-student-college").value, 60),
+        building: sanitizeInput(document.getElementById("form-student-building").value, 80),
+        apartment: sanitizeInput(document.getElementById("form-student-apartment").value, 80),
+        address: sanitizeInput(document.getElementById("form-student-address").value, 150),
+        owner: sanitizeInput(document.getElementById("form-student-owner").value, 80),
+        supervisor: sanitizeInput(document.getElementById("form-student-supervisor").value, 60),
         rent: parseNum(document.getElementById("form-student-rent").value),
         insurance: parseNum(document.getElementById("form-student-insurance").value),
-        notes: document.getElementById("form-student-notes").value.trim(),
+        notes: sanitizeInput(document.getElementById("form-student-notes").value, 300),
         months: {}
       };
 
@@ -2264,26 +2299,44 @@ window.KAYAN_CONFIG = {
         return;
       }
 
-      const name = (document.getElementById("booking-name")?.value || "").trim();
-      const phone = (document.getElementById("booking-phone")?.value || "").trim();
-      const type = document.getElementById("booking-type")?.value || "معاينة وحجز شقة مفروشة";
+      const rawName = (document.getElementById("booking-name")?.value || "").trim();
+      const rawPhone = (document.getElementById("booking-phone")?.value || "").trim();
+      const rawType = (document.getElementById("booking-type")?.value || "").trim();
       const rawNotes = (document.getElementById("booking-notes")?.value || "").trim();
 
-      // 3. التحقق الصارم من صحة المدخلات ومنع الحقن (Input Validation & Anti-Injection)
-      if(!name || name.length < 2 || name.length > 80){
-        alert("يرجى إدخال اسم صحيح يتراوح بين 2 و 80 حرفاً.");
+      // 3. التحقق الأمني الصارم ومنع ثغرات XSS وحقن الأكواد البرمجية (Anti-XSS Validation)
+      const xssCheck = /[<>'"`;\(\)\{\}\[\]\\]|javascript:|vbscript:|data:text\/html/i;
+      if(xssCheck.test(rawName)){
+        alert("⚠️ يرجى إدخال اسم حقيقي بدون علامات برمجية أو رموز خاصة لمنع ثغرات الحقن.");
         if(submitBtn) submitBtn.disabled = false;
         return;
       }
 
+      const name = sanitizeInput(rawName, 60);
+      if(!name || name.length < 2 || name.length > 60){
+        alert("يرجى إدخال اسم صحيح يتراوح بين 2 و 60 حرفاً.");
+        if(submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      const phone = sanitizeInput(rawPhone, 20);
       const cleanPhoneDigits = phone.replace(/[^\d+]/g, "");
-      if(cleanPhoneDigits.length < 10 || cleanPhoneDigits.length > 20){
+      if(cleanPhoneDigits.length < 10 || cleanPhoneDigits.length > 18){
         alert("يرجى إدخال رقم هاتف صحيح ومكتمل.");
         if(submitBtn) submitBtn.disabled = false;
         return;
       }
 
-      const notes = rawNotes.slice(0, 500);
+      const validTypes = [
+        "معاينة وحجز شقة مفروشة",
+        "حجز سكن طلابي",
+        "معاينة شقة للبيع / شراء",
+        "استفسار عام عن العقارات"
+      ];
+      const type = validTypes.includes(rawType) ? rawType : "معاينة وحجز شقة مفروشة";
+
+      // تعقيم الملاحظات من أي وسوم HTML أو بروتوكولات خبيثة نهائياً
+      const notes = sanitizeInput(rawNotes, 400);
 
       if(submitBtn){
         submitBtn.disabled = true;
