@@ -1,41 +1,33 @@
 {
   "rules": {
-    /* 1. منع القراءة والكتابة العامة من جذر قاعدة البيانات تماماً لمنع تسريب /.json */
     ".read": false,
     ".write": false,
 
-    /* 2. بيانات الشقق والوحدات: قراءة عامة للزوار، وتعديل للأدمن فقط */
     "properties": {
       ".read": true,
       ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com')"
     },
 
-    /* 3. الإعدادات والإعلانات: قراءة عامة، وتعديل للأدمن فقط */
     "settings": {
       ".read": true,
       ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com')"
     },
 
-    /* 4. سجل الطلاب والسكن الجامعي: محمي بالكامل ومحجوب عن أي زائر أو استعلام خارجي */
     "students": {
       ".read": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com')",
       ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com')"
     },
 
-    /* 5. طلبات الحجز والمعاينة: القراءة للأدمن فقط، ويسمح للزوار بإنشاء طلب جديد مع فحص صارم ضد الثغرات */
     "requests": {
       ".read": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com')",
-      ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com')",
       "$reqId": {
-        ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com') || (!data.exists() && newData.exists() && newData.hasChildren(['name', 'phone', 'type', 'orderNum']) && newData.child('name').isString() && newData.child('name').val().length >= 2 && newData.child('name').val().length <= 80 && newData.child('phone').isString() && newData.child('phone').val().length <= 25 && (!newData.hasChild('notes') || (newData.child('notes').isString() && newData.child('notes').val().length <= 500)))",
-        ".validate": "newData.hasChildren(['name', 'phone', 'type']) && !newData.child('name').val().matches('.*[<>].*')"
+        ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com') || (!data.exists() && newData.exists() && newData.hasChildren(['name', 'phone', 'type', 'orderNum']) && newData.child('name').isString() && newData.child('name').val().length <= 80 && newData.child('phone').isString() && newData.child('phone').val().length <= 25)"
       }
     },
 
-    /* 6. عداد تسلسل الطلبات: قراءة عامة، وزيادة تصاعدية فقط */
     "request_counter": {
       ".read": true,
-      ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com') || (newData.isNumber() && (!data.exists() || (newData.val() >= data.val() && newData.val() <= data.val() + 5)))"
+      ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'admin@kayancity.com') || (newData.isNumber() && (!data.exists() || newData.val() >= data.val()))"
     }
   }
 }
