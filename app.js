@@ -1249,6 +1249,18 @@ window.KAYAN_CONFIG = {
     "9": "ش 9"
   };
 
+  // تحويل أي قيمة رقمية (سواء كُتبت بأرقام عربية أو فواصل أو نصوص) إلى رقم نظيف
+  function parseNum(val){
+    if(val == null) return 0;
+    if(typeof val === "number") return isNaN(val) ? 0 : val;
+    const s = String(val)
+      .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+      .replace(/[,،]/g, "")
+      .replace(/[^\d.-]/g, "");
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+
   function getStudents(){ return STUDENTS; }
   function saveStudents(s){ STUDENTS = s; syncTable("students", s); }
 
@@ -1331,11 +1343,11 @@ window.KAYAN_CONFIG = {
     let totalNotesNum = 0;
 
     list.forEach(st => {
-      const r = parseFloat(st.rent) || 0;
-      const ins = parseFloat(st.insurance) || 0;
+      const r = parseNum(st.rent);
+      const ins = parseNum(st.insurance);
       totalRent += r;
       totalInsurance += ins;
-      const noteNum = parseFloat(String(st.notes || "").replace(/[^\d.]/g, "")) || 0;
+      const noteNum = parseNum(st.notes);
       totalNotesNum += noteNum;
     });
 
@@ -1402,8 +1414,8 @@ window.KAYAN_CONFIG = {
           <span class="supervisor-pill">${esc(st.supervisor || "غير محدد")}</span>
         </td>
         <td>
-          <div style="font-size:0.95rem; font-weight:700; color:var(--cyan);">${(parseFloat(st.rent)||0).toLocaleString()} ج.م / شهر</div>
-          <div style="font-size:0.8rem; color:var(--text-muted);">تأمين: ${(parseFloat(st.insurance)||0).toLocaleString()} ج.م</div>
+          <div style="font-size:0.95rem; font-weight:700; color:var(--cyan);">${parseNum(st.rent).toLocaleString()} ج.م / شهر</div>
+          <div style="font-size:0.8rem; color:var(--text-muted);">تأمين: ${parseNum(st.insurance).toLocaleString()} ج.م</div>
         </td>
         <td>
           ${st.notes ? `<span class="notes-pill">${esc(st.notes)}</span>` : '<span style="color:var(--text-muted); font-size:0.8rem;">—</span>'}
@@ -1513,8 +1525,8 @@ window.KAYAN_CONFIG = {
         address: document.getElementById("form-student-address").value.trim(),
         owner: document.getElementById("form-student-owner").value.trim(),
         supervisor: document.getElementById("form-student-supervisor").value,
-        rent: parseFloat(document.getElementById("form-student-rent").value) || 0,
-        insurance: parseFloat(document.getElementById("form-student-insurance").value) || 0,
+        rent: parseNum(document.getElementById("form-student-rent").value),
+        insurance: parseNum(document.getElementById("form-student-insurance").value),
         notes: document.getElementById("form-student-notes").value.trim(),
         months: {}
       };
@@ -1569,8 +1581,8 @@ window.KAYAN_CONFIG = {
         `"${(st.address||'').replace(/"/g, '""')}"`,
         `"${(st.owner||'').replace(/"/g, '""')}"`,
         `"${(st.supervisor||'').replace(/"/g, '""')}"`,
-        st.rent || 0,
-        st.insurance || 0,
+        parseNum(st.rent),
+        parseNum(st.insurance),
         `"${(st.notes||'').replace(/"/g, '""')}"`,
         st.months && st.months["10"] ? "مدفوع" : "متبقي",
         st.months && st.months["11"] ? "مدفوع" : "متبقي",

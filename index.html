@@ -80,6 +80,18 @@
   padding: 0;
 }
 
+/* منع ظهور أي أسهم عداد أو أزرار زيادة ونقصان نهائياً للكتابة المباشرة في جميع المتصفحات */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  display: none !important;
+}
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
@@ -2794,8 +2806,8 @@ button, a, input, select { touch-action: manipulation; }
         </div>
 
         <div class="form-field-admin">
-          <label>السعر (مثال: 6,500 ج.م / شهر)</label>
-          <input type="text" id="form-prop-price" placeholder="مثال: 7,000 ج.م / شهر" required>
+          <label>السعر (اكتب السعر مباشرة: مثال 850,000 ج.م أو 6,500 ج.م)</label>
+          <input type="text" id="form-prop-price" placeholder="اكتب السعر مباشرة (مثال: 850,000 ج.م)" autocomplete="off" required>
         </div>
 
         <div class="form-field-admin">
@@ -2954,12 +2966,12 @@ button, a, input, select { touch-action: manipulation; }
       <div class="form-grid-2">
         <div class="form-field-admin">
           <label>الإيجار الشهري (ج.م) *</label>
-          <input type="number" id="form-student-rent" placeholder="1100" required>
+          <input type="text" id="form-student-rent" placeholder="اكتب الإيجار مباشرة (مثال: 1100)" autocomplete="off" required>
         </div>
 
         <div class="form-field-admin">
           <label>مبلغ التأمين (ج.م)</label>
-          <input type="number" id="form-student-insurance" placeholder="1100">
+          <input type="text" id="form-student-insurance" placeholder="اكتب التأمين مباشرة (مثال: 1100)" autocomplete="off">
         </div>
 
         <div class="form-field-admin full">
