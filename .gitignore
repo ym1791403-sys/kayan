@@ -1,12 +1,36 @@
+# Secrets, Keys & Credentials
 .env
 .env.*
 !.env.example
 *.pem
 *.key
+*.p12
+*.pfx
 service-account*.json
-firebase-debug.log
+*credentials*.json
+*secret*.json
+id_rsa*
+id_ed25519*
+
+# Logs & Debug
+firebase-debug.log*
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node & Build Outputs
 node_modules/
+dist/
+build/
+.vercel/
+
+# OS & Editor Files
 .DS_Store
 Thumbs.db
 *.bak
 *.tmp
+*.swp
+*~
+.idea/
+.vscode/
