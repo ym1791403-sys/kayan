@@ -1903,6 +1903,382 @@ button, a, input, select { touch-action: manipulation; }
   background: rgba(212,175,55,0.12);
   color: #fff;
 }
+
+/* ======================================================== */
+/* AUTHENTIC EXCEL SPREADSHEET COMPONENT (دفتر اليوميه)   */
+/* ======================================================== */
+.excel-workbook-container {
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, 'Cairo', sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+}
+
+/* Excel Ribbon / Title Bar */
+.excel-top-ribbon {
+  background: #107c41;
+  color: #ffffff;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-bottom: 2px solid #0d5c30;
+}
+.excel-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.excel-logo-icon {
+  width: 26px;
+  height: 26px;
+  background: #ffffff;
+  color: #107c41;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.excel-tools-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.excel-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.excel-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: #ffffff;
+}
+.excel-btn-primary {
+  background: #ffffff;
+  color: #107c41;
+  border-color: #ffffff;
+  font-weight: 700;
+}
+.excel-btn-primary:hover {
+  background: #f0fdf4;
+  color: #0d5c30;
+}
+.excel-btn-danger {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #fff;
+}
+.excel-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.6);
+}
+
+/* Formula Bar */
+.excel-formula-bar {
+  background: #f8fafc;
+  border-bottom: 1px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  gap: 8px;
+  font-size: 0.88rem;
+}
+.excel-name-box {
+  background: #ffffff;
+  border: 1px solid #94a3b8;
+  padding: 3px 8px;
+  min-width: 65px;
+  text-align: center;
+  font-family: Consolas, monospace;
+  font-weight: 700;
+  color: #0f172a;
+  border-radius: 2px;
+  font-size: 0.85rem;
+}
+.excel-fx-label {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  color: #64748b;
+  font-size: 1rem;
+  user-select: none;
+}
+.excel-formula-input {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  border-radius: 2px;
+  outline: none;
+  font-family: inherit;
+}
+.excel-formula-input:focus {
+  border-color: #107c41;
+  box-shadow: 0 0 0 1px #107c41;
+}
+
+/* Table Grid View */
+.excel-grid-viewport {
+  overflow: auto;
+  max-height: 580px;
+  background: #ffffff;
+  position: relative;
+}
+.excel-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  font-size: 0.88rem;
+}
+.excel-table th, .excel-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0;
+  height: 32px;
+  position: relative;
+}
+
+/* Headers */
+.excel-corner-header {
+  background: #f1f5f9;
+  width: 44px;
+  text-align: center;
+  font-weight: 700;
+  color: #64748b;
+  position: sticky;
+  top: 0;
+  right: 0;
+  z-index: 4;
+  border-bottom: 2px solid #cbd5e1 !important;
+}
+.excel-col-header {
+  background: #f1f5f9;
+  color: #334155;
+  text-align: center;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 6px 4px !important;
+  user-select: none;
+  border-bottom: 2px solid #cbd5e1 !important;
+  transition: background 0.15s;
+}
+.excel-col-letter {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.excel-col-title {
+  display: block;
+  font-size: 0.82rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.excel-col-header.col-active {
+  background: #dcfce7 !important;
+  color: #107c41 !important;
+  border-bottom-color: #107c41 !important;
+}
+.excel-row-header {
+  background: #f1f5f9;
+  color: #64748b;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.78rem;
+  width: 44px;
+  user-select: none;
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  border-left: 2px solid #cbd5e1 !important;
+  transition: background 0.15s;
+}
+.excel-row-header.row-active {
+  background: #dcfce7 !important;
+  color: #107c41 !important;
+  border-left-color: #107c41 !important;
+}
+
+/* Cell Inputs */
+.excel-cell-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #0f172a;
+  box-sizing: border-box;
+  text-align: right;
+  direction: rtl;
+}
+.excel-cell-input:focus {
+  background: #ffffff;
+  outline: 2px solid #107c41 !important;
+  outline-offset: -2px;
+  z-index: 10;
+  position: relative;
+}
+.excel-cell-input.amount-input, .excel-cell-input.commission-input {
+  font-weight: 700;
+  color: #0d5c30;
+  font-family: Consolas, monospace, sans-serif;
+  text-align: left;
+  direction: ltr;
+}
+.excel-cell-input.ref-input {
+  font-weight: 700;
+  color: #1e3a8a;
+  text-align: center;
+}
+.excel-cell-input.date-input {
+  font-size: 0.84rem;
+  color: #334155;
+  text-align: center;
+}
+.excel-row-del-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all 0.15s;
+}
+.excel-row-del-btn:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Bottom Sheet Tabs */
+.excel-bottom-tabs-bar {
+  background: #f1f5f9;
+  border-top: 1px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  overflow-x: auto;
+  gap: 10px;
+}
+.excel-tabs-list {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  padding-top: 4px;
+}
+.excel-tab-item {
+  padding: 6px 14px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.excel-tab-item:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.excel-tab-item.active-sheet {
+  background: #ffffff;
+  color: #107c41;
+  font-weight: 800;
+  border-top: 3px solid #107c41;
+  margin-bottom: -1px;
+  padding-bottom: 7px;
+}
+.excel-tab-add-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px dashed #94a3b8;
+  border-radius: 4px;
+  color: #475569;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+.excel-tab-add-btn:hover {
+  background: #ffffff;
+  color: #107c41;
+  border-color: #107c41;
+}
+
+/* Bottom Status Bar */
+.excel-status-bar {
+  background: #107c41;
+  color: #ffffff;
+  padding: 5px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.excel-status-left, .excel-status-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.excel-stat-chip {
+  background: rgba(0, 0, 0, 0.18);
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 </style>
 </head>
 <body>
@@ -2758,10 +3134,10 @@ button, a, input, select { touch-action: manipulation; }
     </div>
 
     
-    <!-- Tab: Journal (دفتر اليومية) -->
+        <!-- Tab: Journal (دفتر اليومية - واجهة إكسيل تفاعلية) -->
     <div class="admin-tab-pane" id="admin-tab-journal" style="display:none;">
       
-      <!-- KPI Row -->
+      <!-- KPI Row (الملخص المالي والتشغيلي المباشر) -->
       <div class="kpi-row">
         <div class="admin-kpi">
           <div class="kpi-label">إجمالي الحركات المسجلة</div>
@@ -2785,92 +3161,180 @@ button, a, input, select { touch-action: manipulation; }
         </div>
       </div>
 
-      <!-- Content Box -->
-      <div class="content-box">
-        <div class="box-header" style="flex-wrap:wrap; gap:14px;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <h2>
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" width="22" height="22"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              <span>سجل دفتر اليومية والحركات المالية</span>
-            </h2>
-            <span style="font-size:0.8rem; background:rgba(212,175,55,0.15); color:var(--gold-light); border:1px solid rgba(212,175,55,0.3); padding:3px 12px; border-radius:999px; font-weight:700;">تسجيل وحفظ فوري</span>
+      <!-- EXCEL WORKBOOK CONTAINER -->
+      <div class="excel-workbook-container">
+        
+        <!-- Top Ribbon / Excel Bar -->
+        <div class="excel-top-ribbon">
+          <div class="excel-brand">
+            <div class="excel-logo-icon">X</div>
+            <div>
+              <div style="font-weight:800; font-size:1rem; line-height:1.2;">دفتر اليوميه - كيان سيتي للعقارات</div>
+              <div style="font-size:0.72rem; opacity:0.85;">Microsoft Excel Online Grid — كتابة وتعديل مباشر في جميع الخلايا</div>
+            </div>
+            <div id="excel-autosave-badge" class="excel-stat-chip" style="background:rgba(0,0,0,0.25); font-size:0.75rem; padding:3px 10px; border-radius:999px;">
+              🟢 تم الحفظ تلقائياً
+            </div>
           </div>
 
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn-primary" id="btn-open-add-journal" style="padding:9px 20px; font-size:0.9rem;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span>+ إضافة حركة جديدة</span>
+          <div class="excel-tools-bar">
+            <button class="excel-btn excel-btn-primary" id="excel-btn-add-row" title="إضافة صف جديد في نهاية الجدول (أو اضغط Enter في آخر خلية)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ إضافة صف</span>
             </button>
-            <button class="btn-outline" id="btn-export-journal" style="padding:9px 18px; font-size:0.9rem;" title="تصدير السجل إلى Excel">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <button class="excel-btn" id="excel-btn-save-now" title="حفظ فوري لجميع البيانات في قاعدة البيانات">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              <span>حفظ 💾</span>
+            </button>
+            <button class="excel-btn" id="excel-btn-export" title="تصدير جدول الإكسيل بالكامل إلى ملف CSV متوافق مع Excel">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>تصدير Excel</span>
             </button>
+            <button class="excel-btn excel-btn-danger" id="excel-btn-del-active" title="حذف الصف النشط المحدد حالياً">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>حذف الصف</span>
+            </button>
+            <div style="position:relative; display:inline-flex; align-items:center;">
+              <input type="text" id="excel-search-input" placeholder="🔍 تصفية الخلايا..." style="background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); color:#fff; border-radius:4px; padding:4px 8px; font-size:0.8rem; width:130px; outline:none;" title="تصفية السطور بالبحث السريع">
+            </div>
           </div>
         </div>
 
-        <!-- Filter Bar -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)) auto; gap:12px; align-items:center; margin-bottom:20px; padding:14px; background:rgba(8,15,28,0.7); border:1px solid var(--border-subtle); border-radius:12px;">
-          <div>
-            <input type="text" id="journal-search-input" placeholder="🔍 بحث برقم الحركة، اسم العميل، التفاصيل..." style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border-subtle); color:#fff; padding:8px 12px; border-radius:8px; font-size:0.88rem; outline:none;">
-          </div>
-          <div>
-            <select id="journal-filter-type" style="width:100%; background:#0d172a; border:1px solid var(--border-subtle); color:#fff; padding:8px 12px; border-radius:8px; font-size:0.88rem; outline:none; cursor:pointer;">
-              <option value="all">جميع أنواع الحركات</option>
-              <option value="عميل جديد">عميل جديد</option>
-              <option value="إيراد إيجار">إيراد إيجار</option>
-              <option value="حجز وحدة">حجز وحدة</option>
-              <option value="عمولة وساطة">عمولة وساطة</option>
-              <option value="مصروف صيانة">مصروف صيانة</option>
-              <option value="مصروف إداري">مصروف إداري</option>
-              <option value="سداد تأمين">سداد تأمين</option>
-              <option value="أخرى">أخرى</option>
-            </select>
-          </div>
-          <div>
-            <select id="journal-filter-region" style="width:100%; background:#0d172a; border:1px solid var(--border-subtle); color:#fff; padding:8px 12px; border-radius:8px; font-size:0.88rem; outline:none; cursor:pointer;">
-              <option value="all">جميع المناطق</option>
-              <option value="جامعة أسيوط">جامعة أسيوط</option>
-              <option value="حي النميس">حي النميس</option>
-              <option value="كورنيش النيل">كورنيش النيل</option>
-              <option value="سيتي">سيتي</option>
-              <option value="الوليدية">الوليدية</option>
-              <option value="أخرى">أخرى</option>
-            </select>
-          </div>
-          <div>
-            <button id="journal-btn-reset-filters" style="background:rgba(255,255,255,0.06); border:1px solid var(--border-subtle); color:#cbd5e1; padding:8px 16px; border-radius:8px; font-size:0.85rem; cursor:pointer;">
-              إعادة ضبط
+        <!-- Formula Bar (شريط الصيغة والقيم مثل Excel) -->
+        <div class="excel-formula-bar">
+          <div class="excel-name-box" id="excel-name-box" title="اسم وموقع الخلية النشطة">A1</div>
+          <div class="excel-fx-label" title="شريط إدخال وتعديل القيمة">fx</div>
+          <input type="text" class="excel-formula-input" id="excel-formula-input" placeholder="القيمة المحددة في الخلية النشطة (اكتب هنا للتعديل المباشر)..." autocomplete="off">
+        </div>
+
+        <!-- Spreadsheet Grid Viewport -->
+        <div class="excel-grid-viewport" id="excel-grid-viewport">
+          <table class="excel-table" id="excel-table">
+            <thead>
+              <tr>
+                <th class="excel-corner-header" title="تحديد الكل">◢</th>
+                <th class="excel-col-header" data-col="0" style="width:90px;">
+                  <span class="excel-col-letter">A</span>
+                  <span class="excel-col-title">رقم الحركه</span>
+                </th>
+                <th class="excel-col-header" data-col="1" style="width:115px;">
+                  <span class="excel-col-letter">B</span>
+                  <span class="excel-col-title">التاريخ</span>
+                </th>
+                <th class="excel-col-header" data-col="2" style="width:130px;">
+                  <span class="excel-col-letter">C</span>
+                  <span class="excel-col-title">نوع الحركه</span>
+                </th>
+                <th class="excel-col-header" data-col="3" style="width:170px;">
+                  <span class="excel-col-letter">D</span>
+                  <span class="excel-col-title">اسم الحركه</span>
+                </th>
+                <th class="excel-col-header" data-col="4" style="width:140px;">
+                  <span class="excel-col-letter">E</span>
+                  <span class="excel-col-title">المنطقه</span>
+                </th>
+                <th class="excel-col-header" data-col="5" style="width:160px;">
+                  <span class="excel-col-letter">F</span>
+                  <span class="excel-col-title">اسم العميل</span>
+                </th>
+                <th class="excel-col-header" data-col="6" style="width:230px;">
+                  <span class="excel-col-letter">G</span>
+                  <span class="excel-col-title">تفاصيل الحركه</span>
+                </th>
+                <th class="excel-col-header" data-col="7" style="width:125px;">
+                  <span class="excel-col-letter">H</span>
+                  <span class="excel-col-title">المبلغ</span>
+                </th>
+                <th class="excel-col-header" data-col="8" style="width:115px;">
+                  <span class="excel-col-letter">I</span>
+                  <span class="excel-col-title">العموله</span>
+                </th>
+                <th class="excel-col-header" style="width:50px;">
+                  <span class="excel-col-letter">⚙️</span>
+                  <span class="excel-col-title">حذف</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="excel-table-body">
+              <!-- Rendered via JS directly as editable Excel rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Excel Autocomplete Datalists -->
+        <datalist id="excel-type-options">
+          <option value="عميل جديد">
+          <option value="إيراد إيجار">
+          <option value="حجز وحدة">
+          <option value="عمولة وساطة">
+          <option value="مصروف صيانة">
+          <option value="مصروف إداري">
+          <option value="سداد تأمين">
+          <option value="سحب نقدي">
+          <option value="أخرى">
+        </datalist>
+
+        <datalist id="excel-region-options">
+          <option value="جامعة أسيوط">
+          <option value="حي النميس">
+          <option value="سيتي">
+          <option value="كورنيش النيل">
+          <option value="الوليدية">
+          <option value="شارع الجمهورية">
+          <option value="أخرى">
+        </datalist>
+
+        <!-- Excel Bottom Sheet Navigation (كما في فيديو شاشة HP تماماً) -->
+        <div class="excel-bottom-tabs-bar">
+          <div class="excel-tabs-list" id="excel-sheet-tabs">
+            <button type="button" class="excel-tab-item" data-sheet="home" title="الانتقال إلى الرئيسية">
+              <span>الرئيسية</span>
+            </button>
+            <button type="button" class="excel-tab-item active-sheet" data-sheet="journal" title="ورقة دفتر اليوميه النشطة">
+              <span>📊 دفتر اليوميه</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="units" title="الانتقال إلى إدارة العقارات">
+              <span>🏢 العقارات</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="clients" title="الانتقال إلى قائمة العملاء والطلبات">
+              <span>👥 العملاء</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="deals" title="الانتقال إلى الصفقات">
+              <span>🤝 الصفقات</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="accounts" title="الانتقال إلى الحسابات والإحصائيات">
+              <span>💰 الحسابات</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="staff" title="ورقة الموظفين">
+              <span>👔 الموظفين</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="inspections" title="ورقة المعاينات">
+              <span>👁️ المعاينات</span>
+            </button>
+            <button type="button" class="excel-tab-item" data-sheet="reports" title="ورقة التقارير">
+              <span>📈 التقارير</span>
+            </button>
+            <button type="button" class="excel-tab-add-btn" id="excel-tab-add-sheet" title="إضافة صف جديد في ورقة العمل">
+              +
             </button>
           </div>
         </div>
 
-        <!-- Table Container -->
-        <div style="overflow-x:auto;">
-          <table class="admin-data-table" style="width:100%; border-collapse:collapse; text-align:right;">
-            <thead>
-              <tr style="background:rgba(212,175,55,0.08); border-bottom:1px solid var(--border);">
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">رقم الحركة</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">التاريخ</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">نوع الحركة</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">اسم الحركة</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">المنطقة</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">اسم العميل</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">تفاصيل الحركة</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">المبلغ</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light);">العمولة</th>
-                <th style="padding:12px; font-size:0.85rem; color:var(--gold-light); text-align:center;">إجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="admin-journal-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-          <div id="journal-empty-msg" style="display:none; text-align:center; padding:36px; color:var(--text-muted);">
-            لا توجد حركات مسجلة حالياً. اضغط على "+ إضافة حركة جديدة" لبدء التسجيل.
+        <!-- Excel Bottom Status Bar -->
+        <div class="excel-status-bar">
+          <div class="excel-status-right">
+            <span class="excel-stat-chip">جاهز ✓</span>
+            <span class="excel-stat-chip" id="excel-status-count">العدد (COUNT): 0</span>
+          </div>
+          <div class="excel-status-left">
+            <span class="excel-stat-chip" id="excel-status-sum-amount">مجموع المبالغ (SUM): 0 ج.م</span>
+            <span class="excel-stat-chip" id="excel-status-sum-commission">مجموع العمولات (SUM): 0 ج.م</span>
+            <span class="excel-stat-chip" id="excel-status-net" style="color:#f7e7b4;">صافي الصندوق: 0 ج.م</span>
           </div>
         </div>
 
       </div>
+
     </div>
 
     <!-- Tab 3: Stats -->
@@ -3125,81 +3589,6 @@ button, a, input, select { touch-action: manipulation; }
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script src="app.js" defer></script>
-
-<!-- Modal: Add / Edit Journal Entry inside Admin -->
-<div class="admin-sub-modal" id="admin-journal-modal" style="display:none;">
-  <div class="admin-sub-card" style="max-width:720px;">
-    <div class="box-header" style="margin-bottom:20px;">
-      <h3 id="journal-modal-title" style="color:#fff; font-size:1.35rem;">إضافة حركة جديدة في دفتر اليومية</h3>
-      <button id="journal-modal-close" style="background:none; border:none; color:var(--text-muted); font-size:1.6rem; cursor:pointer;">&times;</button>
-    </div>
-
-    <form id="admin-journal-form">
-      <input type="hidden" id="form-journal-id">
-      
-      <div class="form-grid-2">
-        <div class="form-field-admin">
-          <label>رقم الحركة</label>
-          <input type="text" id="form-journal-ref" placeholder="مثال: 1 أو TRX-101" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>التاريخ</label>
-          <input type="date" id="form-journal-date" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>نوع الحركة</label>
-          <select id="form-journal-type" required>
-            <option value="عميل جديد">عميل جديد</option>
-            <option value="إيراد إيجار">إيراد إيجار</option>
-            <option value="حجز وحدة">حجز وحدة</option>
-            <option value="عمولة وساطة">عمولة وساطة</option>
-            <option value="مصروف صيانة">مصروف صيانة</option>
-            <option value="مصروف إداري">مصروف إداري</option>
-            <option value="سداد تأمين">سداد تأمين</option>
-            <option value="أخرى">أخرى</option>
-          </select>
-        </div>
-
-        <div class="form-field-admin">
-          <label>اسم الحركة</label>
-          <input type="text" id="form-journal-name" placeholder="مثال: دفعة إيجار شهر نوفمبر" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>المنطقة</label>
-          <input type="text" id="form-journal-region" placeholder="مثال: جامعة أسيوط / حي النميس" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>اسم العميل</label>
-          <input type="text" id="form-journal-client" placeholder="مثال: أحمد محمود إبراهيم" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>المبلغ (ج.م)</label>
-          <input type="number" id="form-journal-amount" placeholder="مثال: 7500" step="any" required>
-        </div>
-
-        <div class="form-field-admin">
-          <label>العمولة (ج.م)</label>
-          <input type="number" id="form-journal-commission" placeholder="مثال: 750" step="any" value="0">
-        </div>
-
-        <div class="form-field-admin full">
-          <label>تفاصيل الحركة والملاحظات</label>
-          <textarea id="form-journal-details" rows="3" placeholder="اكتب تفاصيل المعاملة، طريقة الدفع (كاش/تحويل)، أو أي ملاحظات أخرى..."></textarea>
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
-        <button type="button" class="btn-outline" id="journal-modal-cancel">إلغاء</button>
-        <button type="submit" class="btn-primary" style="padding:10px 28px;">حفظ وتثبيت الحركة 💾</button>
-      </div>
-    </form>
-  </div>
-</div>
 
 </body>
 </html>

@@ -2514,327 +2514,557 @@ window.KAYAN_CONFIG = {
 
 
   // ========================================================
-  // 7. DAILY JOURNAL & FINANCIAL TRANSACTIONS (دفتر اليومية)
   // ========================================================
-  const journalTbody = document.getElementById("admin-journal-tbody");
-  const journalEmptyMsg = document.getElementById("journal-empty-msg");
-  const btnOpenAddJournal = document.getElementById("btn-open-add-journal");
-  const journalModal = document.getElementById("admin-journal-modal");
-  const journalModalClose = document.getElementById("journal-modal-close");
-  const journalModalCancel = document.getElementById("journal-modal-cancel");
-  const journalForm = document.getElementById("admin-journal-form");
-  const journalModalTitle = document.getElementById("journal-modal-title");
+  // ========================================================
+  // 7. AUTHENTIC EXCEL SPREADSHEET (دفتر اليومية - واجهة إكسيل)
+  // ========================================================
+  const excelTableBody = document.getElementById("excel-table-body");
+  const excelNameBox = document.getElementById("excel-name-box");
+  const excelFormulaInput = document.getElementById("excel-formula-input");
+  const excelAutosaveBadge = document.getElementById("excel-autosave-badge");
+  const excelBtnAddRow = document.getElementById("excel-btn-add-row");
+  const excelBtnSaveNow = document.getElementById("excel-btn-save-now");
+  const excelBtnExport = document.getElementById("excel-btn-export");
+  const excelBtnDelActive = document.getElementById("excel-btn-del-active");
+  const excelSearchInput = document.getElementById("excel-search-input");
+  const excelTabAddSheet = document.getElementById("excel-tab-add-sheet");
+  const excelSheetTabs = document.getElementById("excel-sheet-tabs");
 
-  const formJournalId = document.getElementById("form-journal-id");
-  const formJournalRef = document.getElementById("form-journal-ref");
-  const formJournalDate = document.getElementById("form-journal-date");
-  const formJournalType = document.getElementById("form-journal-type");
-  const formJournalName = document.getElementById("form-journal-name");
-  const formJournalRegion = document.getElementById("form-journal-region");
-  const formJournalClient = document.getElementById("form-journal-client");
-  const formJournalAmount = document.getElementById("form-journal-amount");
-  const formJournalCommission = document.getElementById("form-journal-commission");
-  const formJournalDetails = document.getElementById("form-journal-details");
-
-  const journalSearchInput = document.getElementById("journal-search-input");
-  const journalFilterType = document.getElementById("journal-filter-type");
-  const journalFilterRegion = document.getElementById("journal-filter-region");
-  const journalBtnReset = document.getElementById("journal-btn-reset-filters");
-  const btnExportJournal = document.getElementById("btn-export-journal");
-
+  // KPI Elements
   const journalKpiCount = document.getElementById("journal-kpi-count");
   const journalKpiInflow = document.getElementById("journal-kpi-inflow");
   const journalKpiOutflow = document.getElementById("journal-kpi-outflow");
   const journalKpiCommissions = document.getElementById("journal-kpi-commissions");
   const journalKpiNet = document.getElementById("journal-kpi-net");
 
+  // Status Bar Elements
+  const excelStatusCount = document.getElementById("excel-status-count");
+  const excelStatusSumAmount = document.getElementById("excel-status-sum-amount");
+  const excelStatusSumCommission = document.getElementById("excel-status-sum-commission");
+  const excelStatusNet = document.getElementById("excel-status-net");
+
+  const EXCEL_COLUMNS = [
+    { key: "ref", letter: "A", name: "رقم الحركه", width: "90px", type: "text", className: "ref-input" },
+    { key: "date", letter: "B", name: "التاريخ", width: "115px", type: "text", className: "date-input" },
+    { key: "type", letter: "C", name: "نوع الحركه", width: "130px", type: "text", list: "excel-type-options" },
+    { key: "name", letter: "D", name: "اسم الحركه", width: "170px", type: "text" },
+    { key: "region", letter: "E", name: "المنطقه", width: "140px", type: "text", list: "excel-region-options" },
+    { key: "client", letter: "F", name: "اسم العميل", width: "160px", type: "text" },
+    { key: "details", letter: "G", name: "تفاصيل الحركه", width: "230px", type: "text" },
+    { key: "amount", letter: "H", name: "المبلغ", width: "125px", type: "number", className: "amount-input" },
+    { key: "commission", letter: "I", name: "العموله", width: "115px", type: "number", className: "commission-input" }
+  ];
+
+  let excelRows = [];
+  let excelActivePos = { rowIdx: 0, colIdx: 0, key: "ref" };
+  let excelSaveDebounceTimer = null;
+  let excelFilterQuery = "";
+  let excelLoaded = false;
+
   created.journal = new Map();
 
+  function makeDefaultRow(rowNum){
+    return {
+      id: "j_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6),
+      ref: String(rowNum),
+      date: new Date().toISOString().split("T")[0],
+      type: "عميل جديد",
+      name: "",
+      region: "جامعة أسيوط",
+      client: "",
+      details: "",
+      amount: "",
+      commission: "0",
+      updatedAt: new Date().toISOString()
+    };
+  }
+
   async function loadJournal(){
-    if(!db){
+    excelRows = [];
+    if(db){
+      try {
+        const snap = await new Promise((res, rej) => {
+          db.ref("journal_entries").once("value", res, rej);
+        });
+        if(snap && snap.exists()){
+          snap.forEach(child => {
+            const val = child.val();
+            excelRows.push({ id: child.key, ...val });
+          });
+        }
+      } catch(err){
+        console.warn("Could not read journal from Firebase:", err);
+      }
+    }
+
+    if(excelRows.length === 0){
       const raw = localStorage.getItem("kayan_journal_backup");
       if(raw){
         try {
           const arr = JSON.parse(raw);
-          created.journal.clear();
-          arr.forEach(item => created.journal.set(item.id, item));
+          if(Array.isArray(arr) && arr.length > 0){
+            excelRows = arr;
+          }
         } catch(e){}
       }
-      return;
     }
-    return new Promise(resolve => {
-      db.ref("journal_entries").once("value", snap => {
-        created.journal.clear();
-        if(snap.exists()){
-          snap.forEach(child => {
-            created.journal.set(child.key, { id: child.key, ...child.val() });
-          });
-        }
-        resolve();
-      }, err => {
-        console.warn("Could not load journal from Firebase, falling back to local storage:", err);
-        const raw = localStorage.getItem("kayan_journal_backup");
-        if(raw){
-          try {
-            const arr = JSON.parse(raw);
-            created.journal.clear();
-            arr.forEach(item => created.journal.set(item.id, item));
-          } catch(e){}
-        }
-        resolve();
+
+    // Default sample row if empty
+    if(excelRows.length === 0){
+      excelRows.push({
+        id: "j_init_1",
+        ref: "1",
+        date: new Date().toISOString().split("T")[0],
+        type: "عميل جديد",
+        name: "حجز وحدة سكنية VIP",
+        region: "جامعة أسيوط",
+        client: "أحمد محمود سالم",
+        details: "سداد دفعة حجز نقدية بخزينة الشركة",
+        amount: 15000,
+        commission: 1500,
+        updatedAt: new Date().toISOString()
       });
+    }
+
+    // Ensure at least 12 rows are ready for editing
+    while(excelRows.length < 12){
+      excelRows.push(makeDefaultRow(excelRows.length + 1));
+    }
+
+    excelLoaded = true;
+    syncCreatedJournalMap();
+    persistJournalLocal();
+  }
+
+  function syncCreatedJournalMap(){
+    created.journal.clear();
+    excelRows.forEach(row => {
+      if(hasRowData(row)){
+        created.journal.set(row.id, row);
+      }
     });
+  }
+
+  function hasRowData(row){
+    if(!row) return false;
+    return Boolean(
+      (row.name && String(row.name).trim()) ||
+      (row.client && String(row.client).trim()) ||
+      (row.details && String(row.details).trim()) ||
+      (row.amount && parseFloat(row.amount) > 0) ||
+      (row.commission && parseFloat(row.commission) > 0)
+    );
   }
 
   function persistJournalLocal(){
     try {
-      const arr = Array.from(created.journal.values());
-      localStorage.setItem("kayan_journal_backup", JSON.stringify(arr));
+      localStorage.setItem("kayan_journal_backup", JSON.stringify(excelRows));
     } catch(e){}
   }
 
-  function renderJournalTable(){
-    if(!journalTbody) return;
-    journalTbody.innerHTML = "";
+  function scheduleExcelAutoSave(){
+    if(excelAutosaveBadge){
+      excelAutosaveBadge.textContent = "🟡 جاري الحفظ...";
+      excelAutosaveBadge.style.color = "#fef08a";
+    }
+    clearTimeout(excelSaveDebounceTimer);
+    excelSaveDebounceTimer = setTimeout(async () => {
+      await saveExcelData();
+    }, 500);
+  }
 
-    const q = (journalSearchInput && journalSearchInput.value ? journalSearchInput.value.trim().toLowerCase() : "");
-    const fType = (journalFilterType ? journalFilterType.value : "all");
-    const fRegion = (journalFilterRegion ? journalFilterRegion.value : "all");
+  async function saveExcelData(showToastMsg = false){
+    syncCreatedJournalMap();
+    persistJournalLocal();
 
-    const allItems = Array.from(created.journal.values()).sort((a, b) => {
-      const dComp = (b.date || "").localeCompare(a.date || "");
-      if(dComp !== 0) return dComp;
-      return String(b.ref || "").localeCompare(String(a.ref || ""), undefined, {numeric: true});
-    });
+    if(db){
+      try {
+        const payload = {};
+        excelRows.forEach(row => {
+          if(row.id && hasRowData(row)){
+            payload[row.id] = {
+              ref: row.ref || "",
+              date: row.date || "",
+              type: row.type || "عميل جديد",
+              name: row.name || "",
+              region: row.region || "",
+              client: row.client || "",
+              details: row.details || "",
+              amount: parseFloat(row.amount) || 0,
+              commission: parseFloat(row.commission) || 0,
+              updatedAt: new Date().toISOString()
+            };
+          }
+        });
+        await db.ref("journal_entries").set(payload);
+      } catch(err){
+        console.error("Firebase journal save error:", err);
+      }
+    }
 
+    if(excelAutosaveBadge){
+      excelAutosaveBadge.textContent = "🟢 تم الحفظ تلقائياً";
+      excelAutosaveBadge.style.color = "#ffffff";
+    }
+    if(showToastMsg){
+      showToast("تم حفظ جميع خلايا دفتر اليومية بنجاح 💾");
+    }
+  }
+
+  function recalcExcelStats(){
     let totalInflow = 0;
     let totalOutflow = 0;
     let totalCommissions = 0;
+    let validCount = 0;
 
-    allItems.forEach(item => {
-      const amt = parseFloat(item.amount) || 0;
-      const comm = parseFloat(item.commission) || 0;
+    excelRows.forEach(row => {
+      const amt = parseFloat(row.amount) || 0;
+      const comm = parseFloat(row.commission) || 0;
       totalCommissions += comm;
-      const type = item.type || "";
-      if(type.includes("مصروف") || type.includes("سداد تأمين") || type.includes("سحب")){
+      const t = row.type || "";
+      if(t.includes("مصروف") || t.includes("سداد تأمين") || t.includes("سحب")){
         totalOutflow += amt;
       } else {
         totalInflow += amt;
       }
+      if(hasRowData(row)){
+        validCount++;
+      }
     });
 
-    if(journalKpiCount) journalKpiCount.textContent = allItems.length;
+    const net = totalInflow - totalOutflow;
+
+    if(journalKpiCount) journalKpiCount.textContent = validCount;
     if(journalKpiInflow) journalKpiInflow.textContent = totalInflow.toLocaleString("ar-EG") + " ج.م";
     if(journalKpiOutflow) journalKpiOutflow.textContent = totalOutflow.toLocaleString("ar-EG") + " ج.م";
     if(journalKpiCommissions) journalKpiCommissions.textContent = totalCommissions.toLocaleString("ar-EG") + " ج.م";
-    if(journalKpiNet) {
-      const net = totalInflow - totalOutflow;
+    if(journalKpiNet){
       journalKpiNet.textContent = net.toLocaleString("ar-EG") + " ج.م";
       journalKpiNet.style.color = net >= 0 ? "var(--cyan)" : "#ef4444";
     }
 
-    const filtered = allItems.filter(item => {
-      if(fType !== "all" && item.type !== fType) return false;
-      if(fRegion !== "all" && (!item.region || !item.region.includes(fRegion))) return false;
-      if(q){
-        const haystack = `${item.ref || ""} ${item.name || ""} ${item.client || ""} ${item.details || ""} ${item.region || ""}`.toLowerCase();
-        if(!haystack.includes(q)) return false;
-      }
-      return true;
-    });
-
-    if(filtered.length === 0){
-      if(journalEmptyMsg) journalEmptyMsg.style.display = "block";
-      return;
+    if(excelStatusCount) excelStatusCount.textContent = `العدد (COUNT): ${validCount}`;
+    if(excelStatusSumAmount) excelStatusSumAmount.textContent = `مجموع المبالغ (SUM): ${totalInflow.toLocaleString("ar-EG")} ج.م`;
+    if(excelStatusSumCommission) excelStatusSumCommission.textContent = `مجموع العمولات (SUM): ${totalCommissions.toLocaleString("ar-EG")} ج.م`;
+    if(excelStatusNet){
+      excelStatusNet.textContent = `صافي الصندوق: ${net.toLocaleString("ar-EG")} ج.م`;
+      excelStatusNet.style.color = net >= 0 ? "#f7e7b4" : "#fca5a5";
     }
-    if(journalEmptyMsg) journalEmptyMsg.style.display = "none";
+  }
 
-    filtered.forEach(item => {
+  function renderExcelGrid(){
+    if(!excelTableBody) return;
+    if(excelRows.length === 0){
+      while(excelRows.length < 12){
+        excelRows.push(makeDefaultRow(excelRows.length + 1));
+      }
+    }
+    excelTableBody.innerHTML = "";
+
+    const query = excelFilterQuery.trim().toLowerCase();
+
+    excelRows.forEach((row, rIdx) => {
+      if(query){
+        const haystack = `${row.ref || ""} ${row.date || ""} ${row.type || ""} ${row.name || ""} ${row.region || ""} ${row.client || ""} ${row.details || ""} ${row.amount || ""} ${row.commission || ""}`.toLowerCase();
+        if(!haystack.includes(query)) return;
+      }
+
       const tr = document.createElement("tr");
-      tr.style.borderBottom = "1px solid var(--border-subtle)";
-      tr.style.transition = "background 0.2s";
-      tr.onmouseenter = () => tr.style.background = "rgba(255,255,255,0.02)";
-      tr.onmouseleave = () => tr.style.background = "transparent";
+      tr.setAttribute("data-row-idx", rIdx);
 
-      const isExpense = (item.type || "").includes("مصروف") || (item.type || "").includes("سداد تأمين") || (item.type || "").includes("سحب");
-      const amtColor = isExpense ? "#ef4444" : "var(--cyan)";
-      const amtSign = isExpense ? "-" : "+";
+      // 1. Row Header (# number)
+      const tdRowHeader = document.createElement("td");
+      tdRowHeader.className = "excel-row-header";
+      tdRowHeader.setAttribute("data-row-idx", rIdx);
+      tdRowHeader.textContent = rIdx + 1;
+      tr.appendChild(tdRowHeader);
 
-      tr.innerHTML = `
-        <td style="padding:12px; font-weight:700; color:var(--gold); font-family:monospace; font-size:0.95rem;">${escapeHTML(item.ref || "-")}</td>
-        <td style="padding:12px; color:#cbd5e1; font-size:0.88rem; white-space:nowrap;">${escapeHTML(item.date || "-")}</td>
-        <td style="padding:12px;">
-          <span style="display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.78rem; font-weight:700; background:${isExpense ? 'rgba(239,68,68,0.15)' : 'rgba(56,239,125,0.15)'}; color:${isExpense ? '#ef4444' : '#38ef7d'}; border:1px solid ${isExpense ? 'rgba(239,68,68,0.3)' : 'rgba(56,239,125,0.3)'};">
-            ${escapeHTML(item.type || "عام")}
-          </span>
-        </td>
-        <td style="padding:12px; font-weight:700; color:#fff; font-size:0.92rem;">${escapeHTML(item.name || "-")}</td>
-        <td style="padding:12px; color:var(--gold-light); font-size:0.88rem;">${escapeHTML(item.region || "-")}</td>
-        <td style="padding:12px; color:#e2e8f0; font-size:0.9rem;">${escapeHTML(item.client || "-")}</td>
-        <td style="padding:12px; color:var(--text-muted); font-size:0.85rem; max-width:240px; white-space:normal;">${escapeHTML(item.details || "-")}</td>
-        <td style="padding:12px; font-weight:800; font-size:0.95rem; color:${amtColor}; white-space:nowrap;">${amtSign} ${(parseFloat(item.amount)||0).toLocaleString("ar-EG")} ج.م</td>
-        <td style="padding:12px; font-weight:700; font-size:0.9rem; color:var(--gold); white-space:nowrap;">${(parseFloat(item.commission)||0).toLocaleString("ar-EG")} ج.م</td>
-        <td style="padding:12px; text-align:center; white-space:nowrap;">
-          <button class="btn-journal-edit" data-id="${item.id}" style="background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:6px; cursor:pointer; margin-left:6px;" title="تعديل">
-            ✏️
-          </button>
-          <button class="btn-journal-del" data-id="${item.id}" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:5px 10px; border-radius:6px; cursor:pointer;" title="حذف">
-            🗑️
-          </button>
-        </td>
-      `;
-      journalTbody.appendChild(tr);
-    });
+      // 2. Data Cells A-I
+      EXCEL_COLUMNS.forEach((col, cIdx) => {
+        const td = document.createElement("td");
+        td.style.width = col.width;
 
-    // Attach edit & delete handlers
-    journalTbody.querySelectorAll(".btn-journal-edit").forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.getAttribute("data-id");
-        const item = created.journal.get(id);
-        if(!item) return;
-        openJournalModal(item);
-      };
-    });
+        const input = document.createElement("input");
+        input.type = col.type || "text";
+        input.className = `excel-cell-input ${col.className || ""}`;
+        input.setAttribute("data-row", rIdx);
+        input.setAttribute("data-col", cIdx);
+        input.setAttribute("data-key", col.key);
+        if(col.list) input.setAttribute("list", col.list);
+        if(col.type === "number") input.setAttribute("step", "any");
+        input.value = (row[col.key] !== undefined && row[col.key] !== null) ? row[col.key] : "";
+        input.autocomplete = "off";
 
-    journalTbody.querySelectorAll(".btn-journal-del").forEach(btn => {
-      btn.onclick = async () => {
-        const id = btn.getAttribute("data-id");
-        const item = created.journal.get(id);
-        if(!item) return;
-        if(!confirm(`هل أنت متأكد من حذف الحركة رقم (${item.ref || id})؟`)) return;
-        if(db) {
-          try {
-            await db.ref("journal_entries/" + id).remove();
-          } catch(e){
-            console.error(e);
+        // Focus event
+        input.onfocus = () => {
+          excelActivePos = { rowIdx: rIdx, colIdx: cIdx, key: col.key };
+          highlightExcelHeaders(rIdx, cIdx);
+          if(excelNameBox) excelNameBox.textContent = `${col.letter}${rIdx + 1}`;
+          if(excelFormulaInput) excelFormulaInput.value = input.value;
+        };
+
+        // Live input event
+        input.oninput = () => {
+          row[col.key] = input.value;
+          row.updatedAt = new Date().toISOString();
+          if(excelFormulaInput && excelActivePos.rowIdx === rIdx && excelActivePos.colIdx === cIdx){
+            excelFormulaInput.value = input.value;
           }
-        }
-        created.journal.delete(id);
-        persistJournalLocal();
-        renderJournalTable();
-        showToast("تم حذف الحركة بنجاح");
-      };
+          recalcExcelStats();
+          scheduleExcelAutoSave();
+        };
+
+        // Keyboard navigation
+        input.onkeydown = (e) => {
+          if(e.key === "Enter"){
+            e.preventDefault();
+            if(e.shiftKey){
+              focusExcelCell(rIdx - 1, cIdx);
+            } else {
+              if(rIdx === excelRows.length - 1){
+                addExcelRow(false);
+              }
+              focusExcelCell(rIdx + 1, cIdx);
+            }
+          } else if(e.key === "Tab"){
+            if(e.shiftKey){
+              if(cIdx > 0){
+                e.preventDefault();
+                focusExcelCell(rIdx, cIdx - 1);
+              } else if(rIdx > 0){
+                e.preventDefault();
+                focusExcelCell(rIdx - 1, EXCEL_COLUMNS.length - 1);
+              }
+            } else {
+              if(cIdx < EXCEL_COLUMNS.length - 1){
+                e.preventDefault();
+                focusExcelCell(rIdx, cIdx + 1);
+              } else {
+                e.preventDefault();
+                if(rIdx === excelRows.length - 1){
+                  addExcelRow(false);
+                }
+                focusExcelCell(rIdx + 1, 0);
+              }
+            }
+          } else if(e.key === "ArrowDown" && (input.selectionStart === input.value.length || input.type === "number")){
+            if(rIdx < excelRows.length - 1){
+              focusExcelCell(rIdx + 1, cIdx);
+            }
+          } else if(e.key === "ArrowUp" && (input.selectionStart === 0 || input.type === "number")){
+            if(rIdx > 0){
+              focusExcelCell(rIdx - 1, cIdx);
+            }
+          }
+        };
+
+        td.appendChild(input);
+        tr.appendChild(td);
+      });
+
+      // 3. Delete Row Button Column
+      const tdDel = document.createElement("td");
+      tdDel.style.width = "50px";
+      const delBtn = document.createElement("button");
+      delBtn.className = "excel-row-del-btn";
+      delBtn.innerHTML = "🗑️";
+      delBtn.title = `حذف الصف رقم ${rIdx + 1}`;
+      delBtn.type = "button";
+      delBtn.onclick = () => deleteExcelRow(rIdx);
+      tdDel.appendChild(delBtn);
+      tr.appendChild(tdDel);
+
+      excelTableBody.appendChild(tr);
     });
+
+    recalcExcelStats();
   }
 
-  function openJournalModal(itemToEdit = null){
-    if(!journalModal) return;
-    if(itemToEdit){
-      journalModalTitle.textContent = "تعديل حركة مسجلة";
-      formJournalId.value = itemToEdit.id || "";
-      formJournalRef.value = itemToEdit.ref || "";
-      formJournalDate.value = itemToEdit.date || new Date().toISOString().split("T")[0];
-      formJournalType.value = itemToEdit.type || "عميل جديد";
-      formJournalName.value = itemToEdit.name || "";
-      formJournalRegion.value = itemToEdit.region || "";
-      formJournalClient.value = itemToEdit.client || "";
-      formJournalAmount.value = itemToEdit.amount || "";
-      formJournalCommission.value = itemToEdit.commission || 0;
-      formJournalDetails.value = itemToEdit.details || "";
-    } else {
-      journalModalTitle.textContent = "إضافة حركة جديدة في دفتر اليومية";
-      formJournalId.value = "";
-      const count = created.journal.size + 1;
-      formJournalRef.value = String(count);
-      formJournalDate.value = new Date().toISOString().split("T")[0];
-      formJournalType.value = "عميل جديد";
-      formJournalName.value = "";
-      formJournalRegion.value = "جامعة أسيوط";
-      formJournalClient.value = "";
-      formJournalAmount.value = "";
-      formJournalCommission.value = "0";
-      formJournalDetails.value = "";
+  function highlightExcelHeaders(rIdx, cIdx){
+    document.querySelectorAll(".excel-col-header").forEach(th => th.classList.remove("col-active"));
+    document.querySelectorAll(".excel-row-header").forEach(td => td.classList.remove("row-active"));
+    const activeColHeader = document.querySelector(`.excel-col-header[data-col="${cIdx}"]`);
+    if(activeColHeader) activeColHeader.classList.add("col-active");
+    const activeRowHeader = document.querySelector(`.excel-row-header[data-row-idx="${rIdx}"]`);
+    if(activeRowHeader) activeRowHeader.classList.add("row-active");
+  }
+
+  function focusExcelCell(rIdx, cIdx){
+    if(rIdx < 0 || rIdx >= excelRows.length) return;
+    if(cIdx < 0 || cIdx >= EXCEL_COLUMNS.length) return;
+    const target = document.querySelector(`.excel-cell-input[data-row="${rIdx}"][data-col="${cIdx}"]`);
+    if(target){
+      target.focus();
+      if(target.select && target.type !== "number") target.select();
     }
-    journalModal.style.display = "flex";
   }
 
-  function closeJournalModal(){
-    if(journalModal) journalModal.style.display = "none";
+  function addExcelRow(autoFocus = true){
+    const newRowNum = excelRows.length + 1;
+    const newRow = makeDefaultRow(newRowNum);
+    excelRows.push(newRow);
+    renderExcelGrid();
+    scheduleExcelAutoSave();
+    if(autoFocus){
+      setTimeout(() => {
+        focusExcelCell(excelRows.length - 1, 0);
+      }, 50);
+    }
   }
 
-  if(btnOpenAddJournal) btnOpenAddJournal.onclick = () => openJournalModal();
-  if(journalModalClose) journalModalClose.onclick = () => closeJournalModal();
-  if(journalModalCancel) journalModalCancel.onclick = () => closeJournalModal();
+  async function deleteExcelRow(rIdx){
+    if(rIdx < 0 || rIdx >= excelRows.length) return;
+    const row = excelRows[rIdx];
+    const confirmName = row.name || row.client || `رقم ${row.ref || (rIdx + 1)}`;
+    if(!confirm(`هل أنت متأكد من حذف الصف (${confirmName})؟`)) return;
 
-  if(journalForm){
-    journalForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const id = formJournalId.value || ("j_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6));
-      const data = {
-        ref: formJournalRef.value.trim(),
-        date: formJournalDate.value,
-        type: formJournalType.value,
-        name: formJournalName.value.trim(),
-        region: formJournalRegion.value.trim(),
-        client: formJournalClient.value.trim(),
-        amount: parseFloat(formJournalAmount.value) || 0,
-        commission: parseFloat(formJournalCommission.value) || 0,
-        details: formJournalDetails.value.trim(),
-        updatedAt: new Date().toISOString()
-      };
-
-      if(db){
-        try {
-          await db.ref("journal_entries/" + id).set(data);
-        } catch(err){
-          console.error("Firebase write error:", err);
-        }
+    if(row.id && db){
+      try {
+        await db.ref("journal_entries/" + row.id).remove();
+      } catch(e){
+        console.error("Firebase delete error:", e);
       }
+    }
 
-      created.journal.set(id, { id, ...data });
-      persistJournalLocal();
-      closeJournalModal();
-      renderJournalTable();
-      showToast("تم حفظ وتثبيت الحركة بنجاح 💾");
+    excelRows.splice(rIdx, 1);
+    if(excelRows.length === 0){
+      excelRows.push(makeDefaultRow(1));
+    }
+    excelRows.forEach((r, idx) => {
+      if(/^\d+$/.test(r.ref || "")){
+        r.ref = String(idx + 1);
+      }
+    });
+
+    renderExcelGrid();
+    scheduleExcelAutoSave();
+    showToast("تم حذف الصف بنجاح 🗑️");
+  }
+
+  // Two-way Formula Bar Binding
+  if(excelFormulaInput){
+    excelFormulaInput.oninput = () => {
+      const { rowIdx, colIdx, key } = excelActivePos;
+      if(rowIdx >= 0 && rowIdx < excelRows.length){
+        excelRows[rowIdx][key] = excelFormulaInput.value;
+        const cellInput = document.querySelector(`.excel-cell-input[data-row="${rowIdx}"][data-col="${colIdx}"]`);
+        if(cellInput){
+          cellInput.value = excelFormulaInput.value;
+        }
+        recalcExcelStats();
+        scheduleExcelAutoSave();
+      }
     };
   }
 
-  if(journalSearchInput) journalSearchInput.oninput = () => renderJournalTable();
-  if(journalFilterType) journalFilterType.onchange = () => renderJournalTable();
-  if(journalFilterRegion) journalFilterRegion.onchange = () => renderJournalTable();
-  if(journalBtnReset) {
-    journalBtnReset.onclick = () => {
-      if(journalSearchInput) journalSearchInput.value = "";
-      if(journalFilterType) journalFilterType.value = "all";
-      if(journalFilterRegion) journalFilterRegion.value = "all";
-      renderJournalTable();
+  // Buttons Event Handlers
+  if(excelBtnAddRow) excelBtnAddRow.onclick = () => addExcelRow(true);
+  if(excelTabAddSheet) excelTabAddSheet.onclick = () => addExcelRow(true);
+
+  if(excelBtnSaveNow){
+    excelBtnSaveNow.onclick = () => saveExcelData(true);
+  }
+
+  if(excelBtnDelActive){
+    excelBtnDelActive.onclick = () => {
+      if(excelActivePos && typeof excelActivePos.rowIdx === "number"){
+        deleteExcelRow(excelActivePos.rowIdx);
+      }
     };
   }
 
-  // Export to CSV / Excel
-  if(btnExportJournal){
-    btnExportJournal.onclick = () => {
-      const items = Array.from(created.journal.values());
-      if(items.length === 0){
-        showToast("لا توجد حركات لتصديرها");
+  if(excelSearchInput){
+    excelSearchInput.oninput = () => {
+      excelFilterQuery = excelSearchInput.value;
+      renderExcelGrid();
+    };
+  }
+
+  // Export to Excel / CSV with UTF-8 BOM
+  if(excelBtnExport){
+    excelBtnExport.onclick = () => {
+      const activeRows = excelRows.filter(r => hasRowData(r));
+      if(activeRows.length === 0){
+        showToast("لا توجد بيانات مسجلة في الإكسيل لتصديرها");
         return;
       }
-      const headers = ["رقم الحركة", "التاريخ", "نوع الحركة", "اسم الحركة", "المنطقة", "اسم العميل", "تفاصيل الحركة", "المبلغ", "العمولة"];
-      const rows = items.map(it => [
-        `"${String(it.ref || '').replace(/"/g, '""')}"`,
-        `"${String(it.date || '').replace(/"/g, '""')}"`,
-        `"${String(it.type || '').replace(/"/g, '""')}"`,
-        `"${String(it.name || '').replace(/"/g, '""')}"`,
-        `"${String(it.region || '').replace(/"/g, '""')}"`,
-        `"${String(it.client || '').replace(/"/g, '""')}"`,
-        `"${String(it.details || '').replace(/"/g, '""')}"`,
-        `"${it.amount || 0}"`,
-        `"${it.commission || 0}"`
+      const headers = ["رقم الحركه", "التاريخ", "نوع الحركه", "اسم الحركه", "المنطقه", "اسم العميل", "تفاصيل الحركه", "المبلغ", "العموله"];
+      const lines = activeRows.map(r => [
+        `"${String(r.ref || "").replace(/"/g, '""')}"`,
+        `"${String(r.date || "").replace(/"/g, '""')}"`,
+        `"${String(r.type || "").replace(/"/g, '""')}"`,
+        `"${String(r.name || "").replace(/"/g, '""')}"`,
+        `"${String(r.region || "").replace(/"/g, '""')}"`,
+        `"${String(r.client || "").replace(/"/g, '""')}"`,
+        `"${String(r.details || "").replace(/"/g, '""')}"`,
+        `"${r.amount || 0}"`,
+        `"${r.commission || 0}"`
       ]);
 
-      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const csvText = "\uFEFF" + [headers.join(","), ...lines.map(l => l.join(","))].join("\r\n");
+      const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `دفتر_اليومية_كيان_سيتي_${new Date().toISOString().split("T")[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `دفتر_اليوميه_كيان_عقارات_${new Date().toISOString().split("T")[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
       showToast("تم تصدير ملف الإكسيل بنجاح 📥");
     };
   }
 
+  // Bottom Sheet Tabs Navigation (تطابق شاشة فيديو HP)
+  if(excelSheetTabs){
+    excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(tab => {
+      tab.onclick = () => {
+        const sheet = tab.getAttribute("data-sheet");
+        if(sheet === "journal"){
+          return;
+        }
+        if(sheet === "home"){
+          closeDashboard();
+          return;
+        }
+        if(sheet === "units"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-units"]');
+          if(btn) btn.click();
+          return;
+        }
+        if(sheet === "clients"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-requests"]');
+          if(btn) btn.click();
+          return;
+        }
+        if(sheet === "accounts"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-stats"]');
+          if(btn) btn.click();
+          return;
+        }
+        if(sheet === "deals"){
+          excelFilterQuery = "حجز";
+          if(excelSearchInput) excelSearchInput.value = "حجز";
+          renderExcelGrid();
+          showToast("تم تصفية ورقة الإكسيل لعرض الصفقات وحجوزات الوحدات 🤝");
+          return;
+        }
+        const sheetTitles = {
+          staff: "الموظفين وفريق العمل",
+          inspections: "المعاينات الميدانية",
+          reports: "التقارير والإحصائيات العامة"
+        };
+        showToast(`ورقة (${sheetTitles[sheet] || sheet}) جاهزة ومتصلة بدفتر اليومية 📊`);
+      };
+    });
+  }
+
+  // Backward compatibility alias
+  function renderJournalTable(){
+    renderExcelGrid();
+  }
+
+  // Initial load and render
+  loadJournal().then(() => renderExcelGrid()).catch(() => renderExcelGrid());
 
 })();
 
