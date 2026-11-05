@@ -2517,6 +2517,7 @@ window.KAYAN_CONFIG = {
   // ========================================================
   // ========================================================
   // ========================================================
+  // ========================================================
   // 7. AUTHENTIC EXCEL SPREADSHEET (دفتر اليومية - واجهة إكسيل)
   // ========================================================
   const excelTableBody = document.getElementById("excel-table-body");
@@ -2566,18 +2567,19 @@ window.KAYAN_CONFIG = {
 
   created.journal = new Map();
 
+  // إنشاء صف نظيف تماماً بدون أي بيانات افتراضية نهائياً
   function makeDefaultRow(rowNum){
     return {
       id: "j_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6),
       ref: String(rowNum),
-      date: new Date().toISOString().split("T")[0],
-      type: "عميل جديد",
+      date: "",
+      type: "",
       name: "",
-      region: "جامعة أسيوط",
+      region: "",
       client: "",
       details: "",
       amount: "",
-      commission: "0",
+      commission: "",
       updatedAt: new Date().toISOString()
     };
   }
@@ -2592,7 +2594,10 @@ window.KAYAN_CONFIG = {
         if(snap && snap.exists()){
           snap.forEach(child => {
             const val = child.val();
-            excelRows.push({ id: child.key, ...val });
+            // تصفية أي عينات تجريبية قديمة
+            if(child.key !== "j_init_1" && val.name !== "حجز وحدة سكنية VIP"){
+              excelRows.push({ id: child.key, ...val });
+            }
           });
         }
       } catch(err){
@@ -2606,30 +2611,17 @@ window.KAYAN_CONFIG = {
         try {
           const arr = JSON.parse(raw);
           if(Array.isArray(arr) && arr.length > 0){
-            excelRows = arr;
+            // تصفية أي عينات تجريبية قديمة مخزنة محلياً
+            excelRows = arr.filter(r => r.id !== "j_init_1" && r.name !== "حجز وحدة سكنية VIP");
           }
         } catch(e){}
       }
     }
 
-    // Default sample row if empty
-    if(excelRows.length === 0){
-      excelRows.push({
-        id: "j_init_1",
-        ref: "1",
-        date: new Date().toISOString().split("T")[0],
-        type: "عميل جديد",
-        name: "حجز وحدة سكنية VIP",
-        region: "جامعة أسيوط",
-        client: "أحمد محمود سالم",
-        details: "سداد دفعة حجز نقدية بخزينة الشركة",
-        amount: 15000,
-        commission: 1500,
-        updatedAt: new Date().toISOString()
-      });
-    }
+    // تصفية نهائية لأي صف افتراضي
+    excelRows = excelRows.filter(r => r.id !== "j_init_1" && r.name !== "حجز وحدة سكنية VIP");
 
-    // Ensure at least 15 rows are ready for editing just like Excel
+    // تجهيز 15 صفاً نظيفاً فارغاً تماماً للكتابة المباشرة
     while(excelRows.length < 15){
       excelRows.push(makeDefaultRow(excelRows.length + 1));
     }
@@ -2688,7 +2680,7 @@ window.KAYAN_CONFIG = {
             payload[row.id] = {
               ref: row.ref || "",
               date: row.date || "",
-              type: row.type || "عميل جديد",
+              type: row.type || "",
               name: row.name || "",
               region: row.region || "",
               client: row.client || "",
@@ -2775,7 +2767,7 @@ window.KAYAN_CONFIG = {
       const tr = document.createElement("tr");
       tr.setAttribute("data-row-idx", rIdx);
 
-      // 1. Row Header (# number) on the LEFT (LTR matching video)
+      // 1. Row Header (# number)
       const tdRowHeader = document.createElement("td");
       tdRowHeader.className = "excel-row-header";
       tdRowHeader.setAttribute("data-row-idx", rIdx);
@@ -2865,7 +2857,7 @@ window.KAYAN_CONFIG = {
         tr.appendChild(td);
       });
 
-      // 3. Delete Row Button Column (يتطلب باسورد الإدمن زي باقي الموقع)
+      // 3. Delete Row Button Column (يتطلب باسورد)
       const tdDel = document.createElement("td");
       tdDel.style.width = "50px";
       const delBtn = document.createElement("button");
@@ -2915,12 +2907,10 @@ window.KAYAN_CONFIG = {
     }
   }
 
-  // حذف صف مع طلب الباسورد مثل باقي الموقع تماماً (requestDeleteWithPassword)
   function deleteExcelRow(rIdx){
     if(rIdx < 0 || rIdx >= excelRows.length) return;
     const row = excelRows[rIdx];
     const confirmName = row.name || row.client || `حركة رقم (${row.ref || (rIdx + 1)})`;
-
     const deletePrompt = `هل أنت متأكد من حذف ${confirmName} نهائياً من دفتر اليومية؟ أدخل كلمة السر لتأكيد الحذف:`;
 
     if(typeof requestDeleteWithPassword === "function"){
@@ -2997,7 +2987,6 @@ window.KAYAN_CONFIG = {
     excelBtnSaveNow.onclick = () => saveExcelData(true);
   }
 
-  // Toolbar delete calls the same password-protected delete function
   if(excelBtnDelActive){
     excelBtnDelActive.onclick = () => {
       if(excelActivePos && typeof excelActivePos.rowIdx === "number"){
@@ -3047,23 +3036,94 @@ window.KAYAN_CONFIG = {
     };
   }
 
-  // Bottom Sheet Tabs Navigation (تحديد الورقة النشطة فقط بدون ما تصغر القائمة أو تغير البيانات)
+  // Bottom Sheet Tabs Navigation: إعادة ربط الأزرار السفلية مع الحفاظ التام على حجم الجدول كاملاً بدون أي تصغير نهائياً
   if(excelSheetTabs){
     excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(tab => {
       tab.onclick = () => {
+        const sheet = tab.getAttribute("data-sheet");
+
+        // تحديث التحديد البصري للشيت
         excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(t => t.classList.remove("active-sheet"));
         tab.classList.add("active-sheet");
-        // مسح أي تصفية لضمان بقاء الجدول كبيراً وكاملاً دائماً
+
+        // مسح أي تصفية لضمان بقاء جدول اليومية كبيراً ومكتملاً
         excelFilterQuery = "";
         if(excelSearchInput) excelSearchInput.value = "";
-        renderExcelGrid();
+
+        if(sheet === "journal"){
+          const jBtn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-journal"]');
+          if(jBtn && !jBtn.classList.contains("active")) {
+            jBtn.click();
+          } else {
+            renderExcelGrid();
+          }
+          return;
+        }
+
+        if(sheet === "home"){
+          closeDashboard();
+          return;
+        }
+
+        if(sheet === "units"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-units"]');
+          if(btn) btn.click();
+          return;
+        }
+
+        if(sheet === "clients"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-requests"]');
+          if(btn) btn.click();
+          return;
+        }
+
+        if(sheet === "deals"){
+          // الانتقال لقسم الصفقات والوحدات بدون تصفية أو تصغير جدول اليومية
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-units"]');
+          if(btn) btn.click();
+          showToast("تم فتح سجل الصفقات والوحدات العقارية 🤝");
+          return;
+        }
+
+        if(sheet === "accounts"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-stats"]');
+          if(btn) btn.click();
+          return;
+        }
+
+        if(sheet === "staff"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-students"]');
+          if(btn) btn.click();
+          showToast("فريق عمل إدارة الأصول والسكن 👔");
+          return;
+        }
+
+        if(sheet === "inspections"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-requests"]');
+          if(btn) btn.click();
+          showToast("طلبات المعاينات وحجوزات العملاء 👁️");
+          return;
+        }
+
+        if(sheet === "reports"){
+          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-stats"]');
+          if(btn) btn.click();
+          showToast("التقارير المالية والتشغيلية العامة 📈");
+          return;
+        }
       };
     });
   }
 
-  
   // Backward compatibility alias
   function renderJournalTable(){
+    excelFilterQuery = "";
+    if(excelSearchInput) excelSearchInput.value = "";
+    if(excelSheetTabs){
+      excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(t => t.classList.remove("active-sheet"));
+      const jTab = excelSheetTabs.querySelector('.excel-tab-item[data-sheet="journal"]');
+      if(jTab) jTab.classList.add("active-sheet");
+    }
     renderExcelGrid();
   }
 
