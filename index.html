@@ -1905,14 +1905,16 @@ button, a, input, select { touch-action: manipulation; }
 }
 
 /* ======================================================== */
+/* ======================================================== */
 /* AUTHENTIC EXCEL SPREADSHEET COMPONENT (دفتر اليوميه)   */
+/* Exactly Matching HP Monitor Video Reference              */
 /* ======================================================== */
 .excel-workbook-container {
   background: #ffffff;
   color: #0f172a;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid #cbd5e1;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
   overflow: hidden;
   font-family: 'Segoe UI', Tahoma, 'Cairo', sans-serif;
   display: flex;
@@ -1920,7 +1922,7 @@ button, a, input, select { touch-action: manipulation; }
   margin-top: 14px;
 }
 
-/* Excel Ribbon / Title Bar */
+/* Excel Top Ribbon */
 .excel-top-ribbon {
   background: #107c41;
   color: #ffffff;
@@ -1996,58 +1998,84 @@ button, a, input, select { touch-action: manipulation; }
   background: rgba(239, 68, 68, 0.6);
 }
 
-/* Formula Bar */
+/* Formula Bar matching Frame 01 & Frame 02 */
 .excel-formula-bar {
-  background: #f8fafc;
-  border-bottom: 1px solid #cbd5e1;
+  background: #f3f4f6;
+  border-bottom: 1px solid #d1d5db;
   display: flex;
   align-items: center;
-  padding: 5px 10px;
+  padding: 5px 12px;
   gap: 8px;
   font-size: 0.88rem;
+  direction: ltr;
 }
 .excel-name-box {
   background: #ffffff;
-  border: 1px solid #94a3b8;
-  padding: 3px 8px;
+  border: 1px solid #9ca3af;
+  padding: 3px 10px;
   min-width: 65px;
   text-align: center;
   font-family: Consolas, monospace;
   font-weight: 700;
-  color: #0f172a;
+  color: #111827;
   border-radius: 2px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+  user-select: none;
+}
+.excel-fx-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+  font-size: 0.95rem;
+  user-select: none;
+}
+.excel-fx-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0 3px;
+  font-size: 0.95rem;
+  transition: color 0.15s;
+}
+.excel-fx-btn:hover {
+  color: #107c41;
 }
 .excel-fx-label {
   font-family: Georgia, serif;
   font-style: italic;
   font-weight: 700;
-  color: #64748b;
-  font-size: 1rem;
+  color: #4b5563;
+  font-size: 1.05rem;
+  padding: 0 4px;
   user-select: none;
 }
 .excel-formula-input {
   flex: 1;
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d1d5db;
   padding: 4px 10px;
   font-size: 0.88rem;
-  color: #0f172a;
+  color: #111827;
   border-radius: 2px;
   outline: none;
-  font-family: inherit;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  text-align: right;
 }
 .excel-formula-input:focus {
   border-color: #107c41;
   box-shadow: 0 0 0 1px #107c41;
 }
 
-/* Table Grid View */
+/* Table Grid Viewport: LTR Layout matching HP monitor video */
 .excel-grid-viewport {
   overflow: auto;
-  max-height: 580px;
+  max-height: 560px;
   background: #ffffff;
   position: relative;
+  direction: ltr; /* Row numbers on left, columns A->I left to right */
 }
 .excel-table {
   border-collapse: collapse;
@@ -2056,52 +2084,55 @@ button, a, input, select { touch-action: manipulation; }
   font-size: 0.88rem;
 }
 .excel-table th, .excel-table td {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e7eb;
   padding: 0;
-  height: 32px;
+  height: 30px;
   position: relative;
 }
 
 /* Headers */
 .excel-corner-header {
-  background: #f1f5f9;
+  background: #f3f4f6;
   width: 44px;
   text-align: center;
   font-weight: 700;
-  color: #64748b;
+  color: #6b7280;
   position: sticky;
   top: 0;
-  right: 0;
+  left: 0;
   z-index: 4;
   border-bottom: 2px solid #cbd5e1 !important;
+  border-right: 2px solid #cbd5e1 !important;
+  user-select: none;
 }
 .excel-col-header {
-  background: #f1f5f9;
-  color: #334155;
+  background: #f3f4f6;
+  color: #374151;
   text-align: center;
   font-weight: 700;
   position: sticky;
   top: 0;
   z-index: 3;
-  padding: 6px 4px !important;
+  padding: 5px 4px !important;
   user-select: none;
   border-bottom: 2px solid #cbd5e1 !important;
-  transition: background 0.15s;
+  transition: all 0.15s ease;
 }
 .excel-col-letter {
   display: block;
   font-size: 0.72rem;
-  color: #64748b;
+  color: #6b7280;
   font-weight: 800;
   letter-spacing: 1px;
 }
 .excel-col-title {
   display: block;
   font-size: 0.82rem;
-  color: #0f172a;
+  color: #111827;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: 'Cairo', sans-serif;
 }
 .excel-col-header.col-active {
   background: #dcfce7 !important;
@@ -2109,23 +2140,23 @@ button, a, input, select { touch-action: manipulation; }
   border-bottom-color: #107c41 !important;
 }
 .excel-row-header {
-  background: #f1f5f9;
-  color: #64748b;
+  background: #f3f4f6;
+  color: #6b7280;
   text-align: center;
   font-weight: 700;
   font-size: 0.78rem;
   width: 44px;
   user-select: none;
   position: sticky;
-  right: 0;
+  left: 0;
   z-index: 2;
-  border-left: 2px solid #cbd5e1 !important;
-  transition: background 0.15s;
+  border-right: 2px solid #cbd5e1 !important;
+  transition: all 0.15s ease;
 }
 .excel-row-header.row-active {
   background: #dcfce7 !important;
   color: #107c41 !important;
-  border-left-color: #107c41 !important;
+  border-right-color: #107c41 !important;
 }
 
 /* Cell Inputs */
@@ -2136,11 +2167,11 @@ button, a, input, select { touch-action: manipulation; }
   outline: none;
   background: transparent;
   padding: 4px 8px;
-  font-family: inherit;
+  font-family: 'Cairo', sans-serif;
   font-size: 0.88rem;
-  color: #0f172a;
+  color: #111827;
   box-sizing: border-box;
-  text-align: right;
+  text-align: center;
   direction: rtl;
 }
 .excel-cell-input:focus {
@@ -2154,7 +2185,7 @@ button, a, input, select { touch-action: manipulation; }
   font-weight: 700;
   color: #0d5c30;
   font-family: Consolas, monospace, sans-serif;
-  text-align: left;
+  text-align: center;
   direction: ltr;
 }
 .excel-cell-input.ref-input {
@@ -2164,13 +2195,13 @@ button, a, input, select { touch-action: manipulation; }
 }
 .excel-cell-input.date-input {
   font-size: 0.84rem;
-  color: #334155;
+  color: #374151;
   text-align: center;
 }
 .excel-row-del-btn {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #9ca3af;
   cursor: pointer;
   width: 100%;
   height: 100%;
@@ -2185,16 +2216,17 @@ button, a, input, select { touch-action: manipulation; }
   background: #fee2e2;
 }
 
-/* Bottom Sheet Tabs */
+/* Bottom Sheet Tabs matching Frame 05 & Frame 08 */
 .excel-bottom-tabs-bar {
-  background: #f1f5f9;
-  border-top: 1px solid #cbd5e1;
+  background: #f3f4f6;
+  border-top: 1px solid #d1d5db;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
   overflow-x: auto;
   gap: 10px;
+  direction: ltr; /* Tabs start from left to right as in the video */
 }
 .excel-tabs-list {
   display: flex;
@@ -2204,8 +2236,8 @@ button, a, input, select { touch-action: manipulation; }
 }
 .excel-tab-item {
   padding: 6px 14px;
-  background: #e2e8f0;
-  color: #475569;
+  background: #e5e7eb;
+  color: #4b5563;
   font-size: 0.84rem;
   font-weight: 600;
   border: 1px solid #cbd5e1;
@@ -2218,10 +2250,11 @@ button, a, input, select { touch-action: manipulation; }
   align-items: center;
   gap: 6px;
   transition: all 0.15s ease;
+  font-family: 'Cairo', sans-serif;
 }
 .excel-tab-item:hover {
-  background: #f8fafc;
-  color: #0f172a;
+  background: #f9fafb;
+  color: #111827;
 }
 .excel-tab-item.active-sheet {
   background: #ffffff;
@@ -2234,9 +2267,9 @@ button, a, input, select { touch-action: manipulation; }
 .excel-tab-add-btn {
   padding: 4px 10px;
   background: transparent;
-  border: 1px dashed #94a3b8;
+  border: 1px dashed #9ca3af;
   border-radius: 4px;
-  color: #475569;
+  color: #4b5563;
   cursor: pointer;
   font-size: 0.9rem;
   margin-bottom: 2px;
@@ -2263,6 +2296,7 @@ button, a, input, select { touch-action: manipulation; }
   font-weight: 600;
   flex-wrap: wrap;
   gap: 10px;
+  direction: rtl;
 }
 .excel-status-left, .excel-status-right {
   display: flex;
@@ -2278,7 +2312,6 @@ button, a, input, select { touch-action: manipulation; }
   align-items: center;
   gap: 4px;
 }
-
 </style>
 </head>
 <body>
@@ -3134,7 +3167,7 @@ button, a, input, select { touch-action: manipulation; }
     </div>
 
     
-        <!-- Tab: Journal (دفتر اليومية - واجهة إكسيل تفاعلية) -->
+            <!-- Tab: Journal (دفتر اليومية - واجهة إكسيل تفاعلية) -->
     <div class="admin-tab-pane" id="admin-tab-journal" style="display:none;">
       
       <!-- KPI Row (الملخص المالي والتشغيلي المباشر) -->
@@ -3161,7 +3194,7 @@ button, a, input, select { touch-action: manipulation; }
         </div>
       </div>
 
-      <!-- EXCEL WORKBOOK CONTAINER -->
+      <!-- EXCEL WORKBOOK CONTAINER (مطابق لفيديو شاشة HP بالمللي) -->
       <div class="excel-workbook-container">
         
         <!-- Top Ribbon / Excel Bar -->
@@ -3170,7 +3203,7 @@ button, a, input, select { touch-action: manipulation; }
             <div class="excel-logo-icon">X</div>
             <div>
               <div style="font-weight:800; font-size:1rem; line-height:1.2;">دفتر اليوميه - كيان سيتي للعقارات</div>
-              <div style="font-size:0.72rem; opacity:0.85;">Microsoft Excel Online Grid — كتابة وتعديل مباشر في جميع الخلايا</div>
+              <div style="font-size:0.72rem; opacity:0.85;">Microsoft Excel Online Grid — كتابة وتعديل حر ومباشر في جميع الخلايا</div>
             </div>
             <div id="excel-autosave-badge" class="excel-stat-chip" style="background:rgba(0,0,0,0.25); font-size:0.75rem; padding:3px 10px; border-radius:999px;">
               🟢 تم الحفظ تلقائياً
@@ -3190,9 +3223,9 @@ button, a, input, select { touch-action: manipulation; }
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>تصدير Excel</span>
             </button>
-            <button class="excel-btn excel-btn-danger" id="excel-btn-del-active" title="حذف الصف النشط المحدد حالياً">
+            <button class="excel-btn excel-btn-danger" id="excel-btn-del-active" title="حذف الصف النشط (يتطلب إدخال الرقم السري)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              <span>حذف الصف</span>
+              <span>حذف الصف 🔒</span>
             </button>
             <div style="position:relative; display:inline-flex; align-items:center;">
               <input type="text" id="excel-search-input" placeholder="🔍 تصفية الخلايا..." style="background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); color:#fff; border-radius:4px; padding:4px 8px; font-size:0.8rem; width:130px; outline:none;" title="تصفية السطور بالبحث السريع">
@@ -3200,20 +3233,24 @@ button, a, input, select { touch-action: manipulation; }
           </div>
         </div>
 
-        <!-- Formula Bar (شريط الصيغة والقيم مثل Excel) -->
+        <!-- Formula Bar (مطابق للصورة frame_01 و frame_02) -->
         <div class="excel-formula-bar">
-          <div class="excel-name-box" id="excel-name-box" title="اسم وموقع الخلية النشطة">A1</div>
-          <div class="excel-fx-label" title="شريط إدخال وتعديل القيمة">fx</div>
+          <div class="excel-name-box" id="excel-name-box" title="موقع الخلية النشطة">A1</div>
+          <div class="excel-fx-btns">
+            <button type="button" class="excel-fx-btn" id="excel-fx-cancel" title="إلغاء التعديل">✖</button>
+            <button type="button" class="excel-fx-btn" id="excel-fx-confirm" title="تأكيد التعديل">✔</button>
+            <span class="excel-fx-label" title="شريط الصيغة والقيم">fx</span>
+          </div>
           <input type="text" class="excel-formula-input" id="excel-formula-input" placeholder="القيمة المحددة في الخلية النشطة (اكتب هنا للتعديل المباشر)..." autocomplete="off">
         </div>
 
-        <!-- Spreadsheet Grid Viewport -->
+        <!-- Spreadsheet Grid Viewport: LTR Order matching HP monitor video -->
         <div class="excel-grid-viewport" id="excel-grid-viewport">
           <table class="excel-table" id="excel-table">
             <thead>
               <tr>
                 <th class="excel-corner-header" title="تحديد الكل">◢</th>
-                <th class="excel-col-header" data-col="0" style="width:90px;">
+                <th class="excel-col-header" data-col="0" style="width:95px;">
                   <span class="excel-col-letter">A</span>
                   <span class="excel-col-title">رقم الحركه</span>
                 </th>
@@ -3250,7 +3287,7 @@ button, a, input, select { touch-action: manipulation; }
                   <span class="excel-col-title">العموله</span>
                 </th>
                 <th class="excel-col-header" style="width:50px;">
-                  <span class="excel-col-letter">⚙️</span>
+                  <span class="excel-col-letter">🔒</span>
                   <span class="excel-col-title">حذف</span>
                 </th>
               </tr>
@@ -3284,35 +3321,35 @@ button, a, input, select { touch-action: manipulation; }
           <option value="أخرى">
         </datalist>
 
-        <!-- Excel Bottom Sheet Navigation (كما في فيديو شاشة HP تماماً) -->
+        <!-- Excel Bottom Sheet Navigation (تطابق لقطة frame_05 و frame_08 تماماً) -->
         <div class="excel-bottom-tabs-bar">
           <div class="excel-tabs-list" id="excel-sheet-tabs">
             <button type="button" class="excel-tab-item" data-sheet="home" title="الانتقال إلى الرئيسية">
               <span>الرئيسية</span>
             </button>
             <button type="button" class="excel-tab-item active-sheet" data-sheet="journal" title="ورقة دفتر اليوميه النشطة">
-              <span>📊 دفتر اليوميه</span>
+              <span>دفتر اليوميه</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="units" title="الانتقال إلى إدارة العقارات">
-              <span>🏢 العقارات</span>
+              <span>العقارات</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="clients" title="الانتقال إلى قائمة العملاء والطلبات">
-              <span>👥 العملاء</span>
+              <span>العملاء</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="deals" title="الانتقال إلى الصفقات">
-              <span>🤝 الصفقات</span>
+              <span>الصفقات</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="accounts" title="الانتقال إلى الحسابات والإحصائيات">
-              <span>💰 الحسابات</span>
+              <span>الحسابات</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="staff" title="ورقة الموظفين">
-              <span>👔 الموظفين</span>
+              <span>الموظفين</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="inspections" title="ورقة المعاينات">
-              <span>👁️ المعاينات</span>
+              <span>المعاينات</span>
             </button>
             <button type="button" class="excel-tab-item" data-sheet="reports" title="ورقة التقارير">
-              <span>📈 التقارير</span>
+              <span>التقارير</span>
             </button>
             <button type="button" class="excel-tab-add-btn" id="excel-tab-add-sheet" title="إضافة صف جديد في ورقة العمل">
               +

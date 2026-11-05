@@ -2516,11 +2516,14 @@ window.KAYAN_CONFIG = {
   // ========================================================
   // ========================================================
   // ========================================================
+  // ========================================================
   // 7. AUTHENTIC EXCEL SPREADSHEET (دفتر اليومية - واجهة إكسيل)
   // ========================================================
   const excelTableBody = document.getElementById("excel-table-body");
   const excelNameBox = document.getElementById("excel-name-box");
   const excelFormulaInput = document.getElementById("excel-formula-input");
+  const excelFxCancel = document.getElementById("excel-fx-cancel");
+  const excelFxConfirm = document.getElementById("excel-fx-confirm");
   const excelAutosaveBadge = document.getElementById("excel-autosave-badge");
   const excelBtnAddRow = document.getElementById("excel-btn-add-row");
   const excelBtnSaveNow = document.getElementById("excel-btn-save-now");
@@ -2544,7 +2547,7 @@ window.KAYAN_CONFIG = {
   const excelStatusNet = document.getElementById("excel-status-net");
 
   const EXCEL_COLUMNS = [
-    { key: "ref", letter: "A", name: "رقم الحركه", width: "90px", type: "text", className: "ref-input" },
+    { key: "ref", letter: "A", name: "رقم الحركه", width: "95px", type: "text", className: "ref-input" },
     { key: "date", letter: "B", name: "التاريخ", width: "115px", type: "text", className: "date-input" },
     { key: "type", letter: "C", name: "نوع الحركه", width: "130px", type: "text", list: "excel-type-options" },
     { key: "name", letter: "D", name: "اسم الحركه", width: "170px", type: "text" },
@@ -2626,8 +2629,8 @@ window.KAYAN_CONFIG = {
       });
     }
 
-    // Ensure at least 12 rows are ready for editing
-    while(excelRows.length < 12){
+    // Ensure at least 15 rows are ready for editing just like Excel
+    while(excelRows.length < 15){
       excelRows.push(makeDefaultRow(excelRows.length + 1));
     }
 
@@ -2755,7 +2758,7 @@ window.KAYAN_CONFIG = {
   function renderExcelGrid(){
     if(!excelTableBody) return;
     if(excelRows.length === 0){
-      while(excelRows.length < 12){
+      while(excelRows.length < 15){
         excelRows.push(makeDefaultRow(excelRows.length + 1));
       }
     }
@@ -2772,7 +2775,7 @@ window.KAYAN_CONFIG = {
       const tr = document.createElement("tr");
       tr.setAttribute("data-row-idx", rIdx);
 
-      // 1. Row Header (# number)
+      // 1. Row Header (# number) on the LEFT (LTR matching video)
       const tdRowHeader = document.createElement("td");
       tdRowHeader.className = "excel-row-header";
       tdRowHeader.setAttribute("data-row-idx", rIdx);
@@ -2862,13 +2865,13 @@ window.KAYAN_CONFIG = {
         tr.appendChild(td);
       });
 
-      // 3. Delete Row Button Column
+      // 3. Delete Row Button Column (يتطلب باسورد الإدمن زي باقي الموقع)
       const tdDel = document.createElement("td");
       tdDel.style.width = "50px";
       const delBtn = document.createElement("button");
       delBtn.className = "excel-row-del-btn";
-      delBtn.innerHTML = "🗑️";
-      delBtn.title = `حذف الصف رقم ${rIdx + 1}`;
+      delBtn.innerHTML = "🔒 🗑️";
+      delBtn.title = `حذف الصف رقم ${rIdx + 1} (يتطلب الرقم السري)`;
       delBtn.type = "button";
       delBtn.onclick = () => deleteExcelRow(rIdx);
       tdDel.appendChild(delBtn);
@@ -2912,11 +2915,27 @@ window.KAYAN_CONFIG = {
     }
   }
 
-  async function deleteExcelRow(rIdx){
+  // حذف صف مع طلب الباسورد مثل باقي الموقع تماماً (requestDeleteWithPassword)
+  function deleteExcelRow(rIdx){
     if(rIdx < 0 || rIdx >= excelRows.length) return;
     const row = excelRows[rIdx];
-    const confirmName = row.name || row.client || `رقم ${row.ref || (rIdx + 1)}`;
-    if(!confirm(`هل أنت متأكد من حذف الصف (${confirmName})؟`)) return;
+    const confirmName = row.name || row.client || `حركة رقم (${row.ref || (rIdx + 1)})`;
+
+    const deletePrompt = `هل أنت متأكد من حذف ${confirmName} نهائياً من دفتر اليومية؟ أدخل كلمة السر لتأكيد الحذف:`;
+
+    if(typeof requestDeleteWithPassword === "function"){
+      requestDeleteWithPassword(deletePrompt, async () => {
+        await executeDeleteRow(rIdx);
+      });
+    } else {
+      if(!confirm(deletePrompt)) return;
+      executeDeleteRow(rIdx);
+    }
+  }
+
+  async function executeDeleteRow(rIdx){
+    if(rIdx < 0 || rIdx >= excelRows.length) return;
+    const row = excelRows[rIdx];
 
     if(row.id && db){
       try {
@@ -2938,7 +2957,7 @@ window.KAYAN_CONFIG = {
 
     renderExcelGrid();
     scheduleExcelAutoSave();
-    showToast("تم حذف الصف بنجاح 🗑️");
+    showToast("تم حذف الحركة بنجاح بعد التحقق من كلمة السر 🗑️");
   }
 
   // Two-way Formula Bar Binding
@@ -2957,6 +2976,19 @@ window.KAYAN_CONFIG = {
     };
   }
 
+  if(excelFxConfirm){
+    excelFxConfirm.onclick = () => {
+      saveExcelData(true);
+    };
+  }
+
+  if(excelFxCancel){
+    excelFxCancel.onclick = () => {
+      renderExcelGrid();
+      showToast("تم إلغاء التعديل غير المحفوظ");
+    };
+  }
+
   // Buttons Event Handlers
   if(excelBtnAddRow) excelBtnAddRow.onclick = () => addExcelRow(true);
   if(excelTabAddSheet) excelTabAddSheet.onclick = () => addExcelRow(true);
@@ -2965,6 +2997,7 @@ window.KAYAN_CONFIG = {
     excelBtnSaveNow.onclick = () => saveExcelData(true);
   }
 
+  // Toolbar delete calls the same password-protected delete function
   if(excelBtnDelActive){
     excelBtnDelActive.onclick = () => {
       if(excelActivePos && typeof excelActivePos.rowIdx === "number"){
