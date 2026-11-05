@@ -2645,7 +2645,7 @@ window.KAYAN_CONFIG = {
     }
 
     // تصفية نهائية لأي صف افتراضي
-    excelRows = excelRows.filter(r => r.id !== "j_init_1" && r.name !== "حجز وحدة سكنية VIP");
+    excelRows = excelRows.filter(r => r.id !== "j_init_1" && r.name !== "حجز وحدة سكنية VIP" && r.client !== "أحمد محمود سالم");
 
     // تجهيز 15 صفاً نظيفاً فارغاً تماماً للكتابة المباشرة
     while(excelRows.length < 15){
@@ -3107,7 +3107,7 @@ window.KAYAN_CONFIG = {
   let excelSheets = {
     "journal": { id: "journal", title: "دفتر اليوميه", rows: [] }
   };
-  let savedClientList = ["فايق", "أحمد محمود سالم", "د. محمد مصطفى", "م. حسام علي"];
+  let savedClientList = [];
 
   // تحميل الشيتات المتعددة وعزلها تماماً
   function initMultiSheets(initialJournalRows){
@@ -3249,8 +3249,8 @@ window.KAYAN_CONFIG = {
     cTab.style.background = "rgba(212,175,55,0.18)";
     cTab.style.borderColor = "var(--gold)";
     cTab.style.color = "#b45309";
-    cTab.innerHTML = `<span>👤 كشف حساب فايق والعملاء</span>`;
-    cTab.onclick = () => openClientLedger("فايق");
+    cTab.innerHTML = `<span>👤 كشوف حسابات العملاء</span>`;
+    cTab.onclick = () => openClientLedger();
     excelSheetTabs.appendChild(cTab);
 
     // 3. الشيتات المخصصة المستقلة
@@ -3302,7 +3302,6 @@ window.KAYAN_CONFIG = {
         }
       });
     });
-    if(!map.has("فايق".toLowerCase())) map.set("فايق".toLowerCase(), "فايق");
     return Array.from(map.values());
   }
 
@@ -3373,18 +3372,29 @@ window.KAYAN_CONFIG = {
   let activeLedgerClient = "فايق";
 
   // فتح نافذة كشف حساب العميل
-  function openClientLedger(clientName = "فايق"){
-    activeLedgerClient = clientName || "فايق";
+  function openClientLedger(clientName){
     const modal = document.getElementById("client-ledger-modal");
     if(!modal) return;
 
-    // تعبئة القائمة المنسدلة بكل العملاء
+    const clients = getAllLedgerClients();
+    if(clientName){
+      activeLedgerClient = clientName;
+    } else if(clients.length > 0){
+      activeLedgerClient = clients[0];
+    } else {
+      activeLedgerClient = "";
+    }
+
+    // تعبئة القائمة المنسدلة بالعملاء الحقيقيين فقط بدون أي أسماء افتراضية
     const select = document.getElementById("ledger-client-select");
     if(select){
-      const clients = getAllLedgerClients();
-      select.innerHTML = clients.map(c => `<option value="${escapeHtml(c)}" ${c === activeLedgerClient ? "selected" : ""}>${escapeHtml(c)}</option>`).join("");
+      if(clients.length === 0){
+        select.innerHTML = '<option value="">(لا يوجد عملاء مسجلين بعد)</option>';
+      } else {
+        select.innerHTML = clients.map(c => `<option value="${escapeHtml(c)}" ${c === activeLedgerClient ? "selected" : ""}>${escapeHtml(c)}</option>`).join("");
+      }
       select.onchange = () => {
-        openClientLedger(select.value);
+        if(select.value) openClientLedger(select.value);
       };
     }
 
@@ -3431,8 +3441,7 @@ window.KAYAN_CONFIG = {
       tbody.innerHTML = `
         <tr>
           <td colspan="7" style="text-align:center; padding:36px; color:#64748b;">
-            لا توجد أي حركات مسجلة باسم <strong>(${escapeHtml(data.clientName)})</strong> في دفتر اليومية حتى الآن.<br>
-            بمجرد كتابة اسم (${escapeHtml(data.clientName)}) في خانة "اسم العميل" باليومية (سباكة، نظافة، كهرباء...) ستظهر وتتجمع هنا تلقائياً فوراً!
+            ${data.clientName ? `لا توجد أي حركات مسجلة باسم <strong>(${escapeHtml(data.clientName)})</strong> حتى الآن.<br>اكتب اسم العميل في دفتر اليومية مع أي مصروف (سباكة، نظافة...) وسيظهر هنا تلقائياً.` : 'لم يتم تسجيل أي عملاء بعد. اكتب اسم العميل في دفتر اليومية أو اضغط على زر <strong>+ عميل جديد</strong> بالأعلى.'}
           </td>
         </tr>
       `;
