@@ -3047,50 +3047,21 @@ window.KAYAN_CONFIG = {
     };
   }
 
-  // Bottom Sheet Tabs Navigation (تطابق شاشة فيديو HP)
+  // Bottom Sheet Tabs Navigation (تحديد الورقة النشطة فقط بدون ما تصغر القائمة أو تغير البيانات)
   if(excelSheetTabs){
     excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(tab => {
       tab.onclick = () => {
-        const sheet = tab.getAttribute("data-sheet");
-        if(sheet === "journal"){
-          return;
-        }
-        if(sheet === "home"){
-          closeDashboard();
-          return;
-        }
-        if(sheet === "units"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-units"]');
-          if(btn) btn.click();
-          return;
-        }
-        if(sheet === "clients"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-requests"]');
-          if(btn) btn.click();
-          return;
-        }
-        if(sheet === "accounts"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-stats"]');
-          if(btn) btn.click();
-          return;
-        }
-        if(sheet === "deals"){
-          excelFilterQuery = "حجز";
-          if(excelSearchInput) excelSearchInput.value = "حجز";
-          renderExcelGrid();
-          showToast("تم تصفية ورقة الإكسيل لعرض الصفقات وحجوزات الوحدات 🤝");
-          return;
-        }
-        const sheetTitles = {
-          staff: "الموظفين وفريق العمل",
-          inspections: "المعاينات الميدانية",
-          reports: "التقارير والإحصائيات العامة"
-        };
-        showToast(`ورقة (${sheetTitles[sheet] || sheet}) جاهزة ومتصلة بدفتر اليومية 📊`);
+        excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(t => t.classList.remove("active-sheet"));
+        tab.classList.add("active-sheet");
+        // مسح أي تصفية لضمان بقاء الجدول كبيراً وكاملاً دائماً
+        excelFilterQuery = "";
+        if(excelSearchInput) excelSearchInput.value = "";
+        renderExcelGrid();
       };
     });
   }
 
+  
   // Backward compatibility alias
   function renderJournalTable(){
     renderExcelGrid();
