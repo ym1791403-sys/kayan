@@ -19,6 +19,10 @@
     "request_counter": {
       ".read": true,
       ".write": true
+    },
+    "journal_entries": {
+      ".read": true,
+      ".write": true
     }
   }
 }

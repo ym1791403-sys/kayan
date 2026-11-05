@@ -1772,6 +1772,7 @@ window.KAYAN_CONFIG = {
 
   const adminTitles = {
     "admin-tab-units": "إدارة الشقق والوحدات المعروضة",
+    "admin-tab-journal": "دفتر اليومية والحركات المالية",
     "admin-tab-students": "سجل الطلاب والسكن الجامعي",
     "admin-tab-ads": "نظام الإعلانات والعروض الترويجية",
     "admin-tab-requests": "طلبات الحجز واستفسارات العملاء",
@@ -1788,6 +1789,7 @@ window.KAYAN_CONFIG = {
       if(targetPane) targetPane.style.display = "block";
       adminPageTitle.innerText = adminTitles[targetId] || "لوحة التحكم";
       if(targetId === "admin-tab-students") renderStudentsTable();
+      if(targetId === "admin-tab-journal") renderJournalTable();
       if(targetId === "admin-tab-units") renderAdminTable();
       if(targetId === "admin-tab-requests") renderRequestsTable();
     });
@@ -1818,6 +1820,8 @@ window.KAYAN_CONFIG = {
     renderStudentsTable();
     try { await loadRequests(); } catch(e){ console.error(e); }
     renderRequestsTable();
+    try { await loadJournal(); } catch(e){ console.error(e); }
+    renderJournalTable();
   }
 
   function closeDashboard(){
@@ -2507,6 +2511,330 @@ window.KAYAN_CONFIG = {
     renderPublicProperties();
     console.warn("Kayan: قاعدة البيانات غير مربوطة — املأ KAYAN_CONFIG.FIREBASE في أول السكريبت.");
   }
+
+
+  // ========================================================
+  // 7. DAILY JOURNAL & FINANCIAL TRANSACTIONS (دفتر اليومية)
+  // ========================================================
+  const journalTbody = document.getElementById("admin-journal-tbody");
+  const journalEmptyMsg = document.getElementById("journal-empty-msg");
+  const btnOpenAddJournal = document.getElementById("btn-open-add-journal");
+  const journalModal = document.getElementById("admin-journal-modal");
+  const journalModalClose = document.getElementById("journal-modal-close");
+  const journalModalCancel = document.getElementById("journal-modal-cancel");
+  const journalForm = document.getElementById("admin-journal-form");
+  const journalModalTitle = document.getElementById("journal-modal-title");
+
+  const formJournalId = document.getElementById("form-journal-id");
+  const formJournalRef = document.getElementById("form-journal-ref");
+  const formJournalDate = document.getElementById("form-journal-date");
+  const formJournalType = document.getElementById("form-journal-type");
+  const formJournalName = document.getElementById("form-journal-name");
+  const formJournalRegion = document.getElementById("form-journal-region");
+  const formJournalClient = document.getElementById("form-journal-client");
+  const formJournalAmount = document.getElementById("form-journal-amount");
+  const formJournalCommission = document.getElementById("form-journal-commission");
+  const formJournalDetails = document.getElementById("form-journal-details");
+
+  const journalSearchInput = document.getElementById("journal-search-input");
+  const journalFilterType = document.getElementById("journal-filter-type");
+  const journalFilterRegion = document.getElementById("journal-filter-region");
+  const journalBtnReset = document.getElementById("journal-btn-reset-filters");
+  const btnExportJournal = document.getElementById("btn-export-journal");
+
+  const journalKpiCount = document.getElementById("journal-kpi-count");
+  const journalKpiInflow = document.getElementById("journal-kpi-inflow");
+  const journalKpiOutflow = document.getElementById("journal-kpi-outflow");
+  const journalKpiCommissions = document.getElementById("journal-kpi-commissions");
+  const journalKpiNet = document.getElementById("journal-kpi-net");
+
+  created.journal = new Map();
+
+  async function loadJournal(){
+    if(!db){
+      const raw = localStorage.getItem("kayan_journal_backup");
+      if(raw){
+        try {
+          const arr = JSON.parse(raw);
+          created.journal.clear();
+          arr.forEach(item => created.journal.set(item.id, item));
+        } catch(e){}
+      }
+      return;
+    }
+    return new Promise(resolve => {
+      db.ref("journal_entries").once("value", snap => {
+        created.journal.clear();
+        if(snap.exists()){
+          snap.forEach(child => {
+            created.journal.set(child.key, { id: child.key, ...child.val() });
+          });
+        }
+        resolve();
+      }, err => {
+        console.warn("Could not load journal from Firebase, falling back to local storage:", err);
+        const raw = localStorage.getItem("kayan_journal_backup");
+        if(raw){
+          try {
+            const arr = JSON.parse(raw);
+            created.journal.clear();
+            arr.forEach(item => created.journal.set(item.id, item));
+          } catch(e){}
+        }
+        resolve();
+      });
+    });
+  }
+
+  function persistJournalLocal(){
+    try {
+      const arr = Array.from(created.journal.values());
+      localStorage.setItem("kayan_journal_backup", JSON.stringify(arr));
+    } catch(e){}
+  }
+
+  function renderJournalTable(){
+    if(!journalTbody) return;
+    journalTbody.innerHTML = "";
+
+    const q = (journalSearchInput && journalSearchInput.value ? journalSearchInput.value.trim().toLowerCase() : "");
+    const fType = (journalFilterType ? journalFilterType.value : "all");
+    const fRegion = (journalFilterRegion ? journalFilterRegion.value : "all");
+
+    const allItems = Array.from(created.journal.values()).sort((a, b) => {
+      const dComp = (b.date || "").localeCompare(a.date || "");
+      if(dComp !== 0) return dComp;
+      return String(b.ref || "").localeCompare(String(a.ref || ""), undefined, {numeric: true});
+    });
+
+    let totalInflow = 0;
+    let totalOutflow = 0;
+    let totalCommissions = 0;
+
+    allItems.forEach(item => {
+      const amt = parseFloat(item.amount) || 0;
+      const comm = parseFloat(item.commission) || 0;
+      totalCommissions += comm;
+      const type = item.type || "";
+      if(type.includes("مصروف") || type.includes("سداد تأمين") || type.includes("سحب")){
+        totalOutflow += amt;
+      } else {
+        totalInflow += amt;
+      }
+    });
+
+    if(journalKpiCount) journalKpiCount.textContent = allItems.length;
+    if(journalKpiInflow) journalKpiInflow.textContent = totalInflow.toLocaleString("ar-EG") + " ج.م";
+    if(journalKpiOutflow) journalKpiOutflow.textContent = totalOutflow.toLocaleString("ar-EG") + " ج.م";
+    if(journalKpiCommissions) journalKpiCommissions.textContent = totalCommissions.toLocaleString("ar-EG") + " ج.م";
+    if(journalKpiNet) {
+      const net = totalInflow - totalOutflow;
+      journalKpiNet.textContent = net.toLocaleString("ar-EG") + " ج.م";
+      journalKpiNet.style.color = net >= 0 ? "var(--cyan)" : "#ef4444";
+    }
+
+    const filtered = allItems.filter(item => {
+      if(fType !== "all" && item.type !== fType) return false;
+      if(fRegion !== "all" && (!item.region || !item.region.includes(fRegion))) return false;
+      if(q){
+        const haystack = `${item.ref || ""} ${item.name || ""} ${item.client || ""} ${item.details || ""} ${item.region || ""}`.toLowerCase();
+        if(!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+
+    if(filtered.length === 0){
+      if(journalEmptyMsg) journalEmptyMsg.style.display = "block";
+      return;
+    }
+    if(journalEmptyMsg) journalEmptyMsg.style.display = "none";
+
+    filtered.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.style.borderBottom = "1px solid var(--border-subtle)";
+      tr.style.transition = "background 0.2s";
+      tr.onmouseenter = () => tr.style.background = "rgba(255,255,255,0.02)";
+      tr.onmouseleave = () => tr.style.background = "transparent";
+
+      const isExpense = (item.type || "").includes("مصروف") || (item.type || "").includes("سداد تأمين") || (item.type || "").includes("سحب");
+      const amtColor = isExpense ? "#ef4444" : "var(--cyan)";
+      const amtSign = isExpense ? "-" : "+";
+
+      tr.innerHTML = `
+        <td style="padding:12px; font-weight:700; color:var(--gold); font-family:monospace; font-size:0.95rem;">${escapeHTML(item.ref || "-")}</td>
+        <td style="padding:12px; color:#cbd5e1; font-size:0.88rem; white-space:nowrap;">${escapeHTML(item.date || "-")}</td>
+        <td style="padding:12px;">
+          <span style="display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.78rem; font-weight:700; background:${isExpense ? 'rgba(239,68,68,0.15)' : 'rgba(56,239,125,0.15)'}; color:${isExpense ? '#ef4444' : '#38ef7d'}; border:1px solid ${isExpense ? 'rgba(239,68,68,0.3)' : 'rgba(56,239,125,0.3)'};">
+            ${escapeHTML(item.type || "عام")}
+          </span>
+        </td>
+        <td style="padding:12px; font-weight:700; color:#fff; font-size:0.92rem;">${escapeHTML(item.name || "-")}</td>
+        <td style="padding:12px; color:var(--gold-light); font-size:0.88rem;">${escapeHTML(item.region || "-")}</td>
+        <td style="padding:12px; color:#e2e8f0; font-size:0.9rem;">${escapeHTML(item.client || "-")}</td>
+        <td style="padding:12px; color:var(--text-muted); font-size:0.85rem; max-width:240px; white-space:normal;">${escapeHTML(item.details || "-")}</td>
+        <td style="padding:12px; font-weight:800; font-size:0.95rem; color:${amtColor}; white-space:nowrap;">${amtSign} ${(parseFloat(item.amount)||0).toLocaleString("ar-EG")} ج.م</td>
+        <td style="padding:12px; font-weight:700; font-size:0.9rem; color:var(--gold); white-space:nowrap;">${(parseFloat(item.commission)||0).toLocaleString("ar-EG")} ج.م</td>
+        <td style="padding:12px; text-align:center; white-space:nowrap;">
+          <button class="btn-journal-edit" data-id="${item.id}" style="background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:6px; cursor:pointer; margin-left:6px;" title="تعديل">
+            ✏️
+          </button>
+          <button class="btn-journal-del" data-id="${item.id}" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:5px 10px; border-radius:6px; cursor:pointer;" title="حذف">
+            🗑️
+          </button>
+        </td>
+      `;
+      journalTbody.appendChild(tr);
+    });
+
+    // Attach edit & delete handlers
+    journalTbody.querySelectorAll(".btn-journal-edit").forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute("data-id");
+        const item = created.journal.get(id);
+        if(!item) return;
+        openJournalModal(item);
+      };
+    });
+
+    journalTbody.querySelectorAll(".btn-journal-del").forEach(btn => {
+      btn.onclick = async () => {
+        const id = btn.getAttribute("data-id");
+        const item = created.journal.get(id);
+        if(!item) return;
+        if(!confirm(`هل أنت متأكد من حذف الحركة رقم (${item.ref || id})؟`)) return;
+        if(db) {
+          try {
+            await db.ref("journal_entries/" + id).remove();
+          } catch(e){
+            console.error(e);
+          }
+        }
+        created.journal.delete(id);
+        persistJournalLocal();
+        renderJournalTable();
+        showToast("تم حذف الحركة بنجاح");
+      };
+    });
+  }
+
+  function openJournalModal(itemToEdit = null){
+    if(!journalModal) return;
+    if(itemToEdit){
+      journalModalTitle.textContent = "تعديل حركة مسجلة";
+      formJournalId.value = itemToEdit.id || "";
+      formJournalRef.value = itemToEdit.ref || "";
+      formJournalDate.value = itemToEdit.date || new Date().toISOString().split("T")[0];
+      formJournalType.value = itemToEdit.type || "عميل جديد";
+      formJournalName.value = itemToEdit.name || "";
+      formJournalRegion.value = itemToEdit.region || "";
+      formJournalClient.value = itemToEdit.client || "";
+      formJournalAmount.value = itemToEdit.amount || "";
+      formJournalCommission.value = itemToEdit.commission || 0;
+      formJournalDetails.value = itemToEdit.details || "";
+    } else {
+      journalModalTitle.textContent = "إضافة حركة جديدة في دفتر اليومية";
+      formJournalId.value = "";
+      const count = created.journal.size + 1;
+      formJournalRef.value = String(count);
+      formJournalDate.value = new Date().toISOString().split("T")[0];
+      formJournalType.value = "عميل جديد";
+      formJournalName.value = "";
+      formJournalRegion.value = "جامعة أسيوط";
+      formJournalClient.value = "";
+      formJournalAmount.value = "";
+      formJournalCommission.value = "0";
+      formJournalDetails.value = "";
+    }
+    journalModal.style.display = "flex";
+  }
+
+  function closeJournalModal(){
+    if(journalModal) journalModal.style.display = "none";
+  }
+
+  if(btnOpenAddJournal) btnOpenAddJournal.onclick = () => openJournalModal();
+  if(journalModalClose) journalModalClose.onclick = () => closeJournalModal();
+  if(journalModalCancel) journalModalCancel.onclick = () => closeJournalModal();
+
+  if(journalForm){
+    journalForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const id = formJournalId.value || ("j_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6));
+      const data = {
+        ref: formJournalRef.value.trim(),
+        date: formJournalDate.value,
+        type: formJournalType.value,
+        name: formJournalName.value.trim(),
+        region: formJournalRegion.value.trim(),
+        client: formJournalClient.value.trim(),
+        amount: parseFloat(formJournalAmount.value) || 0,
+        commission: parseFloat(formJournalCommission.value) || 0,
+        details: formJournalDetails.value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if(db){
+        try {
+          await db.ref("journal_entries/" + id).set(data);
+        } catch(err){
+          console.error("Firebase write error:", err);
+        }
+      }
+
+      created.journal.set(id, { id, ...data });
+      persistJournalLocal();
+      closeJournalModal();
+      renderJournalTable();
+      showToast("تم حفظ وتثبيت الحركة بنجاح 💾");
+    };
+  }
+
+  if(journalSearchInput) journalSearchInput.oninput = () => renderJournalTable();
+  if(journalFilterType) journalFilterType.onchange = () => renderJournalTable();
+  if(journalFilterRegion) journalFilterRegion.onchange = () => renderJournalTable();
+  if(journalBtnReset) {
+    journalBtnReset.onclick = () => {
+      if(journalSearchInput) journalSearchInput.value = "";
+      if(journalFilterType) journalFilterType.value = "all";
+      if(journalFilterRegion) journalFilterRegion.value = "all";
+      renderJournalTable();
+    };
+  }
+
+  // Export to CSV / Excel
+  if(btnExportJournal){
+    btnExportJournal.onclick = () => {
+      const items = Array.from(created.journal.values());
+      if(items.length === 0){
+        showToast("لا توجد حركات لتصديرها");
+        return;
+      }
+      const headers = ["رقم الحركة", "التاريخ", "نوع الحركة", "اسم الحركة", "المنطقة", "اسم العميل", "تفاصيل الحركة", "المبلغ", "العمولة"];
+      const rows = items.map(it => [
+        `"${String(it.ref || '').replace(/"/g, '""')}"`,
+        `"${String(it.date || '').replace(/"/g, '""')}"`,
+        `"${String(it.type || '').replace(/"/g, '""')}"`,
+        `"${String(it.name || '').replace(/"/g, '""')}"`,
+        `"${String(it.region || '').replace(/"/g, '""')}"`,
+        `"${String(it.client || '').replace(/"/g, '""')}"`,
+        `"${String(it.details || '').replace(/"/g, '""')}"`,
+        `"${it.amount || 0}"`,
+        `"${it.commission || 0}"`
+      ]);
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `دفتر_اليومية_كيان_سيتي_${new Date().toISOString().split("T")[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("تم تصدير ملف الإكسيل بنجاح 📥");
+    };
+  }
+
 
 })();
 
