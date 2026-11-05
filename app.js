@@ -352,6 +352,21 @@ window.KAYAN_CONFIG = {
   const PH = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%230d172a'/></svg>";
   const DEFAULT_PROPERTIES = [
     {
+      id: "prop_galaa_st_1",
+      title: "شقة للبيع 120م بشارع الجلاء أمام مستشفى العقاد – سوبر لوكس",
+      category: "family",
+      price: "سعر مميز كاش / تواصل للمعرفة",
+      status: "available",
+      location: "شارع الجلاء – أمام مستشفى العقاد (الدور الرابع)",
+      area: "120 م² (100م صافي)",
+      rooms: "غرفتين + ريسبشن قطعتين",
+      baths: "عدادات قديمة + 20م بالأرض",
+      badge: "شقة للبيع - شقتين فقط بالدور",
+      image: "galaa_apartment.jpg",
+      video: "",
+      whatsapp: "201091048919"
+    },
+    {
       id: "prop_shoheib_st_1",
       title: "شقة للبيع 95م مرخصة بشارع شهيب – تشطيب كامل",
       category: "family",
@@ -576,7 +591,15 @@ window.KAYAN_CONFIG = {
         fetchAll("properties"),
         db.ref("settings/ad_banner").get()
       ]);
-      PROPS = (props && props.length > 0) ? props : DEFAULT_PROPERTIES.slice();
+      if(props && props.length > 0){
+        const hasGalaa = props.some(p => p.id === "prop_galaa_st_1");
+        if(!hasGalaa && DEFAULT_PROPERTIES.length > 0){
+          props.unshift(DEFAULT_PROPERTIES[0]);
+        }
+        PROPS = props;
+      } else {
+        PROPS = DEFAULT_PROPERTIES.slice();
+      }
       setSnap("properties", PROPS);
       const adVal = ad.val();
       if(adVal){
@@ -714,7 +737,10 @@ window.KAYAN_CONFIG = {
           <div class="card-foot">
             ${isSold ? 
               '<span class="btn-sold">تم البيع بالكامل</span>' : 
-              '<a href="#contact" class="btn-primary" style="flex:1; justify-content:center;">حجز الشقة</a>'
+              (p.whatsapp ? 
+                `<a href="https://wa.me/${esc(p.whatsapp)}?text=${encodeURIComponent('السلام عليكم، بخصوص ' + (p.title || 'الوحدة') + ' المعروضة للبيع في كيان سيتي')}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="flex:1; justify-content:center; display:inline-flex; align-items:center; gap:6px;"><span>حجز ومعاينة</span></a>` :
+                '<a href="#contact" class="btn-primary" style="flex:1; justify-content:center;">حجز الشقة</a>'
+              )
             }
             ${p.video ? `<button type="button" class="btn-outline btn-video-trigger" data-video-prop-id="${esc(p.id)}" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;"><span>🎥 فيديو</span></button>` : ''}
             <a href="#contact" class="btn-outline">معاينة 3D</a>
@@ -3036,81 +3062,18 @@ window.KAYAN_CONFIG = {
     };
   }
 
-  // Bottom Sheet Tabs Navigation: إعادة ربط الأزرار السفلية مع الحفاظ التام على حجم الجدول كاملاً بدون أي تصغير نهائياً
+  // Bottom Sheet Tabs Navigation: أزرار التبويبات السفلية لا تفتح أي نوافذ خارجية وتظل داخل الجدول تماماً مع الحفاظ على حجمه
   if(excelSheetTabs){
     excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(tab => {
       tab.onclick = () => {
-        const sheet = tab.getAttribute("data-sheet");
-
-        // تحديث التحديد البصري للشيت
+        // تحديث التحديد البصري للشيت النشط فقط بدون فتح أي صفحات أخرى
         excelSheetTabs.querySelectorAll(".excel-tab-item").forEach(t => t.classList.remove("active-sheet"));
         tab.classList.add("active-sheet");
 
-        // مسح أي تصفية لضمان بقاء جدول اليومية كبيراً ومكتملاً
+        // مسح أي فلترة أو بحث لضمان بقاء الجدول كبيراً وظهور كافة الصفوف دائماً
         excelFilterQuery = "";
         if(excelSearchInput) excelSearchInput.value = "";
-
-        if(sheet === "journal"){
-          const jBtn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-journal"]');
-          if(jBtn && !jBtn.classList.contains("active")) {
-            jBtn.click();
-          } else {
-            renderExcelGrid();
-          }
-          return;
-        }
-
-        if(sheet === "home"){
-          closeDashboard();
-          return;
-        }
-
-        if(sheet === "units"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-units"]');
-          if(btn) btn.click();
-          return;
-        }
-
-        if(sheet === "clients"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-requests"]');
-          if(btn) btn.click();
-          return;
-        }
-
-        if(sheet === "deals"){
-          // الانتقال لقسم الصفقات والوحدات بدون تصفية أو تصغير جدول اليومية
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-units"]');
-          if(btn) btn.click();
-          showToast("تم فتح سجل الصفقات والوحدات العقارية 🤝");
-          return;
-        }
-
-        if(sheet === "accounts"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-stats"]');
-          if(btn) btn.click();
-          return;
-        }
-
-        if(sheet === "staff"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-students"]');
-          if(btn) btn.click();
-          showToast("فريق عمل إدارة الأصول والسكن 👔");
-          return;
-        }
-
-        if(sheet === "inspections"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-requests"]');
-          if(btn) btn.click();
-          showToast("طلبات المعاينات وحجوزات العملاء 👁️");
-          return;
-        }
-
-        if(sheet === "reports"){
-          const btn = document.querySelector('.admin-tab-btn[data-admin-tab="admin-tab-stats"]');
-          if(btn) btn.click();
-          showToast("التقارير المالية والتشغيلية العامة 📈");
-          return;
-        }
+        renderExcelGrid();
       };
     });
   }
