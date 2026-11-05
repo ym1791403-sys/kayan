@@ -3291,6 +3291,10 @@ button, a, input, select { touch-action: manipulation; }
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>تصدير Excel</span>
             </button>
+            <button type="button" class="excel-btn" id="excel-btn-client-ledger" style="background:rgba(212,175,55,0.22); border:1px solid var(--gold); color:#f7e7b4; font-weight:700;" title="فتح كشف حساب العملاء (فايق...) ومصروفات الشقق المجمعة تلقائياً من دفتر اليومية">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>👤 كشوف حسابات العملاء (فايق...)</span>
+            </button>
             <button class="excel-btn excel-btn-danger" id="excel-btn-del-active" title="حذف الصف النشط (يتطلب إدخال الرقم السري)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               <span>حذف الصف 🔒</span>
@@ -3379,6 +3383,14 @@ button, a, input, select { touch-action: manipulation; }
           <option value="أخرى">
         </datalist>
 
+        <datalist id="excel-client-options">
+          <option value="فايق">
+          <option value="أحمد محمود سالم">
+          <option value="د. محمد مصطفى">
+          <option value="م. حسام علي">
+          <option value="أ. إبراهيم خليل">
+        </datalist>
+
         <datalist id="excel-region-options">
           <option value="جامعة أسيوط">
           <option value="حي النميس">
@@ -3438,6 +3450,111 @@ button, a, input, select { touch-action: manipulation; }
           </div>
         </div>
 
+      </div>
+
+      <!-- CLIENT STATEMENT & AUTO-LEDGER MODAL (كشف حساب العميل التلقائي ومصروفات الشقة) -->
+      <div class="client-ledger-modal" id="client-ledger-modal" style="display:none; position:fixed; inset:0; z-index:9999999; background:rgba(4,9,18,0.85); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#0a1324; border:1px solid var(--gold-border-glow); border-radius:18px; width:100%; max-width:1150px; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 25px 60px rgba(0,0,0,0.8);">
+          
+          <!-- Modal Header -->
+          <div style="background:linear-gradient(90deg, #0b1a33 0%, #102447 100%); padding:18px 24px; border-bottom:1px solid rgba(212,175,55,0.25); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg, #d4af37, #996515); display:flex; align-items:center; justify-content:center; color:#060911; font-size:1.3rem;">
+                👤
+              </div>
+              <div>
+                <h3 style="font-size:1.25rem; font-weight:800; color:#fff; margin:0; line-height:1.2;" id="ledger-header-client-name">كشف حساب العميل ومصروفات الشقة</h3>
+                <p style="font-size:0.78rem; color:#94a3b8; margin:0;">تسميع وتصدير تلقائي فوري 100% من دفتر اليومية (سباكة، نظافة، كهرباء، صيانة)</p>
+              </div>
+            </div>
+
+            <!-- Client Selector Bar -->
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <label style="color:var(--gold); font-size:0.88rem; font-weight:700;">اختر العميل:</label>
+              <select id="ledger-client-select" style="background:#070d18; border:1px solid var(--gold); color:#fff; padding:8px 16px; border-radius:8px; font-size:0.95rem; font-weight:700; outline:none; min-width:180px; cursor:pointer;">
+                <option value="فايق">فايق</option>
+              </select>
+              <button type="button" class="btn-sm" id="ledger-btn-add-client" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:8px; padding:8px 12px; font-size:0.85rem; font-weight:700; cursor:pointer;">+ عميل جديد</button>
+              <button type="button" id="ledger-btn-close" style="background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fff; border-radius:8px; width:36px; height:36px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+            </div>
+          </div>
+
+          <!-- Summary KPIs Row -->
+          <div style="background:rgba(15,23,42,0.6); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.06); display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+            <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:12px 16px;">
+              <div style="font-size:0.8rem; color:#fca5a5; font-weight:700;">إجمالي المصروفات على الشقة (مدين)</div>
+              <div id="ledger-kpi-expenses" style="font-size:1.5rem; font-weight:900; color:#ef4444; margin-top:4px;">0 ج.م</div>
+              <div style="font-size:0.72rem; color:#94a3b8;">سباكة + نظافة + كهرباء + صيانة</div>
+            </div>
+            <div style="background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.3); border-radius:12px; padding:12px 16px;">
+              <div style="font-size:0.8rem; color:#86efac; font-weight:700;">إجمالي المسدد من العميل (دائن)</div>
+              <div id="ledger-kpi-paid" style="font-size:1.5rem; font-weight:900; color:#22c55e; margin-top:4px;">0 ج.م</div>
+              <div style="font-size:0.72rem; color:#94a3b8;">دفعات نقدية أو تحويلات بنكية</div>
+            </div>
+            <div style="background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.4); border-radius:12px; padding:12px 16px;">
+              <div style="font-size:0.8rem; color:var(--gold); font-weight:700;">الصافي المطلوب للتسوية (المحاسبة)</div>
+              <div id="ledger-kpi-net" style="font-size:1.5rem; font-weight:900; color:#fef08a; margin-top:4px;">0 ج.م</div>
+              <div style="font-size:0.72rem; color:#cbd5e1;">المبلغ الصافي المطلوب من العميل</div>
+            </div>
+            <div style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:12px; padding:12px 16px;">
+              <div style="font-size:0.8rem; color:#7dd3fc; font-weight:700;">عدد البنود المسجلة باليومية</div>
+              <div id="ledger-kpi-count" style="font-size:1.5rem; font-weight:900; color:#38bdf8; margin-top:4px;">0 حركة</div>
+              <div style="font-size:0.72rem; color:#94a3b8;">تحديث ومزامنة لحظية</div>
+            </div>
+          </div>
+
+          <!-- Ledger Table Scroll Area -->
+          <div style="flex:1; overflow:auto; padding:20px; background:#ffffff; color:#0f172a; direction:rtl;" id="ledger-print-area">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #0f172a;">
+              <div>
+                <h4 style="margin:0; font-size:1.15rem; color:#0f172a; font-weight:800;" id="ledger-print-title">كشف حساب مفصل - العميل: فايق</h4>
+                <div style="font-size:0.8rem; color:#64748b;" id="ledger-print-subtitle">شركة كيان سيتي للاستثمار العقاري وإدارة الأصول</div>
+              </div>
+              <div style="text-align:left; font-size:0.8rem; color:#64748b;" id="ledger-print-date">
+                التاريخ: 05/11/2026
+              </div>
+            </div>
+
+            <table style="width:100%; border-collapse:collapse; font-size:0.88rem;" id="ledger-table">
+              <thead>
+                <tr style="background:#0f172a; color:#ffffff; text-align:right;">
+                  <th style="padding:10px 12px; border:1px solid #334155; width:45px; text-align:center;">#</th>
+                  <th style="padding:10px 12px; border:1px solid #334155; width:120px;">التاريخ 📅</th>
+                  <th style="padding:10px 12px; border:1px solid #334155; width:140px;">نوع الصرف / البند 🔧</th>
+                  <th style="padding:10px 12px; border:1px solid #334155;">بيان وتفاصيل الصرف على الشقة 📝</th>
+                  <th style="padding:10px 12px; border:1px solid #334155; width:140px;">المنطقة / الشقة 📍</th>
+                  <th style="padding:10px 12px; border:1px solid #334155; width:125px; text-align:left;">المبلغ (ج.م) 💵</th>
+                  <th style="padding:10px 12px; border:1px solid #334155; width:95px; text-align:center;">المصدر</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-table-body">
+                <!-- Dynamically filled with client's movements -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Actions Footer Bar -->
+          <div style="background:#0b162a; padding:14px 24px; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <button type="button" id="ledger-btn-whatsapp" style="background:#25d366; color:#ffffff; border:none; padding:10px 18px; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px;">
+                <span>💬 إرسال كشف الحساب واتساب</span>
+              </button>
+              <button type="button" id="ledger-btn-print" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:#fff; padding:10px 18px; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px;">
+                <span>🖨️ طباعة كشف حساب رسمي</span>
+              </button>
+              <button type="button" id="ledger-btn-export-csv" style="background:rgba(212,175,55,0.18); border:1px solid var(--gold); color:#f7e7b4; padding:10px 18px; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px;">
+                <span>📥 تصدير Excel</span>
+              </button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <button type="button" id="ledger-btn-add-expense" style="background:linear-gradient(135deg, #d4af37, #aa8214); color:#060911; border:none; padding:10px 18px; border-radius:10px; font-size:0.92rem; font-weight:800; cursor:pointer;">
+                <span>+ إضافة مصروف للشقة فوراً</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </div>

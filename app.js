@@ -2579,7 +2579,7 @@ window.KAYAN_CONFIG = {
     { key: "type", letter: "C", name: "نوع الحركه", width: "130px", type: "text", list: "excel-type-options" },
     { key: "name", letter: "D", name: "اسم الحركه", width: "170px", type: "text" },
     { key: "region", letter: "E", name: "المنطقه", width: "140px", type: "text", list: "excel-region-options" },
-    { key: "client", letter: "F", name: "اسم العميل", width: "160px", type: "text" },
+    { key: "client", letter: "F", name: "اسم العميل", width: "160px", type: "text", list: "excel-client-options" },
     { key: "details", letter: "G", name: "تفاصيل الحركه", width: "230px", type: "text" },
     { key: "amount", letter: "H", name: "المبلغ", width: "125px", type: "number", className: "amount-input" },
     { key: "commission", letter: "I", name: "العموله", width: "115px", type: "number", className: "commission-input" }
@@ -2655,6 +2655,7 @@ window.KAYAN_CONFIG = {
     excelLoaded = true;
     syncCreatedJournalMap();
     persistJournalLocal();
+    initMultiSheets(excelRows);
   }
 
   function syncCreatedJournalMap(){
@@ -2695,8 +2696,12 @@ window.KAYAN_CONFIG = {
   }
 
   async function saveExcelData(showToastMsg = false){
+    if(excelSheets[currentSheetKey]){
+      excelSheets[currentSheetKey].rows = excelRows;
+    }
     syncCreatedJournalMap();
     persistJournalLocal();
+    persistAllSheets();
 
     if(db){
       try {
@@ -2775,6 +2780,9 @@ window.KAYAN_CONFIG = {
 
   function renderExcelGrid(){
     if(!excelTableBody) return;
+    if(excelSheets[currentSheetKey]){
+      excelRows = excelSheets[currentSheetKey].rows;
+    }
     if(excelRows.length === 0){
       while(excelRows.length < 15){
         excelRows.push(makeDefaultRow(excelRows.length + 1));
@@ -3089,6 +3097,521 @@ window.KAYAN_CONFIG = {
     }
     renderExcelGrid();
   }
+
+
+  // ========================================================
+  // 8. MULTI-SHEET ENGINE & CLIENT STATEMENTS (كشوف حسابات العملاء التلقائية)
+  // ========================================================
+  const escapeHtml = typeof esc === 'function' ? esc : (s => s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
+  let currentSheetKey = "journal";
+  let excelSheets = {
+    "journal": { id: "journal", title: "دفتر اليوميه", rows: [] }
+  };
+  let savedClientList = ["فايق", "أحمد محمود سالم", "د. محمد مصطفى", "م. حسام علي"];
+
+  // تحميل الشيتات المتعددة وعزلها تماماً
+  function initMultiSheets(initialJournalRows){
+    excelSheets["journal"] = {
+      id: "journal",
+      title: "دفتر اليوميه",
+      rows: initialJournalRows && initialJournalRows.length > 0 ? initialJournalRows : excelRows
+    };
+
+    // استرجاع الشيتات الإضافية المخزنة محلياً إن وجدت
+    try {
+      const stored = localStorage.getItem("kayan_multi_sheets_backup");
+      if(stored){
+        const parsed = JSON.parse(stored);
+        if(parsed && typeof parsed === "object"){
+          Object.keys(parsed).forEach(k => {
+            if(k !== "journal" && parsed[k] && Array.isArray(parsed[k].rows)){
+              excelSheets[k] = parsed[k];
+            }
+          });
+        }
+      }
+    } catch(e){}
+
+    // استرجاع قائمة العملاء
+    try {
+      const storedClients = localStorage.getItem("kayan_clients_list");
+      if(storedClients){
+        const cl = JSON.parse(storedClients);
+        if(Array.isArray(cl)) savedClientList = Array.from(new Set([...savedClientList, ...cl]));
+      }
+    } catch(e){}
+
+    renderSheetTabsBar();
+    updateClientOptionsDatalist();
+  }
+
+  // حفظ جميع الشيتات المنفصلة
+  function persistAllSheets(){
+    try {
+      localStorage.setItem("kayan_multi_sheets_backup", JSON.stringify(excelSheets));
+      localStorage.setItem("kayan_clients_list", JSON.stringify(savedClientList));
+    } catch(e){}
+
+    if(db){
+      try {
+        const payload = {};
+        Object.keys(excelSheets).forEach(k => {
+          if(k !== "journal"){
+            payload[k] = {
+              title: excelSheets[k].title,
+              rows: (excelSheets[k].rows || []).filter(r => hasRowData(r))
+            };
+          }
+        });
+        db.ref("journal_custom_sheets").set(payload);
+      } catch(err){}
+    }
+  }
+
+  // التبديل بين الشيتات المنفصلة
+  function switchToSheet(sheetId){
+    if(!excelSheets[sheetId]) return;
+    // حفظ بيانات الشيت الحالي قبل الانتقال
+    if(excelSheets[currentSheetKey]){
+      excelSheets[currentSheetKey].rows = excelRows;
+    }
+
+    currentSheetKey = sheetId;
+    excelRows = excelSheets[sheetId].rows || [];
+
+    // التأكد من وجود 15 صفاً
+    while(excelRows.length < 15){
+      excelRows.push(makeDefaultRow(excelRows.length + 1));
+    }
+    excelSheets[sheetId].rows = excelRows;
+
+    excelFilterQuery = "";
+    if(excelSearchInput) excelSearchInput.value = "";
+    excelActivePos = { rowIdx: 0, colIdx: 0, key: "ref" };
+
+    renderSheetTabsBar();
+    renderExcelGrid();
+    showToast(`تم فتح شيت: ${excelSheets[sheetId].title} 📄`);
+  }
+
+  // إضافة شيت جديد مستقل تماماً
+  function addNewExcelSheet(customTitle){
+    const title = customTitle || prompt("أدخل اسم ورقة العمل الجديدة (مثال: يومية 6-11 أو مصاريف...):");
+    if(!title || !title.trim()) return;
+
+    const sheetId = "sheet_" + Date.now();
+    const newRows = [];
+    while(newRows.length < 15){
+      newRows.push(makeDefaultRow(newRows.length + 1));
+    }
+
+    excelSheets[sheetId] = {
+      id: sheetId,
+      title: title.trim(),
+      rows: newRows
+    };
+
+    persistAllSheets();
+    switchToSheet(sheetId);
+  }
+
+  // حذف شيت مخصص
+  function deleteExcelSheet(sheetId){
+    if(sheetId === "journal"){
+      showToast("لا يمكن حذف دفتر اليومية الرئيسي!");
+      return;
+    }
+    if(!confirm(`هل أنت متأكد من حذف ورقة العمل (${excelSheets[sheetId]?.title}) نهائياً؟`)) return;
+
+    delete excelSheets[sheetId];
+    persistAllSheets();
+    switchToSheet("journal");
+  }
+
+  // رسم وتحديث شريط التبويبات السفلي
+  function renderSheetTabsBar(){
+    if(!excelSheetTabs) return;
+    excelSheetTabs.innerHTML = "";
+
+    // 1. زر شيت دفتر اليومية الرئيسي
+    const jTab = document.createElement("button");
+    jTab.type = "button";
+    jTab.className = "excel-tab-item" + (currentSheetKey === "journal" ? " active-sheet" : "");
+    jTab.setAttribute("data-sheet", "journal");
+    jTab.innerHTML = `<span>📊 دفتر اليوميه</span>`;
+    jTab.onclick = () => switchToSheet("journal");
+    excelSheetTabs.appendChild(jTab);
+
+    // 2. زر كشوف حسابات العملاء المباشر
+    const cTab = document.createElement("button");
+    cTab.type = "button";
+    cTab.className = "excel-tab-item";
+    cTab.style.background = "rgba(212,175,55,0.18)";
+    cTab.style.borderColor = "var(--gold)";
+    cTab.style.color = "#b45309";
+    cTab.innerHTML = `<span>👤 كشف حساب فايق والعملاء</span>`;
+    cTab.onclick = () => openClientLedger("فايق");
+    excelSheetTabs.appendChild(cTab);
+
+    // 3. الشيتات المخصصة المستقلة
+    Object.keys(excelSheets).forEach(k => {
+      if(k === "journal") return;
+      const sheet = excelSheets[k];
+      const sTab = document.createElement("button");
+      sTab.type = "button";
+      sTab.className = "excel-tab-item" + (currentSheetKey === k ? " active-sheet" : "");
+      sTab.setAttribute("data-sheet", k);
+      sTab.innerHTML = `<span>📄 ${escapeHtml(sheet.title)}</span> <span style="font-size:10px; margin-right:4px; opacity:0.6;" title="حذف الشيت">✕</span>`;
+      sTab.onclick = (e) => {
+        if(e.target && e.target.textContent === "✕"){
+          e.stopPropagation();
+          deleteExcelSheet(k);
+        } else {
+          switchToSheet(k);
+        }
+      };
+      excelSheetTabs.appendChild(sTab);
+    });
+
+    // 4. زر إضافة شيت جديد (+)
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "excel-tab-add-btn";
+    addBtn.id = "excel-tab-add-sheet";
+    addBtn.title = "إضافة شيت إكسيل مستقل جديد (+)";
+    addBtn.textContent = "+";
+    addBtn.onclick = () => addNewExcelSheet();
+    excelSheetTabs.appendChild(addBtn);
+  }
+
+  // ==========================================
+  // محرك كشف حساب العميل التلقائي (Client Statement Engine)
+  // ==========================================
+  function getAllLedgerClients(){
+    const map = new Map();
+    // 1. العملاء المحفوظون مسبقاً
+    savedClientList.forEach(name => {
+      if(name && name.trim()) map.set(name.trim().toLowerCase(), name.trim());
+    });
+    // 2. استخراج أي اسم عميل كُتب في اليومية
+    Object.values(excelSheets).forEach(sh => {
+      (sh.rows || []).forEach(r => {
+        const c = (r.client || "").trim();
+        if(c && !map.has(c.toLowerCase())){
+          map.set(c.toLowerCase(), c);
+        }
+      });
+    });
+    if(!map.has("فايق".toLowerCase())) map.set("فايق".toLowerCase(), "فايق");
+    return Array.from(map.values());
+  }
+
+  function updateClientOptionsDatalist(){
+    const dl = document.getElementById("excel-client-options");
+    if(!dl) return;
+    const clients = getAllLedgerClients();
+    dl.innerHTML = clients.map(c => `<option value="${escapeHtml(c)}">`).join("");
+  }
+
+  // استخراج كشف حساب كامل ومفصل لعميل معين (مثل فايق) مجمع 100% من اليومية
+  function getClientStatement(clientName){
+    const cleanName = (clientName || "فايق").trim();
+    const cLower = cleanName.toLowerCase();
+    const movements = [];
+    let totalExpenses = 0;
+    let totalPaid = 0;
+
+    // فحص جميع الحركات المسجلة في كل الشيتات
+    Object.values(excelSheets).forEach(sh => {
+      (sh.rows || []).forEach(r => {
+        const rClient = (r.client || "").trim().toLowerCase();
+        const rDetails = (r.details || "").trim().toLowerCase();
+        const rName = (r.name || "").trim().toLowerCase();
+
+        // مطابقة العميل سواء كُتب اسمه في خانة العميل أو في التفاصيل
+        if(rClient === cLower || rClient.includes(cLower) || rDetails.includes(cLower) || rName.includes(cLower)){
+          const amt = parseFloat(r.amount) || 0;
+          if(amt > 0 || (r.type && r.type.trim()) || (r.name && r.name.trim()) || (r.details && r.details.trim())){
+            const t = (r.type || "").trim();
+            // تصنيف الحركة: هل هي سداد من العميل أم مصروف منصرف على شقته؟
+            const isPayment = t.includes("تحصيل") || t.includes("إيراد") || t.includes("سداد") || t.includes("دفعة") || t.includes("مستلم");
+            if(isPayment){
+              totalPaid += amt;
+            } else {
+              totalExpenses += amt;
+            }
+
+            movements.push({
+              id: r.id,
+              ref: r.ref || "",
+              date: r.date || "—",
+              type: r.type || "مصروف صيانة",
+              name: r.name || "—",
+              region: r.region || "أسيوط",
+              details: r.details || "—",
+              amount: amt,
+              isPayment: isPayment,
+              sheetName: sh.title
+            });
+          }
+        }
+      });
+    });
+
+    // ترتيب الحركات تصاعدياً حسب التاريخ
+    movements.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+
+    return {
+      clientName: cleanName,
+      movements,
+      totalExpenses,
+      totalPaid,
+      netBalance: totalExpenses - totalPaid
+    };
+  }
+
+  let activeLedgerClient = "فايق";
+
+  // فتح نافذة كشف حساب العميل
+  function openClientLedger(clientName = "فايق"){
+    activeLedgerClient = clientName || "فايق";
+    const modal = document.getElementById("client-ledger-modal");
+    if(!modal) return;
+
+    // تعبئة القائمة المنسدلة بكل العملاء
+    const select = document.getElementById("ledger-client-select");
+    if(select){
+      const clients = getAllLedgerClients();
+      select.innerHTML = clients.map(c => `<option value="${escapeHtml(c)}" ${c === activeLedgerClient ? "selected" : ""}>${escapeHtml(c)}</option>`).join("");
+      select.onchange = () => {
+        openClientLedger(select.value);
+      };
+    }
+
+    renderClientLedgerContent();
+    modal.style.display = "flex";
+  }
+
+  // رسم محتويات كشف حساب العميل فايق
+  function renderClientLedgerContent(){
+    const data = getClientStatement(activeLedgerClient);
+
+    // تحديث العناوين
+    const headerTitle = document.getElementById("ledger-header-client-name");
+    if(headerTitle) headerTitle.textContent = `كشف حساب ومصروفات الشقة — العميل: ${data.clientName}`;
+
+    const printTitle = document.getElementById("ledger-print-title");
+    if(printTitle) printTitle.textContent = `كشف حساب مفصل لمصروفات الشقة — العميل: ${data.clientName}`;
+
+    const printDate = document.getElementById("ledger-print-date");
+    if(printDate) printDate.textContent = `تاريخ الاستخراج: ${new Date().toLocaleDateString("ar-EG")}`;
+
+    // تحديث بطاقات KPI
+    const kpiExpenses = document.getElementById("ledger-kpi-expenses");
+    if(kpiExpenses) kpiExpenses.textContent = data.totalExpenses.toLocaleString("ar-EG") + " ج.م";
+
+    const kpiPaid = document.getElementById("ledger-kpi-paid");
+    if(kpiPaid) kpiPaid.textContent = data.totalPaid.toLocaleString("ar-EG") + " ج.م";
+
+    const kpiNet = document.getElementById("ledger-kpi-net");
+    if(kpiNet){
+      kpiNet.textContent = data.netBalance.toLocaleString("ar-EG") + " ج.م";
+      kpiNet.style.color = data.netBalance > 0 ? "#ef4444" : (data.netBalance < 0 ? "#22c55e" : "#fef08a");
+    }
+
+    const kpiCount = document.getElementById("ledger-kpi-count");
+    if(kpiCount) kpiCount.textContent = `${data.movements.length} حركة مسجلة`;
+
+    // رسم جدول الحركات
+    const tbody = document.getElementById("ledger-table-body");
+    if(!tbody) return;
+    tbody.innerHTML = "";
+
+    if(data.movements.length === 0){
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:36px; color:#64748b;">
+            لا توجد أي حركات مسجلة باسم <strong>(${escapeHtml(data.clientName)})</strong> في دفتر اليومية حتى الآن.<br>
+            بمجرد كتابة اسم (${escapeHtml(data.clientName)}) في خانة "اسم العميل" باليومية (سباكة، نظافة، كهرباء...) ستظهر وتتجمع هنا تلقائياً فوراً!
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    data.movements.forEach((m, idx) => {
+      const tr = document.createElement("tr");
+      tr.style.borderBottom = "1px solid #e2e8f0";
+      tr.style.background = idx % 2 === 0 ? "#ffffff" : "#f8fafc";
+
+      tr.innerHTML = `
+        <td style="padding:10px; text-align:center; font-weight:700; color:#64748b; border:1px solid #e2e8f0;">${idx + 1}</td>
+        <td style="padding:10px; font-weight:600; color:#0f172a; border:1px solid #e2e8f0; white-space:nowrap;">${escapeHtml(m.date)}</td>
+        <td style="padding:10px; font-weight:700; color:${m.isPayment ? "#16a34a" : "#b45309"}; border:1px solid #e2e8f0;">
+          <span style="display:inline-block; padding:2px 8px; border-radius:4px; background:${m.isPayment ? "#dcfce7" : "#fef3c7"};">
+            ${escapeHtml(m.type)}
+          </span>
+        </td>
+        <td style="padding:10px; color:#334155; border:1px solid #e2e8f0;">
+          <strong>${escapeHtml(m.name !== "—" ? m.name : "")}</strong>
+          <div>${escapeHtml(m.details)}</div>
+        </td>
+        <td style="padding:10px; color:#64748b; border:1px solid #e2e8f0;">${escapeHtml(m.region || "أسيوط")}</td>
+        <td style="padding:10px; font-weight:800; font-size:1rem; color:${m.isPayment ? "#16a34a" : "#dc2626"}; border:1px solid #e2e8f0; text-align:left; direction:ltr;">
+          ${m.isPayment ? "- " : "+ "}${m.amount.toLocaleString("ar-EG")} ج.م
+        </td>
+        <td style="padding:10px; text-align:center; font-size:0.75rem; color:#64748b; border:1px solid #e2e8f0;">
+          ${escapeHtml(m.sheetName)}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // إرسال كشف الحساب لفايق عبر الواتساب برسالة منسقة جداً
+  function sendClientLedgerWhatsApp(){
+    const data = getClientStatement(activeLedgerClient);
+    let msg = `🏢 *كشف حساب ومصروفات الشقة — شركة كيان سيتي*
+`;
+    msg += `👤 *العميل:* ${data.clientName}
+`;
+    msg += `📅 *تاريخ الاستخراج:* ${new Date().toLocaleDateString("ar-EG")}
+`;
+    msg += `------------------------------------
+`;
+    msg += `📌 *تفاصيل العمليات والمصروفات المنصرفة على الشقة:*
+`;
+
+    if(data.movements.length === 0){
+      msg += `لا توجد حركات مسجلة حالياً.
+`;
+    } else {
+      data.movements.forEach((m, idx) => {
+        msg += `${idx + 1}) ${m.date} | *${m.type}*: ${m.amount.toLocaleString("ar-EG")} ج.م
+   البيان: ${m.name} - ${m.details}
+`;
+      });
+    }
+
+    msg += `------------------------------------
+`;
+    msg += `💵 *إجمالي المصروفات:* ${data.totalExpenses.toLocaleString("ar-EG")} ج.م
+`;
+    msg += `✅ *إجمالي المسدد:* ${data.totalPaid.toLocaleString("ar-EG")} ج.م
+`;
+    msg += `⚠️ *الصافي المطلوب للتسوية:* ${data.netBalance.toLocaleString("ar-EG")} ج.م
+`;
+    msg += `------------------------------------
+`;
+    msg += `شكراً لتعاملكم مع كيان سيتي للاستثمار العقاري 🤝
+للاستفسار: 01070451554`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  }
+
+  // تصدير كشف حساب العميل بصيغة Excel CSV
+  function exportClientLedgerCsv(){
+    const data = getClientStatement(activeLedgerClient);
+    let csv = "\uFEFF"; // UTF-8 BOM
+    csv += "م,التاريخ,نوع الصرف,الاسم والبيان,تفاصيل الحركة,المنطقة,المبلغ (ج.م),النوع\n";
+
+    data.movements.forEach((m, idx) => {
+      csv += `"${idx + 1}","${m.date}","${m.type}","${m.name}","${m.details}","${m.region}","${m.amount}","${m.isPayment ? 'سداد' : 'مصروف'}"\n`;
+    });
+
+    csv += `\n,"إجمالي المصروفات",,"${data.totalExpenses}",,"إجمالي المسدد","${data.totalPaid}","الصافي المطلوب: ${data.netBalance}"\n`;
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `كشف_حساب_${data.clientName}_${Date.now()}.csv`;
+    link.click();
+    showToast(`تم تصدير كشف حساب (${data.clientName}) إلى ملف Excel بنجاح 📥`);
+  }
+
+  // طباعة كشف حساب رسمي للعميل
+  function printClientLedger(){
+    window.print();
+  }
+
+  // إضافة مصروف سريع لحساب العميل
+  function quickAddLedgerExpense(){
+    const type = prompt("أدخل نوع الصرف (مثال: سباكة / نظافة / كهرباء / صيانة):", "سباكة");
+    if(!type) return;
+    const desc = prompt("أدخل تفاصيل وبيان الصرف على الشقة:", "صيانة وتصليح");
+    if(!desc) return;
+    const amountStr = prompt("أدخل المبلغ بالجنيه (مثال: 500):", "500");
+    const amount = parseFloat(amountStr) || 0;
+    if(amount <= 0) return;
+
+    // إضافة صف جديد في شيت دفتر اليومية الرئيسي
+    const newRow = makeDefaultRow(excelSheets.journal.rows.length + 1);
+    newRow.date = new Date().toISOString().split("T")[0];
+    newRow.type = type.trim();
+    newRow.name = type.trim() + " - " + desc.trim();
+    newRow.client = activeLedgerClient;
+    newRow.details = desc.trim();
+    newRow.amount = amount;
+    newRow.region = "أسيوط";
+
+    excelSheets.journal.rows.push(newRow);
+    if(currentSheetKey === "journal") excelRows = excelSheets.journal.rows;
+
+    saveExcelData();
+    renderClientLedgerContent();
+    updateClientOptionsDatalist();
+    showToast(`تم إضافة مصروف (${type} - ${amount} ج.م) لحساب ${activeLedgerClient} ودفتر اليومية بنجاح 💾`);
+  }
+
+  // ربط أزرار كشف الحساب
+  function bindClientLedgerEvents(){
+    const btnOpen = document.getElementById("excel-btn-client-ledger");
+    if(btnOpen) btnOpen.onclick = () => openClientLedger(activeLedgerClient || "فايق");
+
+    const btnClose = document.getElementById("ledger-btn-close");
+    if(btnClose){
+      btnClose.onclick = () => {
+        const modal = document.getElementById("client-ledger-modal");
+        if(modal) modal.style.display = "none";
+      };
+    }
+
+    const btnAddClient = document.getElementById("ledger-btn-add-client");
+    if(btnAddClient){
+      btnAddClient.onclick = () => {
+        const name = prompt("أدخل اسم العميل الجديد (مثال: فايق أو د. حسام...):");
+        if(name && name.trim()){
+          const clean = name.trim();
+          if(!savedClientList.includes(clean)) savedClientList.push(clean);
+          persistAllSheets();
+          openClientLedger(clean);
+          updateClientOptionsDatalist();
+          showToast(`تم إضافة العميل (${clean}) وتجهيز صفحته بنجاح!`);
+        }
+      };
+    }
+
+    const btnWa = document.getElementById("ledger-btn-whatsapp");
+    if(btnWa) btnWa.onclick = sendClientLedgerWhatsApp;
+
+    const btnPrint = document.getElementById("ledger-btn-print");
+    if(btnPrint) btnPrint.onclick = printClientLedger;
+
+    const btnCsv = document.getElementById("ledger-btn-export-csv");
+    if(btnCsv) btnCsv.onclick = exportClientLedgerCsv;
+
+    const btnAddExp = document.getElementById("ledger-btn-add-expense");
+    if(btnAddExp) btnAddExp.onclick = quickAddLedgerExpense;
+  }
+
+  bindClientLedgerEvents();
+
+  // Expose global helpers for interactive console / testing
+  window.openClientLedger = openClientLedger;
+  window.addNewExcelSheet = addNewExcelSheet;
+  window.switchToSheet = switchToSheet;
+  window.getClientStatement = getClientStatement;
 
   // Initial load and render
   loadJournal().then(() => renderExcelGrid()).catch(() => renderExcelGrid());
