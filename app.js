@@ -367,6 +367,36 @@ window.KAYAN_CONFIG = {
       whatsapp: "201091048919"
     },
     {
+      id: "prop_motranya_128m",
+      title: "شقة للبيع 128م امتداد الكنيسة المطرانية – شارع عمومي",
+      category: "family",
+      price: "2,200,000 ج.م",
+      status: "available",
+      location: "امتداد الكنيسة المطرانية – شارع عمومي (الدور الثاني)",
+      area: "128 م²",
+      rooms: "الدور الثاني – بلكونة",
+      baths: "جميع العدادات موجودة – برج بأسانسير",
+      badge: "الدور الثاني - برج به أسانسير",
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      video: "",
+      whatsapp: "201091048919"
+    },
+    {
+      id: "prop_taminaat_sayarat_65m",
+      title: "شقة للبيع 65م بتأمينات السيارات – بالفرش ومتأجرة لطالبة",
+      category: "family",
+      price: "1,050,000 ج.م",
+      status: "available",
+      location: "تأمينات السيارات – الدور الخامس والأخير",
+      area: "65 م²",
+      rooms: "أوضتين وصالة",
+      baths: "مطبخ وحمام",
+      badge: "البيع بالفرش - متأجرة لطالبة",
+      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+      video: "",
+      whatsapp: "201091048919"
+    },
+    {
       id: "prop_shoheib_st_1",
       title: "شقة للبيع 95م مرخصة بشارع شهيب – تشطيب كامل",
       category: "family",
@@ -592,9 +622,10 @@ window.KAYAN_CONFIG = {
         db.ref("settings/ad_banner").get()
       ]);
       if(props && props.length > 0){
-        const hasGalaa = props.some(p => p.id === "prop_galaa_st_1");
-        if(!hasGalaa && DEFAULT_PROPERTIES.length > 0){
-          props.unshift(DEFAULT_PROPERTIES[0]);
+        const existingIds = new Set(props.map(p => p.id));
+        const missingDefaults = DEFAULT_PROPERTIES.filter(dp => !existingIds.has(dp.id));
+        if(missingDefaults.length > 0){
+          props.unshift(...missingDefaults);
         }
         PROPS = props;
       } else {
