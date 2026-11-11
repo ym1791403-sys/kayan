@@ -28,28 +28,16 @@ window.KAYAN_CONFIG = {
   let scrollProgress = 0;
 
   function updateScroll(){
+    if(!heroStage) return;
     const rect = heroStage.getBoundingClientRect();
     const totalDist = rect.height - window.innerHeight;
     if(totalDist > 0){
       scrollProgress = Math.max(0, Math.min(1, -rect.top / totalDist));
     }
-
-    if(scrollProgress < 0.25){
-      slide1.className = "hero-slide active";
-      slide2.className = "hero-slide inactive";
-      slide3.className = "hero-slide inactive";
-      scrollCue.style.opacity = "1";
-    } else if(scrollProgress >= 0.25 && scrollProgress < 0.65){
-      slide1.className = "hero-slide inactive";
-      slide2.className = "hero-slide active";
-      slide3.className = "hero-slide inactive";
-      scrollCue.style.opacity = "0.5";
-    } else {
-      slide1.className = "hero-slide inactive";
-      slide2.className = "hero-slide inactive";
-      slide3.className = "hero-slide active";
-      scrollCue.style.opacity = "0";
-    }
+    if(slide1) slide1.className = "hero-slide active";
+    if(slide2) slide2.className = "hero-slide inactive";
+    if(slide3) slide3.className = "hero-slide inactive";
+    if(scrollCue) scrollCue.style.opacity = "0";
   }
 
   let scrollTick = false;
@@ -58,6 +46,7 @@ window.KAYAN_CONFIG = {
 
   // 3D Scene Initialization (lazy + light)
   function init3D(){
+  return; // 3D disabled for editorial luxury style & instant mobile speed
   const canvas = document.getElementById("canvas-3d");
   const lowEnd = (navigator.hardwareConcurrency || 4) <= 4 || window.innerWidth < 768;
   let renderer;
