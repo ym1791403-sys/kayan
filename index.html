@@ -54,60 +54,29 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  /* LIGHT MODE (EDITORIAL WHITE - DEFAULT AS IN PHOTO) */
-  --bg: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-card-hover: #ffffff;
-  --surface: #ffffff;
-  --bg-alt: #f1f5f9;
-  --border: rgba(15, 23, 42, 0.1);
-  --border-subtle: rgba(15, 23, 42, 0.06);
-  --border-gold: rgba(168, 131, 68, 0.35);
-  --gold: #a88344;
-  --gold-light: #c5a880;
-  --gold-gradient: linear-gradient(135deg, #c5a880 0%, #a88344 50%, #7d5e28 100%);
-  --cyan: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --text-secondary: #334155;
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-  --shadow-gold: 0 10px 30px -5px rgba(168, 131, 68, 0.2);
-  --shadow-card: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --header-text: #0f172a;
-}
-
-body.dark-mode {
-  /* DARK MODE (MIDNIGHT ARCHITECTURAL LUXURY) */
-  --bg: #0a1728;
-  --bg-card: #112239;
-  --bg-card-hover: #183152;
-  --surface: #112239;
-  --bg-alt: #0d1e34;
-  --border: rgba(197, 168, 128, 0.3);
+  --bg: #070d18;
+  --bg-card: rgba(15, 25, 45, 0.75);
+  --bg-card-hover: rgba(22, 38, 68, 0.9);
+  --surface: #0d172a;
+  --border: rgba(201, 169, 110, 0.25);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-gold: rgba(197, 168, 128, 0.4);
-  --gold: #c5a880;
-  --gold-light: #f3e5ab;
-  --gold-gradient: linear-gradient(135deg, #f7e6cc 0%, #c5a880 50%, #8e6f43 100%);
+  --gold: #d4af37;
+  --gold-light: #f7e7b4;
+  --gold-gradient: linear-gradient(135deg, #f5df97 0%, #d4af37 50%, #997926 100%);
   --cyan: #38ef7d;
   --danger: #ef4444;
   --warning: #f59e0b;
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-secondary: #cbd5e1;
-  --shadow-gold: 0 10px 30px -5px rgba(197, 168, 128, 0.28);
-  --shadow-card: 0 20px 45px rgba(0, 0, 0, 0.45);
-  --header-bg: rgba(10, 23, 40, 0.95);
-  --header-text: #ffffff;
+  --text: #f0f4f9;
+  --text-muted: #94a5bd;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-gold: 0 10px 30px -5px rgba(212, 175, 55, 0.25);
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.45);
 }
 
 *, *::before, *::after {
@@ -333,26 +302,25 @@ body {
 
 /* 3D Hero Section */
 .hero-stage {
-  min-height: 85vh;
+  height: 320vh;
   position: relative;
-  background: radial-gradient(circle at 75% 30%, #162840 0%, #0b1728 70%, #060d16 100%);
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border-gold);
 }
 
 .hero-viewport {
-  position: relative;
-  min-height: 85vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
   width: 100%;
-  display: flex;
-  align-items: center;
   overflow: hidden;
+  background: radial-gradient(circle at 75% 30%, #15223e 0%, #080f1d 70%, #040810 100%);
 }
 
 #canvas-3d {
-  display: none !important;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .hero-overlay {
@@ -2400,334 +2368,6 @@ button, a, input, select { touch-action: manipulation; }
   box-shadow: 0 8px 22px rgba(254, 44, 85, 0.35);
 }
 
-
-/* ========================================================
-   EDITORIAL ARCHITECTURAL LOOKBOOK THEME (NEW STYLE)
-   ======================================================== */
-.font-serif-lux, .hero-title, .section-title, .editorial-title-dark, .editorial-title-light, .property-card h3 {
-  font-family: 'Amiri', 'Cairo', serif !important;
-}
-
-.hero-slats-bar {
-  position: absolute;
-  bottom: 0;
-  inset-inline: 0;
-  height: 60px;
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-  padding: 0 20px;
-  pointer-events: none;
-  z-index: 5;
-  opacity: 0.65;
-}
-
-.hero-slat {
-  flex: 1;
-  background: linear-gradient(to top, rgba(197, 168, 128, 0.8) 0%, rgba(197, 168, 128, 0.05) 100%);
-  border-radius: 2px 2px 0 0;
-  transition: opacity 0.3s ease;
-}
-
-.editorial-section {
-  padding: 70px 0;
-  background: linear-gradient(180deg, rgba(10, 23, 40, 0.98) 0%, rgba(17, 34, 57, 0.9) 100%);
-  position: relative;
-  z-index: 10;
-  border-bottom: 1px solid var(--border);
-}
-
-.editorial-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 32px;
-}
-
-.editorial-card-white {
-  background: #ffffff;
-  color: #0a1728;
-  padding: 40px;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-radius: var(--radius-sm);
-}
-
-.editorial-card-navy {
-  background: #112239;
-  color: #f8fafc;
-  padding: 40px;
-  border: 1px solid var(--border);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-radius: var(--radius-sm);
-}
-
-.editorial-watermark {
-  font-family: 'Amiri', serif;
-  font-size: 5.5rem;
-  line-height: 1;
-  color: rgba(197, 168, 128, 0.2);
-  position: absolute;
-  top: 15px;
-  left: 25px;
-  pointer-events: none;
-  font-style: italic;
-  font-weight: 700;
-}
-
-.editorial-subhead {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.editorial-title-dark {
-  font-size: 2.3rem;
-  font-weight: 700;
-  color: #0a1728;
-  margin-bottom: 8px;
-}
-
-.editorial-desc-dark {
-  font-size: 0.9rem;
-  color: #475569;
-  line-height: 1.6;
-  margin-bottom: 24px;
-}
-
-.editorial-title-light {
-  font-size: 2.3rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 8px;
-}
-
-.editorial-desc-light {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  line-height: 1.6;
-  margin-bottom: 24px;
-}
-
-.editorial-index-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.index-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.index-pill {
-  font-family: 'Cairo', monospace;
-  font-size: 0.78rem;
-  color: #a88344;
-  font-weight: 700;
-  background: #fdfbf7;
-  padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(168, 131, 68, 0.25);
-}
-
-.index-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.82rem;
-  color: #64748b;
-  padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
-}
-
-.index-link {
-  color: #a88344;
-  font-weight: 700;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.index-link:hover {
-  color: #0a1728;
-}
-
-.editorial-features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-@media (max-width: 600px) {
-  .editorial-features-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.feat-box {
-  background: rgba(10, 23, 40, 0.7);
-  border: 1px solid rgba(197, 168, 128, 0.22);
-  padding: 14px 10px;
-  text-align: center;
-  border-radius: var(--radius-sm);
-  transition: transform 0.2s, border-color 0.2s;
-}
-
-.feat-box:hover {
-  transform: translateY(-2px);
-  border-color: rgba(197, 168, 128, 0.5);
-}
-
-.feat-icon {
-  font-size: 1.35rem;
-  margin-bottom: 6px;
-}
-
-.feat-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 2px;
-}
-
-.feat-text {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-.feat-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Theme Toggle Button Styling */
-.theme-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 7px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  user-select: none;
-}
-
-.theme-toggle-btn:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: translateY(-1px);
-}
-
-.navbar {
-  background: var(--header-bg) !important;
-  border-bottom: 1px solid var(--border) !important;
-  backdrop-filter: blur(14px) !important;
-}
-
-.navbar .brand-text b {
-  color: var(--text) !important;
-}
-
-.navbar .nav-links a {
-  color: var(--text-secondary) !important;
-}
-
-.navbar .nav-links a:hover {
-  color: var(--gold) !important;
-}
-
-/* Light / Dark Mode Card & Text harmonization */
-body:not(.dark-mode) .section-head .section-title {
-  color: #0f172a !important;
-}
-
-body:not(.dark-mode) .section-head .section-desc {
-  color: #64748b !important;
-}
-
-body:not(.dark-mode) .property-card {
-  background: #ffffff !important;
-  border: 1px solid rgba(15, 23, 42, 0.08) !important;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06) !important;
-}
-
-body:not(.dark-mode) .property-card h3 {
-  color: #0f172a !important;
-}
-
-body:not(.dark-mode) .card-location {
-  color: #64748b !important;
-}
-
-body:not(.dark-mode) .card-feature-item {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #334155 !important;
-}
-
-body:not(.dark-mode) .card-price {
-  background: rgba(168, 131, 68, 0.12) !important;
-  color: #a88344 !important;
-  border-color: rgba(168, 131, 68, 0.3) !important;
-}
-
-body:not(.dark-mode) .tab-btn {
-  background: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  color: #475569 !important;
-}
-
-body:not(.dark-mode) .tab-btn.active {
-  background: #112239 !important;
-  color: #ffffff !important;
-  border-color: #112239 !important;
-}
-
-body:not(.dark-mode) #services {
-  background: #ffffff !important;
-}
-
-body:not(.dark-mode) .service-card {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-}
-
-body:not(.dark-mode) .service-card h3 {
-  color: #0f172a !important;
-}
-
-body:not(.dark-mode) .service-card p {
-  color: #64748b !important;
-}
 </style>
 </head>
 <body>
@@ -2765,10 +2405,6 @@ body:not(.dark-mode) .service-card p {
     </ul>
 
     <div class="nav-cta">
-      <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" aria-label="تبديل الوضع" title="تبديل بين الوضع النهاري الفاخر والوضع الليلي">
-        <span class="theme-icon" id="theme-icon">🌙</span>
-        <span class="theme-label" id="theme-label">الوضع الليلي</span>
-      </button>
       <a href="#contact" class="btn-primary">
         <span>احجز معاينة</span>
       </a>
@@ -2782,9 +2418,8 @@ body:not(.dark-mode) .service-card p {
 <!-- 3D Luxury Hero Showcase -->
 <div class="hero-stage" id="hero-stage">
   <div class="hero-viewport">
-    
+    <canvas id="canvas-3d" aria-label="عرض ثلاثي الأبعاد لأبراج كيان سيتي المعمارية"></canvas>
     <div class="hero-overlay"></div>
-    <div class="hero-slats-bar" id="hero-slats-bar" aria-hidden="true"></div>
 
     <div class="wrap hero-content">
       <div class="hero-cards-box">
@@ -2862,9 +2497,16 @@ body:not(.dark-mode) .service-card p {
       </div>
     </div>
 
-    
+    <div class="scene-badge-3d">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+      </svg>
+      <span>اسحب بالماوس لتدوير البرج 360 درجة</span>
+    </div>
 
-    
+    <div class="scroll-cue" id="scroll-cue">
+      <span>قم بالتمرير للأسفل لجولة داخل البرج</span>
+    </div>
   </div>
 </div>
 
@@ -2903,102 +2545,6 @@ body:not(.dark-mode) .service-card p {
     </div>
   </div>
 </div>
-
-
-<!-- Editorial Summary & Key Features (Architectural Lookbook Style) -->
-<section id="editorial-summary" class="editorial-section">
-  <div class="wrap">
-    <div class="editorial-grid">
-      
-      <!-- White Editorial Card: Summary -->
-      <div class="editorial-card-white">
-        <div class="editorial-watermark">01</div>
-        <div>
-          <div class="editorial-subhead">فهرس الكتالوج المعتمد</div>
-          <h3 class="editorial-title-dark">Summary</h3>
-          <p class="editorial-desc-dark">أحدث مشروعات ووحدات كيان سيتي المتاحة حالياً للمعاينة الميدانية والتعاقد الفوري في أسيوط.</p>
-          
-          <div class="editorial-index-list">
-            <div class="index-row">
-              <span class="index-name">01. شقة شارع الجلاء (أمام مستشفى العقاد)</span>
-              <span class="index-pill">120 م² سوبر لوكس</span>
-            </div>
-            <div class="index-row">
-              <span class="index-name">02. شقة امتداد الكنيسة المطرانية (شارع عمومي)</span>
-              <span class="index-pill">128 م² برج بأسانسير</span>
-            </div>
-            <div class="index-row">
-              <span class="index-name">03. شقة تأمينات السيارات (بالفرش ومتأجرة)</span>
-              <span class="index-pill">65 م² عائد فوري</span>
-            </div>
-            <div class="index-row">
-              <span class="index-name">04. شقة شارع شهيب (عمارة مرخصة)</span>
-              <span class="index-pill">95 م² تشطيب كامل</span>
-            </div>
-            <div class="index-row">
-              <span class="index-name">05. شقة تفرعات سيتي (مباني حديثة)</span>
-              <span class="index-pill">65 م² دور رابع</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="index-foot">
-          <span>توثيق عقاري معتمد بأسيوط</span>
-          <a href="#properties" class="index-link">استعرض كامل الوحدات ←</a>
-        </div>
-      </div>
-
-      <!-- Navy Editorial Card: Key Features -->
-      <div class="editorial-card-navy">
-        <div class="editorial-watermark">02</div>
-        <div>
-          <div class="editorial-subhead">منظومة الخدمات والأمان</div>
-          <h3 class="editorial-title-light">Key Features</h3>
-          <p class="editorial-desc-light">نظام إدارة أصول فندقية وعقود رقمية موثقة تضمن أعلى عائد استثماري وراحة تامة للمالك والمستأجر.</p>
-
-          <div class="editorial-features-grid">
-            <div class="feat-box">
-              <div class="feat-icon">⚖️</div>
-              <div class="feat-title">عقود رسمية</div>
-              <div class="feat-text">فحص ملكية موثق</div>
-            </div>
-            <div class="feat-box">
-              <div class="feat-icon">📊</div>
-              <div class="feat-title">كشف حساب فوري</div>
-              <div class="feat-text">محاسبة تلقائية للملاك</div>
-            </div>
-            <div class="feat-box">
-              <div class="feat-icon">🏢</div>
-              <div class="feat-title">إدارة أصول</div>
-              <div class="feat-text">أعلى عائد إشغال</div>
-            </div>
-            <div class="feat-box">
-              <div class="feat-icon">🔑</div>
-              <div class="feat-title">معاينة اليوم</div>
-              <div class="feat-text">متاحة ميدانياً بأسيوط</div>
-            </div>
-            <div class="feat-box">
-              <div class="feat-icon">🛠️</div>
-              <div class="feat-title">صيانة دورية</div>
-              <div class="feat-text">فريق فني متخصص 24/7</div>
-            </div>
-            <div class="feat-box">
-              <div class="feat-icon">💬</div>
-              <div class="feat-title">واتساب مباشر</div>
-              <div class="feat-text">01091048919</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="feat-foot">
-          <span>معايير إعمار وأورا للتطوير العقاري</span>
-          <span style="color:var(--gold); font-weight:700;">كيان سيتي - أسيوط</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <!-- Properties Section -->
 <section id="properties">
@@ -4261,61 +3807,5 @@ body:not(.dark-mode) .service-card p {
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script src="app.js" defer></script>
 
-
-<script>
-// Architectural fluted slats generation (Editorial Style)
-(function(){
-  const bar = document.getElementById('hero-slats-bar');
-  if(!bar) return;
-  const total = 42;
-  for(let i = 0; i < total; i++){
-    const s = document.createElement('div');
-    s.className = 'hero-slat';
-    const wave = Math.sin((i / total) * Math.PI) * 0.8 + 0.2;
-    s.style.height = (wave * 55) + 'px';
-    bar.appendChild(s);
-  }
-})();
-</script>
-
-<script>
-// Theme Toggle Engine (Light / Dark Mode with Persistence)
-(function(){
-  const saved = localStorage.getItem('kayan_theme');
-  // Default to light (as requested: editorial white lookbook style)
-  const isDark = saved === 'dark';
-  
-  function applyTheme(dark){
-    if(dark){
-      document.body.classList.add('dark-mode');
-      const icon = document.getElementById('theme-icon');
-      const label = document.getElementById('theme-label');
-      if(icon) icon.textContent = '☀️';
-      if(label) label.textContent = 'الوضع النهاري';
-    } else {
-      document.body.classList.remove('dark-mode');
-      const icon = document.getElementById('theme-icon');
-      const label = document.getElementById('theme-label');
-      if(icon) icon.textContent = '🌙';
-      if(label) label.textContent = 'الوضع الليلي';
-    }
-  }
-
-  applyTheme(isDark);
-
-  window.addEventListener('DOMContentLoaded', () => {
-    applyTheme(document.body.classList.contains('dark-mode'));
-    const btn = document.getElementById('theme-toggle-btn');
-    if(btn){
-      btn.addEventListener('click', () => {
-        const currentlyDark = document.body.classList.contains('dark-mode');
-        const nextDark = !currentlyDark;
-        applyTheme(nextDark);
-        localStorage.setItem('kayan_theme', nextDark ? 'dark' : 'light');
-      });
-    }
-  });
-})();
-</script>
 </body>
 </html>
